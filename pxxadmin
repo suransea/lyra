@@ -4,6 +4,7 @@
 import sys
 import argparse
 import ConfigParser
+import getpass
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 
@@ -65,8 +66,8 @@ if __name__ == '__main__':
         print 'The password you input is not right.'
         sys.exit(2)
 
-    input_passwd = raw_input('new password:')
-    confirm_passwd = raw_input('confirm:')
+    input_passwd = getpass.getpass('new password:')
+    confirm_passwd = getpass.getpass('confirm:')
     if input_passwd != confirm_passwd:
         print 'confirm password is not right.'
         sys.exit(3)
