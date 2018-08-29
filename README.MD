@@ -6,7 +6,11 @@
 
 ## 使用说明
 
-TODO
+### pxxadmin
+
+* 查看帮助： `pxxadmin -h`或`pxxadmin --help`
+* 修改密码： `pxxadmin -u <user> -p <passwd>`
+> 默认root密码为123456，使用AES-128加密存储于pxx.conf中（暂定）
 
 ## 协作指令
 

@@ -3,8 +3,11 @@
 
 import sys
 import argparse
+import ConfigParser
 from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
+
+# 加密解密代码来自 https://www.cnblogs.com/kaituorensheng/p/4501128.html
 
 
 class prpcrypt(object):
@@ -33,12 +36,43 @@ class prpcrypt(object):
 
 
 if __name__ == '__main__':
-    # pc = prpcrypt('keyskeyskeyskeys')  # 初始化密钥
+    pc = prpcrypt('pxxtntpxxtntpxxt')  # 初始化密钥
     # e = pc.encrypt("00000")
     # d = pc.decrypt(e)
     # print e, d
     # e = pc.encrypt("00000000000000000000000000")
     # d = pc.decrypt(e)
     # print e, d
-    parser=argparse.ArgumentParser(description='Admin the pxx database.')
-    
+
+    # 解析命令行参数
+    parser = argparse.ArgumentParser(description='Admin the pxx database.')
+    group = parser.add_argument_group()
+    group.add_argument("-u", "--username", help='The username')
+    group.add_argument("-p", "--password", help='The password')
+    args = parser.parse_args()
+    #print args.username, args.password
+
+    cf = ConfigParser.ConfigParser()
+    cf.read('pxx.conf')
+    if args.username not in cf.options('up'):
+        print 'The user is not exist.'
+        sys.exit(1)
+
+    unde_password = cf.get('up', args.username)
+    passwd = pc.decrypt(unde_password)
+    if args.password != passwd:
+        print 'The password you input is not right.'
+        sys.exit(2)
+
+    input_passwd = raw_input('new password:')
+    confirm_passwd = raw_input('confirm:')
+    if input_passwd != confirm_passwd:
+        print 'confirm password is not right.'
+        sys.exit(3)
+
+    new_passwd = pc.encrypt(confirm_passwd)
+    cf.set('up', option=args.username, value=new_passwd)
+    with open("pxx.conf", "w+") as f:
+        cf.write(f)
+
+    print 'The password of', args.username, 'is modified.'
