@@ -7,10 +7,10 @@ public class ArgsParser {
     @Option(name = "-u", usage = "username", metaVar = "str")
     private String username = "root";
 
-    @Option(name = "-p", usage = "if input password", metaVar = "str")
+    @Option(name = "-p", usage = "if input password")
     private boolean password = false;
 
-    @Option(name = "-h", usage = "IP address")
+    @Option(name = "-h", usage = "IP address", metaVar = "str")
     private String address = "127.0.0.1";
 
     ArgsParser(String[] args) {
