@@ -6,11 +6,20 @@
 
 ## 使用说明
 
+### pxx
+
+* pxx [-h <address>] [-u <user> [-p]] 
+* address: 服务器ip地址， 默认为127.0.0.1
+* user： 用户名
+* p： 登录用户是否包含密码
+
 ### pxxadmin
 
 * 查看帮助： `pxxadmin -h` 或 `pxxadmin --help`
 * 修改密码： `pxxadmin -u <user> -p <passwd>`
 > 默认root密码为123456，使用AES-128加密存储于user.conf中（暂定）
+
+----
 
 ## 协作指令
 
