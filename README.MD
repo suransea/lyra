@@ -12,7 +12,6 @@
 
 ### pxx
 
-
 * `pxx [-h <address>] [-u <user> [-p]] `
 * `address`: 服务器ip地址， 默认为127.0.0.1
 * `user`： 用户名
