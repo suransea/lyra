@@ -1,8 +1,10 @@
 package com.sea.pxx;
 
+import java.io.Console;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public class Main {
@@ -11,21 +13,18 @@ public class Main {
         //解析命令行参数
         ArgsParser argsParser = new ArgsParser(args);
 
-        String username;
+        String username = argsParser.getUsername();
         String passwd;
-        String address;
-
-        if (argsParser.getUsername() == null) {
-            username = "root";
-        }
-
-        if (argsParser.getAddress() == null) {
-            address = "127.0.0.1";
+        String address = argsParser.getAddress();
+        if (argsParser.isPassword()) {
+            System.out.print("password: ");
+            Console console = System.console();
+            passwd = new String(console.readPassword());
         } else {
-            address = argsParser.getAddress();
+            passwd = "";
         }
 
-        //TODO: 用户登录
+        //创建socket连接数据库服务器
         Socket socket;
         try {
             socket = new Socket();
@@ -33,9 +32,14 @@ public class Main {
             socket.connect(inetSocketAddress, 10000);
         } catch (UnknownHostException u) {
             Log.pa("错误的IP地址.");
-        } catch (IOException ioe) {
+        } catch (SocketTimeoutException ste) {
             Log.pa("连接超时.");
+        } catch (IOException ioe) {
+            Log.pa("服务器未响应.");
         }
+
+
+
         Log.close();
     }
 }
