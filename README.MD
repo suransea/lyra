@@ -1,17 +1,22 @@
 # PXX
 
+----
+
 ## 项目介绍
 
 数据库原型系统
+
+----
 
 ## 使用说明
 
 ### pxx
 
-* pxx [-h <address>] [-u <user> [-p]] 
-* address: 服务器ip地址， 默认为127.0.0.1
-* user： 用户名
-* p： 登录用户是否包含密码
+
+* `pxx [-h <address>] [-u <user> [-p]] `
+* `address`: 服务器ip地址， 默认为127.0.0.1
+* `user`： 用户名
+* `p`： 登录用户是否包含密码
 
 ### pxxadmin
 
