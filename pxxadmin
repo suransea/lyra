@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     #解析配置文件
     cf = ConfigParser.ConfigParser()
-    cf.read('pxx.conf')
+    cf.read('user.conf')
     if args.username not in cf.options('up'):
         print 'The user is not exist.'
         sys.exit(1)
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     new_passwd = pc.encrypt(confirm_passwd)
     cf.set('up', option=args.username, value=new_passwd)
-    with open("pxx.conf", "w+") as f:
+    with open("user.conf", "w+") as f:
         cf.write(f)
 
     print 'The password of', args.username, 'is modified.'
