@@ -12,6 +12,6 @@ public class PxxServerThread implements Runnable {
 
     @Override
     public void run() {
-        Log.pa("connected.");
+
     }
 }

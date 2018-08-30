@@ -20,8 +20,12 @@ public class PxxServer {
 
         try {
             ServerSocket serverSocket = new ServerSocket(port);
+            Log.pa("The server is running.");
             while (true) {
                 Socket socket = serverSocket.accept();
+                Log.p();
+                Log.pa(socket);
+                Log.p();
                 Thread thread = new Thread(new PxxServerThread(socket));
                 thread.start();
             }
