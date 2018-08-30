@@ -11,7 +11,7 @@ public class Log {
 
     static {
         try {
-            writer = new FileWriter("pxxserver.log", true);
+            writer = new FileWriter("pxx.log", true);
         } catch (IOException e) {
             Log.p("Warning: 日志初始化失败.");
         }
@@ -22,6 +22,10 @@ public class Log {
      */
     public static void p(Object o) {
         System.out.println(o);
+    }
+
+    public static void p() {
+        System.out.println();
     }
 
     /**

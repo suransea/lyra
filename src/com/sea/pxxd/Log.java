@@ -24,6 +24,10 @@ public class Log {
         System.out.println(o);
     }
 
+    public static void p() {
+        System.out.println();
+    }
+
     /**
      * 添加到日志文件中
      */
