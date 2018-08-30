@@ -1,4 +1,4 @@
-package com.sea;
+package com.sea.pxx;
 
 import org.kohsuke.args4j.*;
 
@@ -9,6 +9,13 @@ public class ArgsParser {
 
     @Option(name = "-p", usage = "if input password")
     private boolean password = false;
+
+    public String getAddress() {
+        return address;
+    }
+
+    @Option(name="-h",usage = "IP address")
+    private String address;
 
     ArgsParser(String[] args) {
         CmdLineParser cmdLineParser = new CmdLineParser(this);

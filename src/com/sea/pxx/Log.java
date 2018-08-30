@@ -1,4 +1,4 @@
-package com.sea;
+package com.sea.pxx;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,7 +11,7 @@ public class Log {
 
     static {
         try {
-            writer = new FileWriter("pxx.log", true);
+            writer = new FileWriter("pxxserver.log", true);
         } catch (IOException e) {
             Log.p("Warning: 日志初始化失败.");
         }
@@ -28,21 +28,30 @@ public class Log {
      * 添加到日志文件中
      */
     public static void a(Object o) {
-        StringBuilder log=new StringBuilder();
+        StringBuilder log = new StringBuilder();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置时间格式
         log.append(simpleDateFormat.format(new Date()));
         log.append(' ');
         log.append(o.toString());
-        try{
+        try {
             writer.append(log.toString());
             writer.append('\n');
-        }catch (IOException e){
+            writer.flush();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void pa(Object o){
+    public static void pa(Object o) {
         p(o);
         a(o);
+    }
+
+    public static void close() {
+        try {
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

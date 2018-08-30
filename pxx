@@ -1,4 +1,4 @@
 #/bin/bash
 
 cd build
-java -cp .:./com/sea:../lib/args4j-2.0.1.jar com.sea.Main $@
+java -cp .:./com/sea:../lib/args4j-2.0.1.jar com.sea.pxx.Main $@
