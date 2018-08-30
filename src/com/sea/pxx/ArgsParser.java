@@ -5,17 +5,13 @@ import org.kohsuke.args4j.*;
 public class ArgsParser {
 
     @Option(name = "-u", usage = "username", metaVar = "str")
-    private String username;
+    private String username = "root";
 
     @Option(name = "-p", usage = "if input password", metaVar = "str")
     private boolean password = false;
 
-    public String getAddress() {
-        return address;
-    }
-
     @Option(name = "-h", usage = "IP address")
-    private String address;
+    private String address = "127.0.0.1";
 
     ArgsParser(String[] args) {
         CmdLineParser cmdLineParser = new CmdLineParser(this);
@@ -35,5 +31,9 @@ public class ArgsParser {
 
     public boolean isPassword() {
         return password;
+    }
+
+    public String getAddress() {
+        return address;
     }
 }
