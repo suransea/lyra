@@ -11,9 +11,9 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+
         //解析命令行参数
         ArgsParser argsParser = new ArgsParser(args);
-
         String username = argsParser.getUsername();
         String passwd = "(none)";
         String address = argsParser.getAddress();
@@ -58,7 +58,6 @@ public class Main {
         try {
             outputStream.write(login.getBytes());
             outputStream.flush();
-            while (inputStream.available() == 0) ;
         } catch (IOException ioe) {
             Log.pa("服务器未响应.");
             System.exit(4);

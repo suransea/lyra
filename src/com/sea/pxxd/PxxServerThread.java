@@ -55,11 +55,7 @@ public class PxxServerThread implements Runnable {
                 //TODO: 验证用户名和密码
                 access = true;
                 if (access) {
-                    outputStream.write("access ".getBytes());
-                    outputStream.write(VERSION.getBytes());
-                    outputStream.write(' ');
-                    outputStream.write(Integer.valueOf(count).toString().getBytes());
-                    outputStream.write("\n".getBytes());
+                    outputStream.write(String.format("access %s %d\n", VERSION, count).getBytes());
                 } else {
                     outputStream.write("refuse\n".getBytes());
                 }
