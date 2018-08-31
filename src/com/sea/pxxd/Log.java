@@ -11,7 +11,7 @@ public class Log {
 
     static {
         try {
-            writer = new FileWriter("pxxserver.log", true);
+            writer = new FileWriter("pxxd.log", true);
         } catch (IOException e) {
             Log.p("Warning: 日志初始化失败.");
         }
@@ -21,7 +21,12 @@ public class Log {
      * 向控制台打印
      */
     public static void p(Object o) {
-        System.out.println(o);
+        StringBuilder log = new StringBuilder();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置时间格式
+        log.append(simpleDateFormat.format(new Date()));
+        log.append(' ');
+        log.append(o.toString());
+        System.out.println(log);
     }
 
     public static void p() {
