@@ -100,7 +100,8 @@ public class Main {
         while (true) {
             String cmd = screenScanner.nextLine().trim();
             line++;
-            if ((cmd.equals("quit") || cmd.equals("exit")) && line == 1) {
+            if ((cmd.equals("quit") || cmd.equals("exit")
+                    || cmd.equals("quit;") || cmd.equals("exit;")) && line == 1) {
                 Log.p("\nBye.\n");
                 try {
                     scanner.close();

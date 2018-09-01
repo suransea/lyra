@@ -11,14 +11,13 @@ import java.util.Scanner;
 
 public class PxxServerThread implements Runnable {
 
-    private static final String VERSION = "0.1";//版本号
+    private static final String VERSION = "0.2.1";//版本号
 
     private Socket socket;
     private int count;
     private InputStream inputStream;
     private OutputStream outputStream;
     private SQLParser sqlParser;
-    private DBManager dbManager;
     private Scanner scanner;
 
     public PxxServerThread(Socket s, int c) {
@@ -68,8 +67,8 @@ public class PxxServerThread implements Runnable {
             case "sql": {
                 String sql = scanner.nextLine();
                 try {
-                    Statement statement = sqlParser.parse(sql);
-                    String outcome = statement.execute(dbManager);
+                    Statement statement = sqlParser.parse(sql.toLowerCase());
+                    String outcome = statement.execute();
                     outputStream.write(outcome.getBytes());
                     outputStream.write("\ntrue\n".getBytes());
                     outputStream.flush();
