@@ -98,10 +98,10 @@ public class Main {
         StringBuilder sql = new StringBuilder();
         int line = 0;
         while (true) {
-            String cmd = screenScanner.nextLine();
+            String cmd = screenScanner.nextLine().trim();
             line++;
             if ((cmd.equals("quit") || cmd.equals("exit")) && line == 1) {
-                Log.p("Bye.");
+                Log.p("\nBye.\n");
                 try {
                     scanner.close();
                     screenScanner.close();
