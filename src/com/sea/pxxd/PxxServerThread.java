@@ -1,5 +1,7 @@
 package com.sea.pxxd;
 
+import com.sea.pxxd.stmt.Statement;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,11 +17,12 @@ public class PxxServerThread implements Runnable {
     private int count;
     private InputStream inputStream;
     private OutputStream outputStream;
-    private SqlParser sqlParser;
+    private SQLParser sqlParser;
+    private DBManager dbManager;
     private Scanner scanner;
 
     public PxxServerThread(Socket s, int c) {
-        sqlParser = new SqlParser();
+        sqlParser = new SQLParser();
         socket = s;
         count = c;
         try {
@@ -64,14 +67,17 @@ public class PxxServerThread implements Runnable {
             }
             case "sql": {
                 String sql = scanner.nextLine();
-                String outcome = sqlParser.parse(sql);
-                outputStream.write(outcome.getBytes());
-                if (sqlParser.isLastSuccessful()) {
-                    outputStream.write("true\n".getBytes());
-                } else {
-                    outputStream.write("false\n".getBytes());
+                try {
+                    Statement statement = sqlParser.parse(sql);
+                    String outcome = statement.execute(dbManager);
+                    outputStream.write(outcome.getBytes());
+                    outputStream.write("\ntrue\n".getBytes());
+                    outputStream.flush();
+                } catch (DBProcessException | SQLParseException e) {
+                    outputStream.write(e.getMessage().getBytes());
+                    outputStream.write("\nfalse\n".getBytes());
+                    outputStream.flush();
                 }
-                outputStream.flush();
                 break;
             }
         }

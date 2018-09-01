@@ -21,6 +21,7 @@ public class Main {
             System.out.print("password: ");
             Console console = System.console();
             passwd = new String(console.readPassword());
+            if (passwd.equals("")) passwd = "(none)";
         }
 
         //解析配置文件
