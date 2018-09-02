@@ -82,7 +82,7 @@ public class Insert implements Statement {
     public String execute(User user) throws DBProcessException {
         Database database = user.getCurrentDB();
         if (database == null) {
-            throw new DBProcessException("Please use a database firstly.");
+            throw new DBProcessException("Please select a database firstly.");
         }
         Document document = database.getDocument();
         Element tableElement = null;

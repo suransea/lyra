@@ -2,15 +2,15 @@ package com.sea.pxxd.stmt;
 
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.User;
+import com.sea.pxxd.db.Table;
 
-import java.util.List;
 import java.util.regex.Matcher;
 
-public class ShowDatabases implements Statement {
+public class ShowTables implements Statement {
 
     private String sql;
 
-    public ShowDatabases(Matcher matcher) {
+    public ShowTables(Matcher matcher) {
         sql = matcher.group(0);
     }
 
@@ -21,11 +21,13 @@ public class ShowDatabases implements Statement {
 
     @Override
     public String execute(User user) throws DBProcessException {
+        if (user.getCurrentDB() == null) {
+            throw new DBProcessException("Please select a database firstly.");
+        }
         StringBuilder result = new StringBuilder();
-        List<String> names = user.getAccessDBNames();
-        for (String name : names) {
-            result.append('\n');
-            result.append(name);
+        for (Table table : user.getCurrentDB().getTables()) {
+            result.append("\n");
+            result.append(table.getName());
         }
         return result.toString();
     }

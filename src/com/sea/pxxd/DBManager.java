@@ -40,6 +40,13 @@ public class DBManager {
         return fileNames;
     }
 
+    public void deleteDatabase(String name) throws DBProcessException {
+        File file = new File(PATH + "/" + name + ".xml");
+        if (!file.delete()) {
+            throw new DBProcessException("The target database is not exist.");
+        }
+    }
+
     public void write(Database database) throws DBProcessException {
         Document document = database.getDocument();
         try {

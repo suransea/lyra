@@ -37,6 +37,18 @@ public class SQLParser {
                 "ShowDatabases",
                 "show\\s+databases\\s*;"
         );
+        regexps.put(
+                "DropDatabase",
+                "\\s*drop\\s+database\\s+(\\w+)\\s*;\\s*"
+        );
+        regexps.put(
+                "DropTable",
+                "\\s*drop\\s+table\\s+(\\w+)\\s*;\\s*"
+        );
+        regexps.put(
+                "ShowTables",
+                "show\\s+tables\\s*;"
+        );
     }
 
     public SQLParser() {

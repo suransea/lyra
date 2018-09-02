@@ -29,7 +29,7 @@ public class Set implements Statement {
 
     @Override
     public String execute(User user) throws DBProcessException {
-        if (!user.getName().equals("root")) {
+        if (!user.getName().equals("root") && !user.getName().equals(username)) {
             throw new DBProcessException("Permission denied.");
         }
         DBManager dbManager = new DBManager();

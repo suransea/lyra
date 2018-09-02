@@ -65,7 +65,7 @@ public class CreateTable implements Statement {
     public String execute(User user) throws DBProcessException {
         Database database = user.getCurrentDB();
         if (database == null) {
-            throw new DBProcessException("Please use a database firstly.");
+            throw new DBProcessException("Please select a database firstly.");
         }
         if (database.getTable(table.getName()) != null) {
             throw new DBProcessException("The table name is already exist.");
