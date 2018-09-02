@@ -8,6 +8,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +36,18 @@ public class DBManager {
             }
         }
         return fileNames;
+    }
+
+    public void write(Database database) throws DBProcessException {
+        Document document = database.getDocument();
+        try {
+            FileWriter writer = new FileWriter(DBManager.PATH + "/" + database.getName() + ".xml");
+            document.write(writer);
+            writer.close();
+        } catch (IOException e) {
+            Log.a(e.getMessage());
+            throw new DBProcessException("IO error.");
+        }
     }
 
     public Database getDatabase(String dbName) throws DBProcessException {

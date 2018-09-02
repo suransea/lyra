@@ -3,13 +3,11 @@ package com.sea.pxxd.stmt;
 import com.sea.pxxd.DBManager;
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.SQLParseException;
+import com.sea.pxxd.db.Database;
 import com.sea.pxxd.db.Table;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,15 +62,14 @@ public class CreateTable implements Statement {
 
     @Override
     public String execute() throws DBProcessException {
-        if (UseDatabase.currentDB == null) {
+        Database database = UseDatabase.currentDB;
+        if (database == null) {
             throw new DBProcessException("Please use a database firstly.");
         }
-        for (Table table : UseDatabase.currentDB.getTables()) {
-            if (table.getName().equals(this.table.getName())) {
-                throw new DBProcessException("The table name is already exist.");
-            }
+        if (database.getTable(table.getName()) != null) {
+            throw new DBProcessException("The table name is already exist.");
         }
-        Document document = UseDatabase.currentDB.getDocment();
+        Document document = database.getDocument();
         Element root = document.getRootElement();
         Element tableElement = root.addElement("table");
         tableElement.addAttribute("name", table.getName());
@@ -84,13 +81,8 @@ public class CreateTable implements Statement {
                 attrElement.addAttribute("length", Integer.toString(it.getLength()));
             }
         }
-        try {
-            Writer writer = new FileWriter(DBManager.PATH + "/" + UseDatabase.currentDB.getName() + ".xml");
-            document.write(writer);
-            writer.close();
-        } catch (IOException e) {
-            throw new DBProcessException("Unknown error.");
-        }
+        DBManager dbManager = new DBManager();
+        dbManager.write(database);
         return "Table created.";
     }
 

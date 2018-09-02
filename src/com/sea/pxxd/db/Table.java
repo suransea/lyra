@@ -17,6 +17,15 @@ public class Table {
         return name;
     }
 
+    public Attribute getAttribute(String name) {
+        for (Attribute attr : attributes) {
+            if (attr.getName().equals(name)) {
+                return attr;
+            }
+        }
+        return null;
+    }
+
     public Table(String name) {
         this.name = name;
         attributes = new ArrayList<>();

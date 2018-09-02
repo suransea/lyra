@@ -18,11 +18,20 @@ public class Database {
 
     private List<Table> tables;
 
-    public Document getDocment() {
+    public Document getDocument() {
         return document;
     }
 
     private Document document;
+
+    public Table getTable(String name) {
+        for (Table table : tables) {
+            if (table.getName().equals(name)) {
+                return table;
+            }
+        }
+        return null;
+    }
 
     public Database(String name, Document document) {
         this.name = name;
