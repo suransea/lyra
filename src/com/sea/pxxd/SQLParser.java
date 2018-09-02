@@ -25,6 +25,10 @@ public class SQLParser {
                 "CreateTable",
                 "\\s*create\\s+table\\s+(\\w+)\\s*\\(\\s*(.*)\\)\\s*;\\s*"
         );
+        regexps.put(
+                "Insert",
+                "insert\\s+into\\s+(\\w+)\\s+values\\s*(\\s*\\(.*\\)\\s*)\\s*;\\s*"
+        );
     }
 
     public SQLParser() {
@@ -35,13 +39,13 @@ public class SQLParser {
 
         for (Map.Entry<String, String> entry : regexps.entrySet()) {
             Pattern pattern = Pattern.compile(entry.getValue());
-            Matcher matcher = pattern.matcher(sql);
+            Matcher matcher = pattern.matcher(sql.trim().toLowerCase());
             if (matcher.matches()) {
                 try {
                     Class stmt = Class.forName("com.sea.pxxd.stmt." + entry.getKey());
                     return (Statement) stmt.getConstructor(Matcher.class).newInstance(matcher);
                 } catch (Exception e) {
-                    Log.a(e.getMessage());
+                    e.printStackTrace();
                     throw new SQLParseException("Unknown error.");
                 }
             }

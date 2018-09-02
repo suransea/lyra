@@ -67,7 +67,7 @@ public class PxxServerThread implements Runnable {
             case "sql": {
                 String sql = scanner.nextLine();
                 try {
-                    Statement statement = sqlParser.parse(sql.toLowerCase());
+                    Statement statement = sqlParser.parse(sql);
                     String outcome = statement.execute();
                     outputStream.write(outcome.getBytes());
                     outputStream.write("\ntrue\n".getBytes());
