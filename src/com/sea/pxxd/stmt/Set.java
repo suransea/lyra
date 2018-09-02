@@ -29,6 +29,9 @@ public class Set implements Statement {
 
     @Override
     public String execute(User user) throws DBProcessException {
+        if (!user.getName().equals("root")) {
+            throw new DBProcessException("Permission denied.");
+        }
         DBManager dbManager = new DBManager();
         Database userDB = dbManager.getDatabase("pxx");
         Element rootElement = userDB.getDocument().getRootElement();
