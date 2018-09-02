@@ -15,13 +15,13 @@ public class Main {
         //解析命令行参数
         ArgsParser argsParser = new ArgsParser(args);
         String username = argsParser.getUsername();
-        String passwd = "(none)";
+        String password = "(none)";
         String address = argsParser.getAddress();
         if (argsParser.isPassword()) {
             System.out.print("password: ");
             Console console = System.console();
-            passwd = new String(console.readPassword());
-            if (passwd.equals("")) passwd = "(none)";
+            password = new String(console.readPassword());
+            if (password.equals("")) password = "(none)";
         }
 
         //解析配置文件
@@ -55,7 +55,7 @@ public class Main {
         }
 
         //登录
-        String login = "login " + username + ' ' + passwd + '\n';
+        String login = "login " + username + ' ' + password + '\n';
         try {
             outputStream.write(login.getBytes());
             outputStream.flush();
@@ -70,7 +70,7 @@ public class Main {
         switch (scanner.next()) {
             case "access": {
                 version = scanner.next();
-                count = scanner.nextByte();
+                count = scanner.nextInt();
                 break;
             }
             case "refuse": {

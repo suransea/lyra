@@ -44,7 +44,7 @@ public class PxxServerThread implements Runnable {
                 parse(str);
             }
         } catch (IOException | NoSuchElementException ioe) {
-            Log.pa("连接 " + count + " 似乎已断开.");
+            Log.pa("连接 " + count + " 已断开.");
         }
     }
 
@@ -74,9 +74,12 @@ public class PxxServerThread implements Runnable {
             case "sql": {
                 String sql = scanner.nextLine();
                 try {
+                    long startTime = System.currentTimeMillis();
                     Statement statement = sqlParser.parse(sql);
                     String outcome = statement.execute(user);
+                    long time = System.currentTimeMillis() - startTime;
                     outputStream.write(outcome.getBytes());
+                    outputStream.write(String.format("\n\nConsumption of time: %.3f s.", time / 1000.0).getBytes());
                     outputStream.write("\ntrue\n".getBytes());
                     outputStream.flush();
                 } catch (DBProcessException | SQLParseException e) {
