@@ -2,6 +2,8 @@ package com.sea.pxxd;
 
 import com.sea.pxxd.db.Database;
 import com.sea.pxxd.db.Table;
+import com.sea.pxxd.util.AESCrypto;
+import com.sea.pxxd.util.Log;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -16,13 +18,13 @@ import java.util.List;
 
 public class DBManager {
 
-    public static final String PATH = "./database";
+    private static final String PATH = "./database";
 
     public DBManager() {
 
     }
 
-    public List<String> getDbNames() {
+    public List<String> getDBNames() {
         File database = new File(PATH);
         List<String> fileNames = new ArrayList<>();
         File[] files = database.listFiles();
@@ -93,6 +95,29 @@ public class DBManager {
             database.getTables().add(table);
         }
         return database;
+    }
+
+    public boolean verify(String name, String password) throws DBProcessException {
+        AESCrypto aes = new AESCrypto("5494");
+        String encodePassword = aes.encode(password);
+        Database userDB = getDatabase("pxx");
+        Element rootElement = userDB.getDocument().getRootElement();
+        Element tableElement = null;
+        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
+            Element element = it.next();
+            if (element.attributeValue("name").equals("user")) {
+                tableElement = element;
+                break;
+            }
+        }
+        for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
+            Element element = it.next();
+            if (element.attributeValue("username").equals(name) &&
+                    element.attributeValue("password").equals(encodePassword)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

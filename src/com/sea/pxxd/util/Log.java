@@ -1,4 +1,4 @@
-package com.sea.pxxd;
+package com.sea.pxxd.util;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -2,14 +2,12 @@ package com.sea.pxxd.stmt;
 
 import com.sea.pxxd.DBManager;
 import com.sea.pxxd.DBProcessException;
-import com.sea.pxxd.db.Database;
+import com.sea.pxxd.User;
 
 import java.util.List;
 import java.util.regex.Matcher;
 
 public class UseDatabase implements Statement {
-
-    public static Database currentDB = null;
 
     private String sql;
     private String dbName;
@@ -20,13 +18,13 @@ public class UseDatabase implements Statement {
     }
 
     @Override
-    public String execute() throws DBProcessException {
+    public String execute(User user) throws DBProcessException {
         DBManager dbManager = new DBManager();
-        List dbNames = dbManager.getDbNames();
+        List dbNames = dbManager.getDBNames();
         if (!dbNames.contains(dbName)) {
             throw new DBProcessException("The database is not exist.");
         }
-        currentDB = dbManager.getDatabase(dbName);
+        user.setCurrentDB(dbManager.getDatabase(dbName));
         return "Database changed.";
     }
 

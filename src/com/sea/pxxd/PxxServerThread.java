@@ -1,6 +1,7 @@
 package com.sea.pxxd;
 
 import com.sea.pxxd.stmt.Statement;
+import com.sea.pxxd.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ public class PxxServerThread implements Runnable {
     private OutputStream outputStream;
     private SQLParser sqlParser;
     private Scanner scanner;
+    private User user;
 
     public PxxServerThread(Socket s, int c) {
         sqlParser = new SQLParser();
@@ -50,14 +52,19 @@ public class PxxServerThread implements Runnable {
         Scanner strScanner = new Scanner(s);
         switch (strScanner.next()) {
             case "login": {
-                String user = strScanner.next();
-                String passwd = strScanner.next();
-                boolean access = false;
+                String username = strScanner.next();
+                String password = strScanner.next();
+                DBManager dbManager = new DBManager();
+                boolean access;
+                try {
+                    access = dbManager.verify(username, password);
+                } catch (DBProcessException e) {
+                    access = false;
+                }
 
-                //TODO: 验证用户名和密码
-                access = true;
                 if (access) {
                     outputStream.write(String.format("access %s %d\n", VERSION, count).getBytes());
+                    user = new User(username);
                 } else {
                     outputStream.write("refuse\n".getBytes());
                 }
@@ -68,7 +75,7 @@ public class PxxServerThread implements Runnable {
                 String sql = scanner.nextLine();
                 try {
                     Statement statement = sqlParser.parse(sql);
-                    String outcome = statement.execute();
+                    String outcome = statement.execute(user);
                     outputStream.write(outcome.getBytes());
                     outputStream.write("\ntrue\n".getBytes());
                     outputStream.flush();

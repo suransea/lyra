@@ -2,6 +2,7 @@ package com.sea.pxxd.stmt;
 
 import com.sea.pxxd.DBManager;
 import com.sea.pxxd.DBProcessException;
+import com.sea.pxxd.User;
 import com.sea.pxxd.db.Database;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -25,9 +26,9 @@ public class CreateDatabase implements Statement {
     }
 
     @Override
-    public String execute() throws DBProcessException {
+    public String execute(User user) throws DBProcessException {
         DBManager dbManager = new DBManager();
-        List<String> fileNames = dbManager.getDbNames();
+        List<String> fileNames = dbManager.getDBNames();
         if (fileNames.contains(dbName)) {
             throw new DBProcessException("The database is already exist.");
         }

@@ -3,6 +3,7 @@ package com.sea.pxxd.stmt;
 import com.sea.pxxd.DBManager;
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.SQLParseException;
+import com.sea.pxxd.User;
 import com.sea.pxxd.db.Database;
 import com.sea.pxxd.db.Table;
 import org.dom4j.Document;
@@ -61,8 +62,8 @@ public class CreateTable implements Statement {
     }
 
     @Override
-    public String execute() throws DBProcessException {
-        Database database = UseDatabase.currentDB;
+    public String execute(User user) throws DBProcessException {
+        Database database = user.getCurrentDB();
         if (database == null) {
             throw new DBProcessException("Please use a database firstly.");
         }

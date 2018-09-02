@@ -2,6 +2,7 @@ package com.sea.pxxd.stmt;
 
 import com.sea.pxxd.DBManager;
 import com.sea.pxxd.DBProcessException;
+import com.sea.pxxd.User;
 import com.sea.pxxd.db.Database;
 import com.sea.pxxd.db.Table;
 import org.dom4j.Document;
@@ -32,7 +33,7 @@ public class Insert implements Statement {
         StringBuilder value = new StringBuilder();
         boolean start = false;
         boolean stringStart = false;
-        boolean ignore=false;
+        boolean ignore = false;
         for (int i = 0; i < s.length; i++) {
             char c = s[i];
             if (c == '\'') {
@@ -45,8 +46,8 @@ public class Insert implements Statement {
                 continue;
             }
             if (c == ' ') continue;
-            if(ignore){
-                ignore=false;
+            if (ignore) {
+                ignore = false;
                 continue;
             }
             if (c == ',') {
@@ -64,7 +65,7 @@ public class Insert implements Statement {
                 result.add(subValue);
                 subValue = new ArrayList<>();
                 start = false;
-                ignore=true;
+                ignore = true;
                 continue;
             }
             if (start) value.append(c);
@@ -78,8 +79,8 @@ public class Insert implements Statement {
     }
 
     @Override
-    public String execute() throws DBProcessException {
-        Database database = UseDatabase.currentDB;
+    public String execute(User user) throws DBProcessException {
+        Database database = user.getCurrentDB();
         if (database == null) {
             throw new DBProcessException("Please use a database firstly.");
         }
@@ -113,6 +114,9 @@ public class Insert implements Statement {
                     }
                 } else if (attribute.getType() == Table.Attribute.Type.VARCHAR) {
                     String string = value.get(i);
+                    if (string.length() > attribute.getLength()) {
+                        throw new DBProcessException("The length is outsize.");
+                    }
                     if (!(string.startsWith("'") && string.endsWith("'"))) {
                         throw new DBProcessException("Please wrap the string with '' .");
                     }

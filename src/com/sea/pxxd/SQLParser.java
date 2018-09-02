@@ -29,6 +29,10 @@ public class SQLParser {
                 "Insert",
                 "insert\\s+into\\s+(\\w+)\\s+values\\s*(\\s*\\(.*\\)\\s*)\\s*;\\s*"
         );
+        regexps.put(
+                "Set",
+                "set\\s+password\\s+for\\s+(\\w+)\\s*=\\s*password\\s*\\(\\s*'(\\w{4,16})'\\s*\\)\\s*;"
+        );
     }
 
     public SQLParser() {
