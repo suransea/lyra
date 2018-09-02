@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="pxx">
+    <table name="user">
+        <attr name="username" type="varchar" length="20"/>
+        <attr name="password" type="varchar" length="255"/>
+        <data username="root" password="Hps5oNDU5L27CNJom5ZH1w=="/>
+        <data username="sea" password="wS6XKQSxt9Cp9TIpr1gLeA=="/>
+    </table>
+</database>
