@@ -27,7 +27,7 @@ public class ShowTables implements Statement {
         }
         ConsoleTable consoleTable = new ConsoleTable(1);
         consoleTable.appendRow();
-        consoleTable.appendColumn("*TABLES*");
+        consoleTable.appendColumn("TABLES");
         for (Table table : user.getCurrentDB().getTables()) {
             consoleTable.appendRow();
             consoleTable.appendColumn(table.getName());

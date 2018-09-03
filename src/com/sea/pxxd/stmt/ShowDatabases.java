@@ -23,7 +23,7 @@ public class ShowDatabases implements Statement {
     public String execute(User user) throws DBProcessException {
         ConsoleTable consoleTable = new ConsoleTable(1);
         consoleTable.appendRow();
-        consoleTable.appendColumn("*DATABASES*");
+        consoleTable.appendColumn("DATABASES");
         for (String name : user.getAccessDBNames()) {
             consoleTable.appendRow();
             consoleTable.appendColumn(name);

@@ -73,9 +73,9 @@ public class ConsoleTable {
             } else {
                 for (int i = 0; i < column; i++) {
                     if (i == 0) {
-                        if(rowIndex==0) {
+                        if (rowIndex == 0) {
                             result.append('├');//├┼┤
-                        }else {
+                        } else {
                             result.append('│');
                         }
                     } else {
@@ -87,14 +87,14 @@ public class ConsoleTable {
                         result.append(repeatChar(' ', margin * 2 + columnLength[i]));
                     }
                 }
-                if(rowIndex==0) {
+                if (rowIndex == 0) {
                     result.append("┤\n");
-                }else{
+                } else {
                     result.append("│\n");
                 }
             }
         }
-        result.append('\n').append(rows.size()).append(" rows in set.");
+        result.append('\n').append(rows.size() - 1).append(" rows in set.");
         return result.toString();
     }
 

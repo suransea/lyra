@@ -3,6 +3,7 @@ package com.sea.pxxd.stmt;
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.User;
 import com.sea.pxxd.db.Database;
+import com.sea.pxxd.db.Table;
 import com.sea.pxxd.util.ConsoleTable;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.regex.Matcher;
 public class Select implements Statement {
 
     private String sql;
-    private List<String> attr;
+    private List<String> attrs;
     private String tableName;
     private String left;
     private String compare;
@@ -21,13 +22,13 @@ public class Select implements Statement {
 
     public Select(Matcher matcher) {
         sql = matcher.group(0);
-        attr = new ArrayList<>();
+        attrs = new ArrayList<>();
         if (matcher.group(1).contains(",")) {
             for (String s : matcher.group(1).split(",")) {
-                attr.add(s.trim());
+                attrs.add(s.trim());
             }
         } else {
-            attr.add(matcher.group(1).trim());
+            attrs.add(matcher.group(1).trim());
         }
         tableName = matcher.group(2);
         left = matcher.group(3);
@@ -46,9 +47,75 @@ public class Select implements Statement {
         if (database == null) {
             throw new DBProcessException("Please select a database firstly.");
         }
-        List<Map<String,String>> datas=database.getRows(tableName);
-        //for()
-        //ConsoleTable consoleTable=new ConsoleTable(attr.size());
-        return null;
+        List<Map<String, String>> datas = database.getRows(tableName);
+        Table table = database.getTable(tableName);
+        List<String> allAttrs = new ArrayList<>();
+        for (Table.Attribute attr : table.getAttributes()) {
+            allAttrs.add(attr.getName());
+        }
+        if (left != null) {
+            if (!allAttrs.contains(left)) {
+                throw new DBProcessException("The where expression left is not exist.");
+            }
+        }
+        if (attrs.get(0).equals("*")) {
+            attrs = allAttrs;
+        }
+        for (String attr : attrs) {
+            if (table.getAttribute(attr) == null) {
+                throw new DBProcessException("Cannot find the column.");
+            }
+        }
+        ConsoleTable consoleTable = new ConsoleTable(attrs.size());
+        consoleTable.appendRow();
+        for (String attr : attrs) {
+            consoleTable.appendColumn(attr);
+        }
+        for (Map<String, String> entry : datas) {
+            boolean flag = false;
+            if (left != null) {
+                switch (compare) {
+                    case ">":
+                        if (entry.get(left).compareTo(right) > 0) {
+                            flag = true;
+                        }
+                        break;
+                    case "<":
+                        if (entry.get(left).compareTo(right) < 0) {
+                            flag = true;
+                        }
+                        break;
+                    case "=":
+                        if (entry.get(left).compareTo(right) == 0) {
+                            flag = true;
+                        }
+                        break;
+                    case ">=":
+                        if (entry.get(left).compareTo(right) >= 0) {
+                            flag = true;
+                        }
+                        break;
+                    case "<=":
+                        if (entry.get(left).compareTo(right) <= 0) {
+                            flag = true;
+                        }
+                        break;
+                    case "<>":
+                        if (entry.get(left).compareTo(right) != 0) {
+                            flag = true;
+                        }
+                        break;
+                }
+            } else {
+                flag = true;
+            }
+            if (flag) {
+                consoleTable.appendRow();
+                for (String attr : attrs) {
+                    consoleTable.appendColumn(entry.get(attr));
+                }
+            }
+        }
+        return consoleTable.toString();
     }
 }
