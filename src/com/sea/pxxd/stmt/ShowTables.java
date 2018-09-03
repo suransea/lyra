@@ -3,6 +3,7 @@ package com.sea.pxxd.stmt;
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.User;
 import com.sea.pxxd.db.Table;
+import com.sea.pxxd.util.ConsoleTable;
 
 import java.util.regex.Matcher;
 
@@ -24,11 +25,13 @@ public class ShowTables implements Statement {
         if (user.getCurrentDB() == null) {
             throw new DBProcessException("Please select a database firstly.");
         }
-        StringBuilder result = new StringBuilder();
+        ConsoleTable consoleTable = new ConsoleTable(1);
+        consoleTable.appendRow();
+        consoleTable.appendColumn("*TABLES*");
         for (Table table : user.getCurrentDB().getTables()) {
-            result.append("\n");
-            result.append(table.getName());
+            consoleTable.appendRow();
+            consoleTable.appendColumn(table.getName());
         }
-        return result.toString();
+        return consoleTable.toString();
     }
 }

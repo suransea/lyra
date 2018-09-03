@@ -2,8 +2,8 @@ package com.sea.pxxd.stmt;
 
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.User;
+import com.sea.pxxd.util.ConsoleTable;
 
-import java.util.List;
 import java.util.regex.Matcher;
 
 public class ShowDatabases implements Statement {
@@ -21,12 +21,13 @@ public class ShowDatabases implements Statement {
 
     @Override
     public String execute(User user) throws DBProcessException {
-        StringBuilder result = new StringBuilder();
-        List<String> names = user.getAccessDBNames();
-        for (String name : names) {
-            result.append('\n');
-            result.append(name);
+        ConsoleTable consoleTable = new ConsoleTable(1);
+        consoleTable.appendRow();
+        consoleTable.appendColumn("*DATABASES*");
+        for (String name : user.getAccessDBNames()) {
+            consoleTable.appendRow();
+            consoleTable.appendColumn(name);
         }
-        return result.toString();
+        return consoleTable.toString();
     }
 }
