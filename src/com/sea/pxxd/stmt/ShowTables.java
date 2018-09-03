@@ -1,5 +1,6 @@
 package com.sea.pxxd.stmt;
 
+import com.sea.pxxd.DBManager;
 import com.sea.pxxd.DBProcessException;
 import com.sea.pxxd.User;
 import com.sea.pxxd.db.Table;
@@ -28,6 +29,8 @@ public class ShowTables implements Statement {
         ConsoleTable consoleTable = new ConsoleTable(1);
         consoleTable.appendRow();
         consoleTable.appendColumn("TABLES");
+        DBManager dbManager = new DBManager();
+        user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));
         for (Table table : user.getCurrentDB().getTables()) {
             consoleTable.appendRow();
             consoleTable.appendColumn(table.getName());
