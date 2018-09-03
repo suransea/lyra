@@ -98,7 +98,7 @@ public class ConsoleTable {
                 }
             }
         }
-        result.append('\n').append(rows.size() - 1).append(" rows in set.");
+        result.append(rows.size() - 1).append(" rows in set.");
         return result.toString();
     }
 
