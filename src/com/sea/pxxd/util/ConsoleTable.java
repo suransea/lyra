@@ -79,7 +79,11 @@ public class ConsoleTable {
                             result.append('│');
                         }
                     } else {
-                        result.append('│');
+                        if (rowIndex == 0) {
+                            result.append('┼');//├┼┤
+                        } else {
+                            result.append('│');
+                        }
                     }
                     if (rowIndex == 0) {
                         result.append(repeatChar('─', margin * 2 + columnLength[i]));
