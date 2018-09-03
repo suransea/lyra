@@ -51,7 +51,15 @@ public class SQLParser {
         );
         regexps.put(
                 "Select",
-                "select\\s+(\\*|(?:\\s*\\w+\\s*[,]*\\s*)+)\\s+from\\s+(\\w+)\\s*(?:where\\s+(\\w+)\\s*(=|<|>|>=|<=|<>)\\s*(\\w+))?\\s*;"
+                "select\\s+(\\*|(?:\\s*\\w+\\s*[,]*\\s*)+)\\s+from\\s+(\\w+)\\s*(?:where\\s+(\\w+)\\s*(=|<|>|>=|<=|<>)\\s*[']*(\\w+)[']*)?\\s*;"
+        );
+        regexps.put(
+                "Delete",
+                "delete\\s+from\\s+(\\w+)\\s*(?:where\\s+(\\w+)\\s*(=|<|>|>=|<=|<>)\\s*[']*(\\w+)[']*)?\\s*;"
+        );
+        regexps.put(
+                "Update",
+                "update\\s+(\\w+)\\s+set\\s+(\\w+)\\s*=\\s*[']*(\\w+)[']*\\s+(?:where\\s+(\\w+)\\s*(=|<|>|>=|<=)\\s*[']*(\\w+)[']*)\\s*;"
         );
     }
 

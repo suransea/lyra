@@ -49,6 +49,9 @@ public class Select implements Statement {
         }
         List<Map<String, String>> datas = database.getRows(tableName);
         Table table = database.getTable(tableName);
+        if (table == null) {
+            throw new DBProcessException("The target table is not exist.");
+        }
         List<String> allAttrs = new ArrayList<>();
         for (Table.Attribute attr : table.getAttributes()) {
             allAttrs.add(attr.getName());
