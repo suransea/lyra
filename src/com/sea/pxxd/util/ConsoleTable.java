@@ -73,13 +73,25 @@ public class ConsoleTable {
             } else {
                 for (int i = 0; i < column; i++) {
                     if (i == 0) {
-                        result.append('├');
+                        if(rowIndex==0) {
+                            result.append('├');//├┼┤
+                        }else {
+                            result.append('│');
+                        }
                     } else {
-                        result.append('┼');
+                        result.append('│');
                     }
-                    result.append(repeatChar('─', margin * 2 + columnLength[i]));
+                    if (rowIndex == 0) {
+                        result.append(repeatChar('─', margin * 2 + columnLength[i]));
+                    } else {
+                        result.append(repeatChar(' ', margin * 2 + columnLength[i]));
+                    }
                 }
-                result.append("┤\n");
+                if(rowIndex==0) {
+                    result.append("┤\n");
+                }else{
+                    result.append("│\n");
+                }
             }
         }
         result.append('\n').append(rows.size()).append(" rows in set.");

@@ -49,6 +49,10 @@ public class SQLParser {
                 "ShowTables",
                 "show\\s+tables\\s*;"
         );
+        regexps.put(
+                "Select",
+                "select\\s+(\\*|(?:\\s*\\w+\\s*[,]*\\s*)+)\\s+from\\s+(\\w+)\\s*(?:where\\s+(\\w+)\\s*(=|<|>|>=|<=)\\s*(\\w+))?\\s*;"
+        );
     }
 
     public SQLParser() {
