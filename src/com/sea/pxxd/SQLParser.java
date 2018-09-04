@@ -2,7 +2,6 @@ package com.sea.pxxd;
 
 import com.sea.pxxd.stmt.Statement;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

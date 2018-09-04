@@ -89,3 +89,11 @@ create table test0(
 2 varchar(8),
 3 int);
 quit
+show databases;
+use pxx
+;
+select * from pxx;
+select * from user;
+select * from user where username=root;
+SELECT * FROM USER;
+exit

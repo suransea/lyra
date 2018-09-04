@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConsoleTable {
+
+    private final static int MARGIN_WIDTH = 2;
+
     private List<List<Object>> rows = new ArrayList<>();
+    private int columnCount;
+    private int[] columnWidths;
 
-    private int column;
 
-    private int[] columnLength;
-
-    private static int margin = 2;
-
-    public ConsoleTable(int column) {
-        this.column = column;
-        this.columnLength = new int[column];
+    public ConsoleTable(int columnCount) {
+        this.columnCount = columnCount;
+        this.columnWidths = new int[columnCount];
     }
 
     public void appendRow() {
-        List<Object> row = new ArrayList<>(column);
+        List<Object> row = new ArrayList<>();
         rows.add(row);
     }
 
@@ -28,9 +28,9 @@ public class ConsoleTable {
         }
         List<Object> row = rows.get(rows.size() - 1);
         row.add(value);
-        int len = value.toString().getBytes().length;
-        if (columnLength[row.size() - 1] < len) {
-            columnLength[row.size() - 1] = len;
+        int width = value.toString().getBytes().length;
+        if (columnWidths[row.size() - 1] < width) {
+            columnWidths[row.size() - 1] = width;
         }
         return this;
     }
@@ -39,65 +39,56 @@ public class ConsoleTable {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        for (int i = 0; i < column; i++) {
-            if (i == 0) {
-                result.append('┌');
-            } else {
-                result.append('┬');
-            }
-            result.append(repeatChar('─', margin * 2 + columnLength[i]));
+        //head
+        result.append('┌');
+        result.append(repeatChar('─', MARGIN_WIDTH * 2 + columnWidths[0]));
+        for (int i = 1; i < columnCount; i++) {
+            result.append('┬');
+            result.append(repeatChar('─', MARGIN_WIDTH * 2 + columnWidths[i]));
         }
         result.append("┐\n");
 
-        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+        //head data
+        for (int i = 0; i < columnCount; i++) {
+            String item = "";
+            if (i < rows.get(0).size()) {
+                item = rows.get(0).get(i).toString();
+            }
+            result.append('│').append(repeatChar(' ', MARGIN_WIDTH)).append(item);
+            result.append(repeatChar(' ', columnWidths[i] - item.getBytes().length + MARGIN_WIDTH));
+        }
+        result.append("│\n");
+
+        //span
+        result.append('├');
+        result.append(repeatChar('─', MARGIN_WIDTH * 2 + columnWidths[0]));
+        for (int i = 1; i < columnCount; i++) {
+            result.append('┼');
+            result.append(repeatChar('─', MARGIN_WIDTH * 2 + columnWidths[i]));
+        }
+        result.append("┤\n");
+
+        //data lines
+        for (int rowIndex = 1; rowIndex < rows.size(); rowIndex++) {
             List row = rows.get(rowIndex);
-            for (int i = 0; i < column; i++) {
+            for (int i = 0; i < columnCount; i++) {
                 String item = "";
                 if (i < row.size()) {
                     item = row.get(i).toString();
                 }
-                result.append('│').append(repeatChar(' ', margin)).append(item);
-                result.append(repeatChar(' ', columnLength[i] - item.getBytes().length + margin));
+                result.append('│').append(repeatChar(' ', MARGIN_WIDTH)).append(item);
+                result.append(repeatChar(' ', columnWidths[i] - item.getBytes().length + MARGIN_WIDTH));
             }
             result.append("│\n");
-            if (rowIndex == rows.size() - 1) {
-                for (int i = 0; i < column; i++) {
-                    if (i == 0) {
-                        result.append('└');
-                    } else {
-                        result.append('┴');
-                    }
-                    result.append(repeatChar('─', margin * 2 + columnLength[i]));
-                }
-                result.append("┘\n");
-            } else {
-                for (int i = 0; i < column; i++) {
-                    if (i == 0) {
-                        if (rowIndex == 0) {
-                            result.append('├');//├┼┤
-                        } else {
-                            result.append('│');
-                        }
-                    } else {
-                        if (rowIndex == 0) {
-                            result.append('┼');//├┼┤
-                        } else {
-                            result.append('│');
-                        }
-                    }
-                    if (rowIndex == 0) {
-                        result.append(repeatChar('─', margin * 2 + columnLength[i]));
-                    } else {
-                        result.append(repeatChar(' ', margin * 2 + columnLength[i]));
-                    }
-                }
-                if (rowIndex == 0) {
-                    result.append("┤\n");
-                } else {
-                    result.append("│\n");
-                }
-            }
         }
+
+        //tail
+        result.append('└').append(repeatChar('─', MARGIN_WIDTH * 2 + columnWidths[0]));
+        for (int i = 1; i < columnCount; i++) {
+            result.append('┴');
+            result.append(repeatChar('─', MARGIN_WIDTH * 2 + columnWidths[i]));
+        }
+        result.append("┘\n");
         result.append(rows.size() - 1).append(" rows in set.");
         return result.toString();
     }
