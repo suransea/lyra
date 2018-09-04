@@ -10,8 +10,8 @@ import socket
 import re
 
 # Tab 自动补全的字符串
-WORDS = ['table', 'select ', 'create ', 'drop ', 'delete ', 'update ', 'insert ', 'where ',
-         'from ', 'database', 'show ', 'set ', 'into ', 'use ', 'varchar(', 'int ', 'values(']
+WORDS = ['table', 'select ', 'create ', 'drop ', 'delete ', 'update ', 'insert ', 'where ', 'for',
+         'from ', 'database', 'show ', 'set ', 'into ', 'use ', 'varchar(', 'int ', 'values(', 'quit', 'password']
 
 
 def completer(text, state):
