@@ -2,6 +2,7 @@ package com.sea.pxxd;
 
 import com.sea.pxxd.stmt.Statement;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -78,7 +79,7 @@ public class SQLParser {
                     return (Statement) stmt.getConstructor(Matcher.class).newInstance(matcher);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    throw new SQLParseException("Unknown error.");
+                    throw new SQLParseException("The format of the subSQL is not right.");
                 }
             }
         }

@@ -25,7 +25,7 @@ public class CreateTable implements Statement {
         sql = matcher.group(0);
         table = new Table(matcher.group(1));
         String[] attrs = matcher.group(2).trim().split(",");
-        Pattern pattern = Pattern.compile("(\\w+)\\s+(varchar|int)\\s*(?:\\(\\s*(\\d+)\\s*\\)\\s*)*");
+        Pattern pattern = Pattern.compile("([a-zA-Z_]\\w*)\\s+(varchar|int)\\s*(?:\\(\\s*(\\d+)\\s*\\)\\s*)*");
         Matcher subMatcher;
         for (String attr : attrs) {
             subMatcher = pattern.matcher(attr.trim());

@@ -37,3 +37,55 @@ select * from user;
 quit
 show databases;
 quit
+show databases;
+use pxx;
+select * from pxx;
+show tables;
+select * from user;
+insert into user values('bxx','1234'),('zxc','1234');
+select * from user;
+set password for bxx=password('1234');
+set password for zxc=password('1234');
+select * from user;
+quit
+use pxx;
+show tables;
+select * from user;
+quit;
+show databases;
+create database test;
+show databases;
+use test;
+show tables;
+create tables test0;
+create table test0;
+create table test0(1,2,3);
+create table test0(1 int,2 varchar(8),3 int);
+show tables;
+select * from test0;
+insert into test values(1,'2',3),(2,'3',4),(4,'5',6),(5,'qaz',7); 
+insert into test values(1,'2',3),(2,'3',4),(4,'5',6),(5,'qaz',7);
+insert into test0 values(1,'2',3),(2,'3',4),(4,'5',6),(5,'qaz',7);
+use test;
+insert into test0 values(1,'2',3),(2,'3',4),(4,'5',6),(5,'qaz',7);
+use test;
+show tables;
+quit
+use test;
+insert into test0 values(1,'2',3),(2,'3',4),(4,'5',6),(5,'qaz',7);
+use test;
+drop test0;
+drop table test0;
+show tables;
+create table test0(
+1 int,
+2 varchar(8),
+3 int);
+quit
+use test;
+show tables;
+create table test0(
+1 int,
+2 varchar(8),
+3 int);
+quit
