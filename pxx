@@ -1,4 +1,126 @@
-#/bin/bash
+#!/bin/env python3
 
-cd build
-java -cp .:./com/sea:../lib/args4j-2.0.1.jar com.sea.pxx.Main $@
+import sys
+import readline
+import atexit
+import argparse
+import configparser
+import getpass
+import socket
+import re
+
+# Tab 自动补全的字符串
+WORDS = ['table', 'select ', 'create ', 'drop ', 'delete ', 'update ', 'insert ', 'where ',
+         'from ', 'database', 'show ', 'set ', 'into ', 'use ', 'varchar(', 'int ', 'values(']
+
+
+def completer(text, state):
+    options = [word for word in WORDS if word.startswith(text)]
+    if state < len(options):
+        return options[state]
+    else:
+        return None
+
+
+readline.parse_and_bind('tab:complete')
+readline.read_history_file('./sql.history')
+atexit.register(readline.write_history_file, './sql.history')
+readline.set_completer(completer)
+
+if __name__ == '__main__':
+    # 解析命令行参数
+    parser = argparse.ArgumentParser(description='Pxx database monitor.', add_help=False)
+    parser.add_argument('-h', '--host', default='127.0.0.1', help='the server IP address')
+    group = parser.add_argument_group()
+    group.add_argument('-u', '--username', default='root', help='your username')
+    group.add_argument('-p', '--password', action='store_true', default=False, help='if the user has a password')
+    args = parser.parse_args()
+    username = args.username
+    password = '(none)'
+    host = args.host
+    if args.password:
+        password = getpass.getpass('Enter password:')
+
+    # 解析配置文件
+    cf = configparser.ConfigParser()
+    cf.read('./pxx.conf')
+
+    # 创建socket连接服务器
+    sk = socket.socket()
+    sk.settimeout(10)
+    try:
+        sk.connect((host, 5494))
+    except socket.error as e:
+        print(e.strerror)
+        sys.exit(1)
+
+    # 登录
+    login = 'login ' + username + ' ' + password + '\n'
+    try:
+        sk.sendall(login.encode())
+        rev = sk.recv(1024).decode()
+    except socket.error as e:
+        print(e.strerror)
+        sys.exit(1)
+
+    status = re.findall(r'\S+', rev)
+    if status[0] == 'access':
+        version = status[1]
+        count = status[2]
+    else:
+        print('Username or password is not right.')
+        sys.exit(1)
+
+    print('\nWelcome to the pxx monitor.  Commands end with ; .')
+    print('Your connection id is ' + count)
+    print("Server version: " + version)
+    print()
+    print("Type 'help;' or '\\h' for help. Type '\\c' to clear the current input statement.\n\n")
+
+    cur_db = '(none)'
+    sql = ''
+    line = 0
+    cmd = input('pxx [' + cur_db + '] > ')
+    while True:
+        line += 1
+        if cmd in ['quit', 'quit;', 'exit', 'exit;'] and line == 1:
+            print('\nBye.')
+            sys.exit(0)
+        if cmd == r'\c':
+            sql = ''
+            line = 0
+            cmd = input('pxx [' + cur_db + '] > ')
+            continue
+        if cmd.endswith(';'):
+            sql += cmd
+            try:
+                sk.sendall('sql\n'.encode())
+                sk.sendall((sql + '\n').encode())
+                rev = ''
+                while True:
+                    data = sk.recv(8192)
+                    if not data:
+                        break
+                    rev += data.decode()
+                    if rev.endswith('true\n') or rev.endswith('false\n'):
+                        break
+            except socket.error as e:
+                print(e.strerror)
+                sys.exit(1)
+            complete = False
+            if rev.endswith('true\n'):
+                complete = True
+            print()
+            print(rev.rstrip('false\n').rstrip('true\n'))
+            print()
+            sub_sql = re.findall(r'\w+', sql)
+            if sub_sql[0:2] == ['drop', 'database'] and complete:
+                cur_db = '(none)'
+            elif sub_sql[0] == 'use' and complete:
+                cur_db = sub_sql[1]
+            sql = ''
+            line = 0
+            cmd = input('pxx [' + cur_db + '] > ')
+        else:
+            sql += cmd + ' '
+            cmd = input('    -> ')
