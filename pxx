@@ -114,7 +114,7 @@ if __name__ == '__main__':
             print(rev.rstrip('false\n').rstrip('true\n'))
             print()
             sub_sql = re.findall(r'\w+', sql)
-            if sub_sql[0:2] == ['drop', 'database'] and complete:
+            if sub_sql[0:3] == ['drop', 'database', cur_db] and complete:
                 cur_db = '(none)'
             elif sub_sql[0] == 'use' and complete:
                 cur_db = sub_sql[1]
