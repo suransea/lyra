@@ -15,4 +15,4 @@
 
 ### 登录后
 
-* `show databases;`:获取数
+* `show databases;`获取数据库列表
