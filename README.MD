@@ -1,4 +1,4 @@
-# PXX
+# Lyra (天琴座)
 
 ----
 
@@ -8,9 +8,9 @@
 
 ## 使用说明
 
-### pxx
+### lyra
 
-* `pxx [-h <address>] [-u <user> [-p]] `
+* `lyra [-h <address>] [-u <user> [-p]] `
 * `address`: 服务器ip地址， 默认为127.0.0.1
 * `user`： 用户名
 * `p`： 登录用户是否包含密码
@@ -18,7 +18,7 @@
 
 ## 协作指令
 
-1. **克隆远程仓库** `git clone https://github.com/suransea/pxx.git`
+1. **克隆远程仓库** `git clone https://github.com/suransea/Lyra.git`
 2. **进入仓库** `cd pxx` 切换到仓库里
 3. **查看分支** `git branch`  如果确定自己是在master就没问题。
 4. **更新仓库** `git pull`
