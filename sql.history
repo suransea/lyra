@@ -8,19 +8,19 @@ quit
 use temp
 ;
 quit
-use pxx;
+use lyra;
 quit
-use pxx;
+use lyra;
 quit
-use pxx;
+use lyra;
 quit
-use pxx;
+use lyra;
 quit
-use pxx;
+use lyra;
 quit
-use pxx;
+use lyra;
 quit
-use pxx;
+use lyra;
 djdiid
 djdiif
 \c
@@ -28,9 +28,9 @@ use temp
 ;
 quit
 use temp;
-use pxx:
+use lyra:
 ;
-use pxx;
+use lyra;
 show databases;
 show tables;
 select * from user;
@@ -38,8 +38,8 @@ quit
 show databases;
 quit
 show databases;
-use pxx;
-select * from pxx;
+use lyra;
+select * from lyra;
 show tables;
 select * from user;
 insert into user values('bxx','1234'),('zxc','1234');
@@ -48,7 +48,7 @@ set password for bxx=password('1234');
 set password for zxc=password('1234');
 select * from user;
 quit
-use pxx;
+use lyra;
 show tables;
 select * from user;
 quit;
@@ -90,9 +90,9 @@ create table test0(
 3 int);
 quit
 show databases;
-use pxx
+use lyra
 ;
-select * from pxx;
+select * from lyra;
 select * from user;
 select * from user where username=root;
 SELECT * FROM USER;
