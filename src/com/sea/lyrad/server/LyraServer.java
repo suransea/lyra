@@ -1,4 +1,4 @@
-package com.sea.lyrad;
+package com.sea.lyrad.server;
 
 import com.sea.lyrad.util.Log;
 
@@ -13,7 +13,7 @@ public class LyraServer {
     public static void main(String[] args) {
         Properties properties = new Properties();
         try {
-            properties.load(new FileReader("lyrad.conf"));
+            properties.load(new FileReader("etc/lyrad.conf"));
         } catch (IOException e) {
             Log.pa("The configure file was lost.");
             System.exit(1);

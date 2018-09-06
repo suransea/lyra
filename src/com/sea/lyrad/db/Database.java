@@ -1,6 +1,6 @@
 package com.sea.lyrad.db;
 
-import com.sea.lyrad.DBProcessException;
+import com.sea.lyrad.exec.DBProcessException;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;

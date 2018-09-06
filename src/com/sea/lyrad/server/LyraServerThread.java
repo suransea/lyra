@@ -1,6 +1,8 @@
-package com.sea.lyrad;
+package com.sea.lyrad.server;
 
-import com.sea.lyrad.stmt.Statement;
+import com.sea.lyrad.exec.DBManager;
+import com.sea.lyrad.exec.DBProcessException;
+import com.sea.lyrad.exec.User;
 import com.sea.lyrad.util.Log;
 
 import java.io.IOException;
@@ -18,12 +20,10 @@ public class LyraServerThread implements Runnable {
     private int count;
     private InputStream inputStream;
     private OutputStream outputStream;
-    private SQLParser sqlParser;
     private Scanner scanner;
     private User user;
 
     public LyraServerThread(Socket s, int c) {
-        sqlParser = new SQLParser();
         socket = s;
         count = c;
         try {
@@ -48,6 +48,11 @@ public class LyraServerThread implements Runnable {
         }
     }
 
+    private void send(String response) throws IOException {
+        outputStream.write(response.getBytes());
+        outputStream.flush();
+    }
+
     private void parse(String s) throws IOException {
         Scanner strScanner = new Scanner(s);
         switch (strScanner.next()) {
@@ -63,30 +68,29 @@ public class LyraServerThread implements Runnable {
                 }
 
                 if (access) {
-                    outputStream.write(String.format("access %s %d\n", VERSION, count).getBytes());
+                    send(String.format("access %s %d\n", VERSION, count));
                     user = new User(username);
                 } else {
-                    outputStream.write("refuse\n".getBytes());
+                    send("refuse\n");
                 }
                 outputStream.flush();
                 break;
             }
             case "sql": {
                 String sql = scanner.nextLine();
-                try {
-                    long startTime = System.currentTimeMillis();
-                    Statement statement = sqlParser.parse(sql);
-                    String outcome = statement.execute(user);
-                    long time = System.currentTimeMillis() - startTime;
-                    outputStream.write(outcome.getBytes());
-                    outputStream.write(String.format("\n\nConsumption of time: %.3f s.", time / 1000.0).getBytes());
-                    outputStream.write("\ntrue\n".getBytes());
-                    outputStream.flush();
-                } catch (DBProcessException | SQLParseException e) {
-                    outputStream.write(e.getMessage().getBytes());
-                    outputStream.write("\nfalse\n".getBytes());
-                    outputStream.flush();
-                }
+//                try {
+//                    long startTime = System.currentTimeMillis();
+//                    //Statement statement = sqlParser.parse(sql);
+//                    //String outcome = statement.execute(user);
+//                    long time = System.currentTimeMillis() - startTime;
+//                    //send(outcome);
+//                    send(String.format("\n\nConsumption of time: %.3f s.", time / 1000.0));
+//                    send("\ntrue\n");
+//                    outputStream.flush();
+//                } catch (DBProcessException | SQLParseException e) {
+//                    //send(e.getMessage());
+//                    send("\nfalse\n");
+//                }
                 break;
             }
         }

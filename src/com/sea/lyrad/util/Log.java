@@ -9,6 +9,9 @@ import java.util.Date;
 public class Log {
     private static Writer writer = null;
 
+    private Log() {
+    }
+
     static {
         try {
             writer = new FileWriter("lyrad.log", true);

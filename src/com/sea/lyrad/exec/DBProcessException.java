@@ -1,4 +1,4 @@
-package com.sea.lyrad;
+package com.sea.lyrad.exec;
 
 public class DBProcessException extends Exception {
 

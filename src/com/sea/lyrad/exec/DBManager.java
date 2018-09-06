@@ -1,4 +1,4 @@
-package com.sea.lyrad;
+package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
 import com.sea.lyrad.db.Table;
