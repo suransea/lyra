@@ -9,6 +9,7 @@ public class UseStatement extends DALStatement {
     }
 
     public UseStatement(String sql, String dbName) {
+        super(sql);
         this.sql = sql;
         this.dbName = dbName;
     }

@@ -28,25 +28,28 @@ public class DALParser extends SQLParser {
     private SQLStatement parseUse() throws SQLParseException, UnterminatedCharException {
         accept(Keyword.USE);
         Token token = lexer.getToken();
-        if (token.getType() == Literals.IDENTIFIER) {
-            String dbName = token.getLiterals();
-            accept(Literals.IDENTIFIER);
-            accept(Symbol.SEMI);
-            accept(Assist.END);
-            return new UseStatement(lexer.getContent(), dbName);
-        }
-        throw new SQLParseException(lexer);
+        String dbName = token.getLiterals();
+        accept(Literals.IDENTIFIER);
+        accept(Symbol.SEMI);
+        accept(Assist.END);
+        return new UseStatement(lexer.getContent(), dbName);
     }
 
     private SQLStatement parseShow() throws SQLParseException, UnterminatedCharException {
         accept(Keyword.SHOW);
         Token token = lexer.getToken();
-        ShowStatement showStatement = new ShowStatement();
+        ShowStatement showStatement = new ShowStatement(lexer.getContent());
         if (token.getType() == Keyword.DATABASES) {
             showStatement.setItem(Keyword.DATABASES);
+            accept(Keyword.DATABASES);
+            accept(Symbol.SEMI);
+            accept(Assist.END);
             return showStatement;
         } else if (token.getType() == Keyword.TABLES) {
             showStatement.setItem(Keyword.TABLES);
+            accept(Keyword.TABLES);
+            accept(Symbol.SEMI);
+            accept(Assist.END);
             return showStatement;
         }
         throw new SQLParseException(lexer, Keyword.SHOW);

@@ -5,6 +5,7 @@ import com.sea.lyrad.lex.analyze.UnterminatedCharException;
 import com.sea.lyrad.lex.token.*;
 import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.parse.stmt.dal.DALParser;
+import com.sea.lyrad.parse.stmt.ddl.DDLParser;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +23,8 @@ public class SQLParser {
         Token token = lexer.nextToken();
         if (equalAny(Keyword.USE) || equalAny(Keyword.SHOW) || equalAny(Keyword.DESCRIBE)) {
             return new DALParser(lexer).parse();
+        } else if (equalAny(Keyword.CREATE)) {
+            return new DDLParser(lexer).parse();
         } else {
             throw new SQLParseUnsupportedException(token.getType());
         }
@@ -30,21 +33,20 @@ public class SQLParser {
     /**
      * skip all tokens that inside parentheses.
      *
-     * @param sqlStatement SQL statement
      * @return skipped string
      */
-    public String skipParentheses(SQLStatement sqlStatement) throws SQLParseException, UnterminatedCharException {
+    public String skipParentheses() throws SQLParseException, UnterminatedCharException {
         StringBuilder result = new StringBuilder();
         int count = 0;
         if (Symbol.LEFT_PAREN == lexer.getToken().getType()) {
-            final int beginPosition = lexer.getToken().getEndPosition();
+            int beginPosition = lexer.getToken().getEndPosition();
             result.append(Symbol.LEFT_PAREN.getLiterals());
             lexer.nextToken();
-            while (true) {//TODO: WHat?
-//                if (equalAny(Symbol.QUESTION)) {
-//                    sqlStatement.increaseParametersIndex();
-//                }
+            while (true) {
                 if (Assist.END == lexer.getToken().getType() || (Symbol.RIGHT_PAREN == lexer.getToken().getType() && 0 == count)) {
+                    if (lexer.getToken().getType().equals(Assist.END)) {
+                        throw new UnterminatedCharException('(');
+                    }
                     break;
                 }
                 if (Symbol.LEFT_PAREN == lexer.getToken().getType()) {

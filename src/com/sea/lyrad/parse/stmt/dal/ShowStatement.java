@@ -4,7 +4,12 @@ import com.sea.lyrad.lex.token.Keyword;
 
 public class ShowStatement extends DALStatement {
 
+    public ShowStatement(String sql) {
+        super(sql);
+    }
+
     public Keyword getItem() {
+
         return item;
     }
 

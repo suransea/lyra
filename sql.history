@@ -116,3 +116,13 @@ show tables;
 use aj;
 show tables;
 quit
+show databases;
+create database test1;
+use test1;
+create table test0 (
+aj int,
+sjfj varchar(10),
+jah varchar(100)
+);
+show tables;
+quit
