@@ -21,9 +21,9 @@ public class SQLParser {
 
     public SQLStatement parse() throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
         Token token = lexer.nextToken();
-        if (equalAny(Keyword.USE) || equalAny(Keyword.SHOW) || equalAny(Keyword.DESCRIBE)) {
+        if (equalAny(Keyword.USE, Keyword.SHOW, Keyword.DESCRIBE)) {
             return new DALParser(lexer).parse();
-        } else if (equalAny(Keyword.CREATE)) {
+        } else if (equalAny(Keyword.CREATE, Keyword.ALTER, Keyword.DROP, Keyword.TRUNCATE)) {
             return new DDLParser(lexer).parse();
         } else {
             throw new SQLParseUnsupportedException(token.getType());

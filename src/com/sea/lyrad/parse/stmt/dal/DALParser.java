@@ -52,6 +52,6 @@ public class DALParser extends SQLParser {
             accept(Assist.END);
             return showStatement;
         }
-        throw new SQLParseException(lexer, Keyword.SHOW);
+        throw new SQLParseException(lexer);
     }
 }
