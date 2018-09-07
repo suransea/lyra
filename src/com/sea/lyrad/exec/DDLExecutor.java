@@ -5,10 +5,12 @@ import com.sea.lyrad.lex.token.Keyword;
 import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.ddl.CreateStatement;
 import com.sea.lyrad.parse.stmt.ddl.DDLStatement;
+import com.sea.lyrad.parse.stmt.ddl.DropStatement;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class DDLExecutor extends SQLExecutor {
@@ -20,6 +22,8 @@ public class DDLExecutor extends SQLExecutor {
         this.statement = statement;
         if (statement instanceof CreateStatement) {
             return executeCreate();
+        } else if (statement instanceof DropStatement) {
+            return executeDrop();
         }
         throw new DBProcessException("Unsupported DDL statement.");
     }
@@ -61,6 +65,37 @@ public class DDLExecutor extends SQLExecutor {
             DBManager dbManager = new DBManager();
             dbManager.write(database);
             return String.format("Table %s created.", stmt.getTableName());
+        }
+        throw new DBProcessException("Unknown error.");
+    }
+
+    private String executeDrop() throws DBProcessException {
+        DropStatement stmt = (DropStatement) statement;
+        if (stmt.getItem() == Keyword.DATABASE) {
+            if (!user.getAccessDBNames().contains(stmt.getDBName())) {
+                throw new DBProcessException("The target database is not exist.");
+            }
+            DBManager dbManager = new DBManager();
+            dbManager.deleteDatabase(stmt.getDBName());
+            if (user.getCurrentDB().getName().equals(stmt.getDBName())) {
+                user.setCurrentDB(null);
+            }
+            return String.format("Database %s deleted.", stmt.getDBName());
+        } else if (stmt.getItem() == Keyword.TABLE) {
+            if (user.getCurrentDB() == null) {
+                throw new DBProcessException("Please select a database firstly.");
+            }
+            Element rootElement = user.getCurrentDB().getDocument().getRootElement();
+            for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
+                Element element = it.next();
+                if (element.attributeValue("name").equals(stmt.getTableName())) {
+                    element.detach();
+                    DBManager dbManager = new DBManager();
+                    dbManager.write(user.getCurrentDB());
+                    return String.format("Table %s deleted.", stmt.getTableName());
+                }
+            }
+            throw new DBProcessException("The target table is not exist.");
         }
         throw new DBProcessException("Unknown error.");
     }

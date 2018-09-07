@@ -5,7 +5,9 @@ import com.sea.lyrad.lex.analyze.UnterminatedCharException;
 import com.sea.lyrad.lex.token.*;
 import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.parse.stmt.dal.DALParser;
+import com.sea.lyrad.parse.stmt.dcl.DCLParser;
 import com.sea.lyrad.parse.stmt.ddl.DDLParser;
+import com.sea.lyrad.parse.stmt.dml.DMLParser;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,8 +25,21 @@ public class SQLParser {
         Token token = lexer.nextToken();
         if (equalAny(Keyword.USE, Keyword.SHOW, Keyword.DESCRIBE)) {
             return new DALParser(lexer).parse();
-        } else if (equalAny(Keyword.CREATE, Keyword.ALTER, Keyword.DROP, Keyword.TRUNCATE)) {
+        } else if (equalAny(Keyword.TRUNCATE)) {
             return new DDLParser(lexer).parse();
+        } else if (equalAny(Keyword.CREATE, Keyword.ALTER, Keyword.DROP)) {
+            lexer.nextToken();
+            Lexer newLexer = new Lexer(this.lexer.getContent());
+            newLexer.nextToken();
+            if (equalAny(Keyword.USER)) {
+                return new DCLParser(newLexer).parse();
+            } else {
+                return new DDLParser(newLexer).parse();
+            }
+        } else if (equalAny(Keyword.DENY, Keyword.GRANT)) {
+            return new DCLParser(lexer).parse();
+        } else if (equalAny(Keyword.INSERT, Keyword.DELETE, Keyword.UPDATE)) {
+            return new DMLParser(lexer).parse();
         } else {
             throw new SQLParseUnsupportedException(token.getType());
         }

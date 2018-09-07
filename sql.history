@@ -126,3 +126,36 @@ jah varchar(100)
 );
 show tables;
 quit
+show databases;
+use test1;
+show tables;
+drop table test0;
+show tables;
+drop database test1;
+show tables;
+exit
+show DATABASES;
+CREATE USER sea identified by '(none)';
+quit
+CREATE USER sea identified by '(none)';
+alter  USER sea identified by '(none)';
+quit
+alter  USER sea identified by '(none)';
+alter  USER aaa identified by '(none)';
+create   USER aaa identified by '(none)';
+quit
+create user sss identified by '123';
+create user sss identified by '1234';
+create user sss identified by 'qwerty';
+alter  user sss identified by 'qazwsx';
+quit
+show databases;
+use aj;
+quit
+use aj;
+insert into cc values('a',1),('b',2);
+insert into cc(a) values('asf'),('saffs');
+insert into cc(num) values('asf'),('saffs');
+insert into cc(num) values(12),(5464);
+insert into cc(num) values(12),(5464.6);
+quit

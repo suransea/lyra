@@ -3,13 +3,13 @@ package com.sea.lyrad.parse.stmt.context;
 import com.sea.lyrad.lex.token.Keyword;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class Column {
     private String columnName;
     private Keyword type;
     private int typeLength;
-    private Collection<Constraint> constraints;
+    private List<Constraint> constraints;
 
     public String getColumnName() {
         return columnName;
@@ -35,7 +35,7 @@ public class Column {
         this.typeLength = typeLength;
     }
 
-    public Collection<Constraint> getConstraints() {
+    public List<Constraint> getConstraints() {
         return constraints;
     }
 

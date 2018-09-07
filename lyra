@@ -11,7 +11,11 @@ import sys
 
 # Tab 自动补全的字符串
 WORDS = ['table', 'select ', 'create ', 'drop ', 'delete ', 'update ', 'insert ', 'where ', 'for',
-         'from ', 'database', 'show ', 'set ', 'into ', 'use ', 'varchar(', 'int ', 'values(', 'quit', 'password']
+         'from ', 'database', 'show ', 'set ', 'into ', 'use ', 'varchar(', 'int ', 'values(',
+         'create ', 'user ', 'alter ', 'identified ', 'by ', 'quit', 'password']
+
+for string in WORDS.copy():
+    WORDS.append(string.upper())
 
 
 def completer(text, state):
@@ -41,15 +45,19 @@ if __name__ == '__main__':
     if args.password:
         password = getpass.getpass('Enter password:')
 
+    if password == '':
+        password = '(none)'
+
     # 解析配置文件
     cf = configparser.ConfigParser()
     cf.read('./lyra.conf')
+    port = cf.getint('host', 'port')
 
     # 创建socket连接服务器
     sk = socket.socket()
     sk.settimeout(10)
     try:
-        sk.connect((host, 5494))
+        sk.connect((host, port))
     except socket.error as e:
         print(e.strerror)
         sys.exit(1)

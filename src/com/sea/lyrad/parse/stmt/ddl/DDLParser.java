@@ -19,6 +19,8 @@ public class DDLParser extends SQLParser {
         Token token = lexer.getToken();
         if (token.getType().equals(Keyword.CREATE)) {
             return parseCreate();
+        } else if (token.getType() == Keyword.DROP) {
+            return parseDrop();
         }
         throw new SQLParseUnsupportedException(lexer.getToken().getType());
     }
@@ -75,5 +77,29 @@ public class DDLParser extends SQLParser {
             return statement;
         }
         throw new SQLParseUnsupportedException(token.getType());
+    }
+
+    private SQLStatement parseDrop() throws SQLParseException, UnterminatedCharException {
+        DropStatement statement = new DropStatement(lexer.getContent());
+        accept(Keyword.DROP);
+        Token token = lexer.getToken();
+        if (token.getType() == Keyword.DATABASE) {
+            statement.setItem(Keyword.DATABASE);
+            accept(Keyword.DATABASE);
+            statement.setDBName(lexer.getToken().getLiterals());
+            accept(Literals.IDENTIFIER);
+            accept(Symbol.SEMI);
+            accept(Assist.END);
+            return statement;
+        } else if (token.getType() == Keyword.TABLE) {
+            statement.setItem(Keyword.TABLE);
+            accept(Keyword.TABLE);
+            statement.setTableName(lexer.getToken().getLiterals());
+            accept(Literals.IDENTIFIER);
+            accept(Symbol.SEMI);
+            accept(Assist.END);
+            return statement;
+        }
+        throw new SQLParseException(lexer);
     }
 }

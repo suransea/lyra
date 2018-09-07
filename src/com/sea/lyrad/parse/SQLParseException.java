@@ -4,7 +4,7 @@ import com.sea.lyrad.lex.Lexer;
 import com.sea.lyrad.lex.token.TokenType;
 
 public class SQLParseException extends Exception {
-    private static final String UNMATCH_MESSAGE = "SQL syntax error, expected token is '%s', actual token is '%s', literals is '%s'.";
+    private static final String UNMATCHED_MESSAGE = "SQL syntax error, expected token is '%s', actual token is '%s', literals is '%s'.";
 
     private static final String TOKEN_ERROR_MESSAGE = "SQL syntax error, token is '%s', literals is '%s'.";
 
@@ -13,7 +13,7 @@ public class SQLParseException extends Exception {
     }
 
     public SQLParseException(Lexer lexer, TokenType expectedTokenType) {
-        super(String.format(UNMATCH_MESSAGE, expectedTokenType, lexer.getToken().getType(), lexer.getToken().getLiterals()));
+        super(String.format(UNMATCHED_MESSAGE, expectedTokenType, lexer.getToken().getType(), lexer.getToken().getLiterals()));
     }
 
     public SQLParseException(Lexer lexer) {
