@@ -28,4 +28,12 @@ public class Token {
         this.literals = literals;
         this.endPosition = endPosition;
     }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "type=" + type +
+                ", literals='" + literals + '\'' +
+                '}';
+    }
 }

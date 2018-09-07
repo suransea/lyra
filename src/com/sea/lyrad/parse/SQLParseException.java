@@ -16,7 +16,7 @@ public class SQLParseException extends Exception {
         super(String.format(UNMATCH_MESSAGE, expectedTokenType, lexer.getToken().getType(), lexer.getToken().getLiterals()));
     }
 
-//    public SQLParseException(LexerEngine lexerEngine) {
-//        super(String.format(TOKEN_ERROR_MESSAGE, lexerEngine.getCurrentToken().getType(), lexerEngine.getCurrentToken().getLiterals()));
-//    }
+    public SQLParseException(Lexer lexer) {
+        super(String.format(TOKEN_ERROR_MESSAGE, lexer.getToken().getType(), lexer.getToken().getLiterals()));
+    }
 }

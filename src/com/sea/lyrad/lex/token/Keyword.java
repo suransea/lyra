@@ -33,6 +33,10 @@ public enum Keyword implements TokenType {
     TEMPORARY,
     TEMP,
     COMMENT,
+    SHOW,
+    DESCRIBE,
+    DATABASES,
+    TABLES,
 
     /*
     Create

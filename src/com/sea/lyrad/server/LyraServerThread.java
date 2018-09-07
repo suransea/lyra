@@ -2,7 +2,14 @@ package com.sea.lyrad.server;
 
 import com.sea.lyrad.exec.DBManager;
 import com.sea.lyrad.exec.DBProcessException;
+import com.sea.lyrad.exec.SQLExecutor;
 import com.sea.lyrad.exec.User;
+import com.sea.lyrad.lex.Lexer;
+import com.sea.lyrad.lex.analyze.UnterminatedCharException;
+import com.sea.lyrad.parse.SQLParseException;
+import com.sea.lyrad.parse.SQLParseUnsupportedException;
+import com.sea.lyrad.parse.SQLParser;
+import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.util.Log;
 
 import java.io.IOException;
@@ -22,10 +29,12 @@ public class LyraServerThread implements Runnable {
     private OutputStream outputStream;
     private Scanner scanner;
     private User user;
+    private SQLExecutor sqlExecutor;
 
     public LyraServerThread(Socket s, int c) {
         socket = s;
         count = c;
+        sqlExecutor = new SQLExecutor();
         try {
             inputStream = s.getInputStream();
             outputStream = s.getOutputStream();
@@ -46,11 +55,6 @@ public class LyraServerThread implements Runnable {
         } catch (IOException | NoSuchElementException ioe) {
             Log.pa("连接 " + count + " 已断开.");
         }
-    }
-
-    private void send(String response) throws IOException {
-        outputStream.write(response.getBytes());
-        outputStream.flush();
     }
 
     private void parse(String s) throws IOException {
@@ -78,21 +82,29 @@ public class LyraServerThread implements Runnable {
             }
             case "sql": {
                 String sql = scanner.nextLine();
-//                try {
-//                    long startTime = System.currentTimeMillis();
-//                    //Statement statement = sqlParser.parse(sql);
-//                    //String outcome = statement.execute(user);
-//                    long time = System.currentTimeMillis() - startTime;
-//                    //send(outcome);
-//                    send(String.format("\n\nConsumption of time: %.3f s.", time / 1000.0));
-//                    send("\ntrue\n");
-//                    outputStream.flush();
-//                } catch (DBProcessException | SQLParseException e) {
-//                    //send(e.getMessage());
-//                    send("\nfalse\n");
-//                }
+                Lexer lexer = new Lexer(sql);
+                SQLParser parser = new SQLParser(lexer);
+                try {
+                    long startTime = System.currentTimeMillis();
+                    SQLStatement statement = parser.parse();
+                    String outcome = sqlExecutor.execute(user, statement);
+                    long time = System.currentTimeMillis() - startTime;
+                    send(outcome);
+                    send(String.format("\n\nConsumption of time: %.3f s.", time / 1000.0));
+                    send("\ntrue\n");
+                    outputStream.flush();
+                } catch (DBProcessException | SQLParseException |
+                        SQLParseUnsupportedException | UnterminatedCharException e) {
+                    send(e.getMessage());
+                    send("\nfalse\n");
+                }
                 break;
             }
         }
+    }
+
+    private void send(String response) throws IOException {
+        outputStream.write(response.getBytes());
+        outputStream.flush();
     }
 }

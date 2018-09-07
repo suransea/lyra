@@ -51,7 +51,7 @@ public enum Symbol implements TokenType {
 
     public static Map<String, Symbol> symbols = new HashMap<>(128);
 
-    public static Symbol[] operators;
+    private static Symbol[] operators;
 
     static {
         for (Symbol each : Symbol.values()) {
@@ -64,7 +64,15 @@ public enum Symbol implements TokenType {
         };
     }
 
-    public String literals;
+    private String literals;
+
+    public static Symbol[] getOperators() {
+        return operators;
+    }
+
+    public String getLiterals() {
+        return literals;
+    }
 
     /**
      * 通过字面量查找词法符号.

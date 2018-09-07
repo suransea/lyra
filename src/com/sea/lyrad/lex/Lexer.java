@@ -33,7 +33,7 @@ public class Lexer {
         return this.position + position >= content.length() ? CharUtil.getEOI() : content.charAt(this.position + position);
     }
 
-    public void nextToken() throws UnterminatedCharException, SQLParseException {
+    public Token nextToken() throws UnterminatedCharException, SQLParseException {
         skipIgnoredToken();
         if (isVariableBegin()) {
             token = tokenizer.eatVariable(position);
@@ -53,6 +53,7 @@ public class Lexer {
             throw new SQLParseException(this, Assist.ERROR);
         }
         position = token.getEndPosition();
+        return token;
     }
 
     private void skipIgnoredToken() throws UnterminatedCharException {

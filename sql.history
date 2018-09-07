@@ -97,3 +97,22 @@ select * from user;
 select * from user where username=root;
 SELECT * FROM USER;
 exit
+use pxx;
+quit
+use pxx;
+quiy
+;
+use pxx;
+quit
+use pxx;
+use lyra;
+quit
+show databases;
+use lyra;
+show tables;
+kk;
+show databases;
+show tables;
+use aj;
+show tables;
+quit
