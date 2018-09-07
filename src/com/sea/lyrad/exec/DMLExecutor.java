@@ -2,9 +2,13 @@ package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
 import com.sea.lyrad.db.Table;
+import com.sea.lyrad.parse.SQLParseException;
 import com.sea.lyrad.parse.stmt.context.Column;
+import com.sea.lyrad.parse.stmt.context.Condition;
 import com.sea.lyrad.parse.stmt.dml.DMLStatement;
+import com.sea.lyrad.parse.stmt.dml.DeleteStatement;
 import com.sea.lyrad.parse.stmt.dml.InsertStatement;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
@@ -15,11 +19,13 @@ public class DMLExecutor extends SQLExecutor {
     private User user;
     private DMLStatement statement;
 
-    public String execute(User user, DMLStatement statement) throws DBProcessException {
+    public String execute(User user, DMLStatement statement) throws DBProcessException, SQLParseException {
         this.user = user;
         this.statement = statement;
         if (statement instanceof InsertStatement) {
             return executeInsert();
+        } else if (statement instanceof DeleteStatement) {
+            return executeDelete();
         }
         throw new DBProcessException("Unsupported DML statement.");
     }
@@ -95,5 +101,63 @@ public class DMLExecutor extends SQLExecutor {
         DBManager dbManager = new DBManager();
         dbManager.write(database);
         return String.format("%d item(s) inserted.", count);
+    }
+
+    private String executeDelete() throws DBProcessException, SQLParseException {
+        DeleteStatement stmt = (DeleteStatement) statement;
+        Database database = user.getCurrentDB();
+        if (database == null) {
+            throw new DBProcessException("Please select a database firstly.");
+        }
+        Table table = database.getTable(stmt.getTableName());
+        if (table == null) {
+            throw new DBProcessException("The target table is not exist.");
+        }
+        List<String> allAttrs = new ArrayList<>();
+        for (Table.Attribute attr : table.getAttributes()) {
+            allAttrs.add(attr.getName());
+        }
+        boolean deleteAll = stmt.getConditions().size() == 0;
+        List<String> leftAttrs = new ArrayList<>();
+        for (Condition condition : stmt.getConditions()) {
+            leftAttrs.add(condition.getColumn().getColumnName());
+        }
+        if (!deleteAll) {
+            if (!allAttrs.containsAll(leftAttrs)) {
+                throw new DBProcessException("The one of where expressions left value is not exist.");
+            }
+        }
+        Element rootElement = database.getDocument().getRootElement();
+        Element tableElement = null;
+        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
+            Element element = it.next();
+            if (element.attributeValue("name").equals(stmt.getTableName())) {
+                tableElement = element;
+                break;
+            }
+        }
+        int count = 0;
+        if (deleteAll) {
+            for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
+                it.next().detach();
+                count++;
+            }
+        } else {
+            for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
+                Element element = it.next();
+                Map<String, String> data = new HashMap<>();
+                for (Iterator<Attribute> attrIt = element.attributeIterator(); attrIt.hasNext(); ) {
+                    Attribute attribute = attrIt.next();
+                    data.put(attribute.getName(), attribute.getValue());
+                }
+                if (stmt.isMatched(data)) {
+                    element.detach();
+                    count++;
+                }
+            }
+        }
+        DBManager dbManager = new DBManager();
+        dbManager.write(database);
+        return String.format("%d item(s) deleted.", count);
     }
 }

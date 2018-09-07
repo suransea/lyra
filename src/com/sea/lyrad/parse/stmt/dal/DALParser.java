@@ -26,13 +26,14 @@ public class DALParser extends SQLParser {
     }
 
     private SQLStatement parseUse() throws SQLParseException, UnterminatedCharException {
+        UseStatement statement = new UseStatement(lexer.getContent());
         accept(Keyword.USE);
         Token token = lexer.getToken();
-        String dbName = token.getLiterals();
+        statement.setDBName(token.getLiterals());
         accept(Literals.IDENTIFIER);
         accept(Symbol.SEMI);
         accept(Assist.END);
-        return new UseStatement(lexer.getContent(), dbName);
+        return statement;
     }
 
     private SQLStatement parseShow() throws SQLParseException, UnterminatedCharException {

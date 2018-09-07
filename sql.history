@@ -167,3 +167,32 @@ insert into cc(b) values('asf'),('saffs');
 insert into cc(b) values('asf'),('saffs',0);
 insert into cc(a) values('asf'),('saffs',0);
 quit
+use aj ;
+delete from cc where num=1;
+use aj;
+delete from cc where num=1;
+use aj;
+delete from cc where num=1;
+use aj;
+delete from cc where num=1;
+delete from cc where num>=454;
+delete from cc where num>=454 or num='(none)';
+quit
+use aj;
+delete from cc where num>=454 or num='(none)';
+use aj;
+delete from cc where num>=454 or num='(none)';
+delete from cc where num>=454 and num='(none)';
+delete from cc where a='q' and num='12';
+delete from cc;
+insert into cc values('q',4),('tr',6');
+insert into cc values('q',4),('tr',6);
+quit
+use aj;
+delete from cc where a='q';
+quit
+show databases;
+use aj;
+show table;
+show tables;
+quit;

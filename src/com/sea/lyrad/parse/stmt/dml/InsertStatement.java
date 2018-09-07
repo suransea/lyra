@@ -12,14 +12,6 @@ public class InsertStatement extends DMLStatement {
         values = new ArrayList<>();
     }
 
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
     public List<Column> getColumns() {
         return columns;
     }
@@ -36,7 +28,6 @@ public class InsertStatement extends DMLStatement {
         this.values = values;
     }
 
-    private String tableName;
     private List<Column> columns;
     private List<List<String>> values;
 
