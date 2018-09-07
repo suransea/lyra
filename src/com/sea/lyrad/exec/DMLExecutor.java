@@ -66,35 +66,26 @@ public class DMLExecutor extends SQLExecutor {
             for (int i = 0; i < value.size(); i++) {
                 data.put(columns.get(i).getColumnName(), value.get(i));
             }
-            List<String> completeValue = new ArrayList<>();
-            for (Table.Attribute attr : table.getAttributes()) {
-                if (data.get(attr.getName()) != null) {
-                    completeValue.add(data.get(attr.getName()));
-                } else {
-                    completeValue.add("(none)");
-                }
-            }
-            value = completeValue;
             Element element = new DefaultElement("data");
             for (int i = 0; i < table.getAttributes().size(); i++) {
                 Table.Attribute attribute = table.getAttributes().get(i);
-                if (value.get(i).equals("(none)")) {
+                String subValue = data.get(attribute.getName());
+                if (subValue == null) {
                     element.addAttribute(attribute.getName(), "(none)");
                     continue;
                 }
                 if (attribute.getType() == Table.Attribute.Type.INT) {
                     try {
-                        int number = Integer.parseInt(value.get(i));
+                        int number = Integer.parseInt(subValue);
                         element.addAttribute(attribute.getName(), Integer.toString(number));
                     } catch (NumberFormatException e) {
                         throw new DBProcessException("The format of value is not right.");
                     }
                 } else if (attribute.getType() == Table.Attribute.Type.VARCHAR) {
-                    String string = value.get(i);
-                    if (string.length() > attribute.getLength()) {
+                    if (subValue.length() > attribute.getLength()) {
                         throw new DBProcessException("The length is outsize.");
                     }
-                    element.addAttribute(attribute.getName(), string);
+                    element.addAttribute(attribute.getName(), subValue);
                 }
             }
             elements.add(element);
@@ -103,6 +94,6 @@ public class DMLExecutor extends SQLExecutor {
         int count = elements.size();
         DBManager dbManager = new DBManager();
         dbManager.write(database);
-        return String.format("%d item inserted.", count);
+        return String.format("%d item(s) inserted.", count);
     }
 }

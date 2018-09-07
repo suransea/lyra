@@ -10,6 +10,7 @@ import org.dom4j.Element;
 import java.util.Iterator;
 
 public class DCLExecutor extends SQLExecutor {
+    private static final String PASSWORD_REGEX = "^([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~\uff01@#\uffe5%\u2026\u2026&*\uff08\uff09\u2014\u2014+|{}\u3010\u3011\u2018\uff1b\uff1a\u201d\u201c'\u3002\uff0c\u3001\uff1f]){6,20}$";
     private User user;
     private DCLStatement statement;
 
@@ -48,7 +49,7 @@ public class DCLExecutor extends SQLExecutor {
         }
         AESCrypto aes = new AESCrypto("5494");
         String password = stmt.getPassword();
-        if (!password.matches("^([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~\uff01@#\uffe5%\u2026\u2026&*\uff08\uff09\u2014\u2014+|{}\u3010\u3011\u2018\uff1b\uff1a\u201d\u201c'\u3002\uff0c\u3001\uff1f]){6,20}$")) {
+        if (!password.matches(PASSWORD_REGEX)) {
             throw new DBProcessException("The password is illegal.");
         }
         Element element = tableElement.addElement("data");
@@ -79,7 +80,7 @@ public class DCLExecutor extends SQLExecutor {
             if (element.attributeValue("username").equals(stmt.getUsername())) {
                 AESCrypto aes = new AESCrypto("5494");
                 String password = stmt.getPassword();
-                if (!password.matches("^([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~\uff01@#\uffe5%\u2026\u2026&*\uff08\uff09\u2014\u2014+|{}\u3010\u3011\u2018\uff1b\uff1a\u201d\u201c'\u3002\uff0c\u3001\uff1f]){6,20}$")) {
+                if (!password.matches(PASSWORD_REGEX)) {
                     throw new DBProcessException("The password is illegal.");
                 }
                 element.attribute("password").setValue(aes.encode(password));

@@ -159,3 +159,11 @@ insert into cc(num) values('asf'),('saffs');
 insert into cc(num) values(12),(5464);
 insert into cc(num) values(12),(5464.6);
 quit
+use aj;
+insert into cc(num) values(12),(5464);
+insert into cc(a) values('asf'),('saffs');
+insert into cc values('a',1),('b',2);
+insert into cc(b) values('asf'),('saffs');
+insert into cc(b) values('asf'),('saffs',0);
+insert into cc(a) values('asf'),('saffs',0);
+quit
