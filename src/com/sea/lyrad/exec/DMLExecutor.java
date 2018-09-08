@@ -178,6 +178,13 @@ public class DMLExecutor extends SQLExecutor {
         for (Table.Attribute attr : table.getAttributes()) {
             allAttrs.add(attr.getName());
         }
+        List<String> updateAttrs = new ArrayList<>();
+        for (Column column : stmt.getColumns()) {
+            updateAttrs.add(column.getColumnName());
+        }
+        if (!allAttrs.containsAll(updateAttrs)) {
+            throw new DBProcessException("The target column is not exist.");
+        }
         boolean updateAll = stmt.getConditions().size() == 0;
         List<String> leftAttrs = new ArrayList<>();
         for (Condition condition : stmt.getConditions()) {
