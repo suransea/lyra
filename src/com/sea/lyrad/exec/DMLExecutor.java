@@ -8,6 +8,7 @@ import com.sea.lyrad.parse.stmt.context.Condition;
 import com.sea.lyrad.parse.stmt.dml.DMLStatement;
 import com.sea.lyrad.parse.stmt.dml.DeleteStatement;
 import com.sea.lyrad.parse.stmt.dml.InsertStatement;
+import com.sea.lyrad.parse.stmt.dml.UpdateStatement;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -26,6 +27,8 @@ public class DMLExecutor extends SQLExecutor {
             return executeInsert();
         } else if (statement instanceof DeleteStatement) {
             return executeDelete();
+        } else if (statement instanceof UpdateStatement) {
+            return executeUpdate();
         }
         throw new DBProcessException("Unsupported DML statement.");
     }
@@ -85,11 +88,11 @@ public class DMLExecutor extends SQLExecutor {
                         int number = Integer.parseInt(subValue);
                         element.addAttribute(attribute.getName(), Integer.toString(number));
                     } catch (NumberFormatException e) {
-                        throw new DBProcessException("The format of value is not right.");
+                        throw new DBProcessException(String.format("The format of value '%s' is not right.", subValue));
                     }
                 } else if (attribute.getType() == Table.Attribute.Type.VARCHAR) {
                     if (subValue.length() > attribute.getLength()) {
-                        throw new DBProcessException("The length is outsize.");
+                        throw new DBProcessException(String.format("The length of '%s' is outsize.", subValue));
                     }
                     element.addAttribute(attribute.getName(), subValue);
                 }
@@ -159,5 +162,82 @@ public class DMLExecutor extends SQLExecutor {
         DBManager dbManager = new DBManager();
         dbManager.write(database);
         return String.format("%d item(s) deleted.", count);
+    }
+
+    private String executeUpdate() throws DBProcessException, SQLParseException {
+        UpdateStatement stmt = (UpdateStatement) statement;
+        Database database = user.getCurrentDB();
+        if (database == null) {
+            throw new DBProcessException("Please select a database firstly.");
+        }
+        Table table = database.getTable(stmt.getTableName());
+        if (table == null) {
+            throw new DBProcessException("The target table is not exist.");
+        }
+        List<String> allAttrs = new ArrayList<>();
+        for (Table.Attribute attr : table.getAttributes()) {
+            allAttrs.add(attr.getName());
+        }
+        boolean updateAll = stmt.getConditions().size() == 0;
+        List<String> leftAttrs = new ArrayList<>();
+        for (Condition condition : stmt.getConditions()) {
+            leftAttrs.add(condition.getColumn().getColumnName());
+        }
+        if (!updateAll) {
+            if (!allAttrs.containsAll(leftAttrs)) {
+                throw new DBProcessException("The one of where expressions left value is not exist.");
+            }
+        }
+        Element rootElement = database.getDocument().getRootElement();
+        Element tableElement = null;
+        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
+            Element element = it.next();
+            if (element.attributeValue("name").equals(stmt.getTableName())) {
+                tableElement = element;
+                break;
+            }
+        }
+        int count = 0;
+        if (updateAll) {
+            for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
+                Element element = it.next();
+                updateRow(stmt, table, element);
+                count++;
+            }
+        } else {
+            for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
+                Element element = it.next();
+                Map<String, String> data = new HashMap<>();
+                for (Iterator<Attribute> attrIt = element.attributeIterator(); attrIt.hasNext(); ) {
+                    Attribute attribute = attrIt.next();
+                    data.put(attribute.getName(), attribute.getValue());
+                }
+                if (stmt.isMatched(data)) {
+                    updateRow(stmt, table, element);
+                    count++;
+                }
+            }
+        }
+        DBManager dbManager = new DBManager();
+        dbManager.write(database);
+        return String.format("%d item(s) updated.", count);
+    }
+
+    private void updateRow(UpdateStatement stmt, Table table, Element element) throws DBProcessException {
+        for (Column column : stmt.getColumns()) {
+            Table.Attribute attribute = table.getAttribute(column.getColumnName());
+            if (attribute.getType() == Table.Attribute.Type.VARCHAR) {
+                if (column.getValue().length() > attribute.getLength()) {
+                    throw new DBProcessException(String.format("The length of '%s' is outsize.", column.getValue()));
+                }
+            } else if (attribute.getType() == Table.Attribute.Type.INT) {
+                try {
+                    Integer.parseInt(column.getValue());
+                } catch (NumberFormatException e) {
+                    throw new DBProcessException(String.format("The format of value '%s' is not right.", column.getValue()));
+                }
+            }
+            element.setAttributeValue(column.getColumnName(), column.getValue());
+        }
     }
 }

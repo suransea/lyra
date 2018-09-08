@@ -9,6 +9,16 @@ public class Column {
     private String columnName;
     private Keyword type;
     private int typeLength;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    private String value;
     private List<Constraint> constraints;
 
     public String getColumnName() {

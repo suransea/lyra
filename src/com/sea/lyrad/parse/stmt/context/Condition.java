@@ -9,7 +9,14 @@ public class Condition {
     private String value;
 
     public boolean isMatched(String value) throws SQLParseException {
-        int outcome = value.compareTo(this.value);
+        double outcome;
+        try {
+            double left = Double.parseDouble(value);
+            double right = Double.parseDouble(this.value);
+            outcome = left - right;
+        } catch (NumberFormatException e) {
+            outcome = value.compareTo(this.value);
+        }
         switch (operator) {
             case EQ:
                 return outcome == 0;

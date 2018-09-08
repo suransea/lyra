@@ -196,3 +196,8 @@ use aj;
 show table;
 show tables;
 quit;
+use aj
+;
+insert into cc values('sd',234),('dw33',213),("fe",22);
+update cc set a='ww',num=33 where num<22;
+quit

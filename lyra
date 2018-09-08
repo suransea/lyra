@@ -55,7 +55,6 @@ if __name__ == '__main__':
 
     # 创建socket连接服务器
     sk = socket.socket()
-    sk.settimeout(10)
     try:
         sk.connect((host, port))
     except socket.error as e:

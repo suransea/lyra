@@ -24,6 +24,8 @@ public class DMLParser extends SQLParser {
             return parseInsert();
         } else if (token.getType() == Keyword.DELETE) {
             return parseDelete();
+        } else if (token.getType() == Keyword.UPDATE) {
+            return parseUpdate();
         }
         throw new SQLParseUnsupportedException(token.getType());
     }
@@ -54,10 +56,8 @@ public class DMLParser extends SQLParser {
             List<String> value = new ArrayList<>();
             while (true) {
                 value.add(lexer.getToken().getLiterals());
-                if (lexer.getToken().getType() == Literals.INT) {
-                    accept(Literals.INT);
-                } else {
-                    accept(Literals.STRING);
+                if (equalAny(Literals.INT, Literals.STRING)) {
+                    lexer.nextToken();
                 }
                 if (lexer.getToken().getType() == Symbol.RIGHT_PAREN) {
                     accept(Symbol.RIGHT_PAREN);
@@ -87,6 +87,48 @@ public class DMLParser extends SQLParser {
             return statement;
         }
         accept(Keyword.WHERE);
+        parseWhere(statement);
+        accept(Symbol.SEMI);
+        accept(Assist.END);
+        return statement;
+    }
+
+    private SQLStatement parseUpdate() throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+        UpdateStatement statement = new UpdateStatement(lexer.getContent());
+        accept(Keyword.UPDATE);
+        statement.setTableName(lexer.getToken().getLiterals());
+        accept(Literals.IDENTIFIER);
+        accept(Keyword.SET);
+        while (true) {
+            Column column = new Column();
+            column.setColumnName(lexer.getToken().getLiterals());
+            accept(Literals.IDENTIFIER);
+            accept(Symbol.EQ);
+            if (equalAny(Literals.INT, Literals.STRING)) {
+                column.setValue(lexer.getToken().getLiterals());
+                lexer.nextToken();
+            }
+            statement.getColumns().add(column);
+            if (lexer.getToken().getType() != Symbol.COMMA) {
+                break;
+            }
+            accept(Symbol.COMMA);
+        }
+        if (lexer.getToken().getType() == Symbol.SEMI) {
+            accept(Symbol.SEMI);
+            accept(Assist.END);
+            return statement;
+        }
+        accept(Keyword.WHERE);
+        parseWhere(statement);
+        accept(Symbol.SEMI);
+        accept(Assist.END);
+        return statement;
+    }
+
+    private void parseWhere(DMLStatement statement) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+        List<Condition> conditions = statement.getConditions();
+        List<Keyword> connectors = statement.getConnectors();
         while (true) {
             Condition condition = new Condition();
             Column column = new Column();
@@ -105,17 +147,14 @@ public class DMLParser extends SQLParser {
             } else {
                 throw new SQLParseUnsupportedException(lexer.getToken().getType());
             }
-            statement.getConditions().add(condition);
+            conditions.add(condition);
             if (lexer.getToken().getType() == Symbol.SEMI) {
                 break;
             }
             if (equalAny(Keyword.AND, Keyword.OR)) {
-                statement.getConnectors().add((Keyword) lexer.getToken().getType());
+                connectors.add((Keyword) lexer.getToken().getType());
                 lexer.nextToken();
             }
         }
-        accept(Symbol.SEMI);
-        accept(Assist.END);
-        return statement;
     }
 }
