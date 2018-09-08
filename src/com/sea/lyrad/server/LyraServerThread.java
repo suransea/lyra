@@ -21,7 +21,7 @@ import java.util.Scanner;
 
 public class LyraServerThread implements Runnable {
 
-    private static final String VERSION = "0.2.1";//版本号
+    private static final String VERSION = "0.4";//版本号
 
     private Socket socket;
     private int count;

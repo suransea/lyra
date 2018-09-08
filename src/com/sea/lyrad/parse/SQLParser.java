@@ -54,6 +54,7 @@ public class SQLParser {
     protected void parseWhere(SQLStatement statement) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
         List<Condition> conditions = statement.getConditions();
         List<Keyword> connectors = statement.getConnectors();
+        accept(Keyword.WHERE);
         while (true) {
             Condition condition = new Condition();
             Column column = new Column();
@@ -73,10 +74,9 @@ public class SQLParser {
                 throw new SQLParseUnsupportedException(lexer.getToken().getType());
             }
             conditions.add(condition);
-            if (lexer.getToken().getType() == Symbol.SEMI) {
+            if (!equalAny(Keyword.AND, Keyword.OR)) {
                 break;
-            }
-            if (equalAny(Keyword.AND, Keyword.OR)) {
+            } else {
                 connectors.add((Keyword) lexer.getToken().getType());
                 lexer.nextToken();
             }

@@ -10,6 +10,8 @@ import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.context.OrderExpression;
 
+import java.util.List;
+
 public class DQLParser extends SQLParser {
     public DQLParser(Lexer lexer) {
         super(lexer);
@@ -30,20 +32,18 @@ public class DQLParser extends SQLParser {
             statement.setStar(true);
             accept(Symbol.STAR);
         } else {
-            while (true) {
-                Column column = new Column();
-                column.setColumnName(lexer.getToken().getLiterals());
-                accept(Literals.IDENTIFIER);
-                if (lexer.getToken().getType() != Symbol.COMMA) {
-                    break;
-                }
-                accept(Symbol.COMMA);
-            }
+            parseColumns(statement.getColumns());
         }
         accept(Keyword.FROM);
         statement.setTableName(lexer.getToken().getLiterals());
         accept(Literals.IDENTIFIER);
         if (lexer.getToken().getType() == Symbol.SEMI) {
+            accept(Symbol.SEMI);
+            accept(Assist.END);
+            return statement;
+        }
+        if (lexer.getToken().getType() == Keyword.ORDER) {
+            statement.setOrderExpression(parseOrder());
             accept(Symbol.SEMI);
             accept(Assist.END);
             return statement;
@@ -60,20 +60,24 @@ public class DQLParser extends SQLParser {
         return statement;
     }
 
-    private OrderExpression parseOrder() throws SQLParseException, UnterminatedCharException {
-        accept(Keyword.ORDER);
-        accept(Keyword.BY);
-        OrderExpression orderExpression = new OrderExpression();
+    private void parseColumns(List<Column> columns) throws SQLParseException, UnterminatedCharException {
         while (true) {
             Column column = new Column();
             column.setColumnName(lexer.getToken().getLiterals());
             accept(Literals.IDENTIFIER);
-            orderExpression.getColumns().add(column);
+            columns.add(column);
             if (lexer.getToken().getType() != Symbol.COMMA) {
                 break;
             }
             accept(Symbol.COMMA);
         }
+    }
+
+    private OrderExpression parseOrder() throws SQLParseException, UnterminatedCharException {
+        accept(Keyword.ORDER);
+        accept(Keyword.BY);
+        OrderExpression orderExpression = new OrderExpression();
+        parseColumns(orderExpression.getColumns());
         if (equalAny(Keyword.ASC, Keyword.DESC)) {
             if (equalAny(Keyword.DESC)) {
                 orderExpression.setAsc(false);

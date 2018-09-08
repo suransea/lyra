@@ -120,7 +120,7 @@ public class DBManager {
         for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
             Element element = it.next();
             if (element.attributeValue("username").equals(name) &&
-                    element.attributeValue("password").equals(encodePassword)) {
+                    element.attributeValue("passwd").equals(encodePassword)) {
                 return true;
             }
         }

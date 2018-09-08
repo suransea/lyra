@@ -6,6 +6,7 @@ import com.sea.lyrad.parse.stmt.dal.DALStatement;
 import com.sea.lyrad.parse.stmt.dcl.DCLStatement;
 import com.sea.lyrad.parse.stmt.ddl.DDLStatement;
 import com.sea.lyrad.parse.stmt.dml.DMLStatement;
+import com.sea.lyrad.parse.stmt.dql.DQLStatement;
 
 public class SQLExecutor {
 
@@ -18,6 +19,8 @@ public class SQLExecutor {
             return new DCLExecutor().execute(user, (DCLStatement) statement);
         } else if (statement instanceof DMLStatement) {
             return new DMLExecutor().execute(user, (DMLStatement) statement);
+        } else if (statement instanceof DQLStatement) {
+            return new DQLExecutor().execute(user, (DQLStatement) statement);
         }
         throw new DBProcessException("Unsupported SQL statement.");
     }

@@ -54,7 +54,7 @@ public class DCLExecutor extends SQLExecutor {
         }
         Element element = tableElement.addElement("data");
         element.addAttribute("username", stmt.getUsername());
-        element.addAttribute("password", aes.encode(password));
+        element.addAttribute("passwd", aes.encode(password));
         dbManager.write(userDB);
         return String.format("User %s added.", stmt.getUsername());
     }
@@ -83,7 +83,7 @@ public class DCLExecutor extends SQLExecutor {
                 if (!password.matches(PASSWORD_REGEX)) {
                     throw new DBProcessException("The password is illegal.");
                 }
-                element.attribute("password").setValue(aes.encode(password));
+                element.attribute("passwd").setValue(aes.encode(password));
                 dbManager.write(userDB);
                 return String.format("Password changed for user %s.", stmt.getUsername());
             }

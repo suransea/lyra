@@ -85,7 +85,6 @@ public class DMLParser extends SQLParser {
             accept(Assist.END);
             return statement;
         }
-        accept(Keyword.WHERE);
         parseWhere(statement);
         accept(Symbol.SEMI);
         accept(Assist.END);
@@ -118,7 +117,6 @@ public class DMLParser extends SQLParser {
             accept(Assist.END);
             return statement;
         }
-        accept(Keyword.WHERE);
         parseWhere(statement);
         accept(Symbol.SEMI);
         accept(Assist.END);

@@ -201,3 +201,48 @@ use aj
 insert into cc values('sd',234),('dw33',213),("fe",22);
 update cc set a='ww',num=33 where num<22;
 quit
+use aj;
+select * from cc;
+use aj;
+select * from cc;
+use lyra;
+select * from cc;
+select * from user;
+select * from 'user';
+select * from `user`;
+quit
+use lyra;
+select * from `user`;
+quit
+select * from `user`;
+use lyra;
+select * from `user`;
+select username from `user`;
+select username,password from `user`;
+select username,`password` from `user`;
+quit
+select username,`password` from `user`;
+use lyra;
+select username,password from `user`;
+select username,passwd from `user`;
+select username,passwd from `user` order by username;
+quit
+use lyra;
+select username,passwd from `user` order by username;
+select username,passwd from `user` order by passwd;
+select username,passwd from `user` order by username,passwd;
+select username,passwd from `user` where username>b order by username,passwd;
+select username,passwd from `user` where username>'b' order by username,passwd;
+select username,passwd from `user` where username>'c' order by username,passwd;
+quit
+use lyra;
+select username,passwd from `user` where username>'c' order by username,passwd;
+select username,passwd from `user` where username>'c' and username<s order by username,passwd;
+select username,passwd from `user` where username>'c' and username<'s' order by username,passwd;
+select username,passwd from `user` where username>'b' and username<'s' order by username,passwd;
+select username,passwd from `user` where username>'r' and username<'s' order by username,passwd;
+quit
+use lyra;
+select username,passwd from `user` where username>'r' and username<'s' order by username,passwd;
+select username,passwd from `user` where username>'root' and username<'s' order by username,passwd;
+quit
