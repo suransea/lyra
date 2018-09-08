@@ -4,13 +4,17 @@ import com.sea.lyrad.lex.Lexer;
 import com.sea.lyrad.lex.analyze.UnterminatedCharException;
 import com.sea.lyrad.lex.token.*;
 import com.sea.lyrad.parse.stmt.SQLStatement;
+import com.sea.lyrad.parse.stmt.context.Column;
+import com.sea.lyrad.parse.stmt.context.Condition;
 import com.sea.lyrad.parse.stmt.dal.DALParser;
 import com.sea.lyrad.parse.stmt.dcl.DCLParser;
 import com.sea.lyrad.parse.stmt.ddl.DDLParser;
 import com.sea.lyrad.parse.stmt.dml.DMLParser;
+import com.sea.lyrad.parse.stmt.dql.DQLParser;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SQLParser {
@@ -40,8 +44,42 @@ public class SQLParser {
             return new DCLParser(lexer).parse();
         } else if (equalAny(Keyword.INSERT, Keyword.DELETE, Keyword.UPDATE)) {
             return new DMLParser(lexer).parse();
+        } else if (equalAny(Keyword.SELECT)) {
+            return new DQLParser(lexer).parse();
         } else {
             throw new SQLParseUnsupportedException(token.getType());
+        }
+    }
+
+    protected void parseWhere(SQLStatement statement) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+        List<Condition> conditions = statement.getConditions();
+        List<Keyword> connectors = statement.getConnectors();
+        while (true) {
+            Condition condition = new Condition();
+            Column column = new Column();
+            column.setColumnName(lexer.getToken().getLiterals());
+            condition.setColumn(column);
+            accept(Literals.IDENTIFIER);
+            if (lexer.getToken().getType() instanceof Symbol) {
+                condition.setOperator((Symbol) lexer.getToken().getType());
+                lexer.nextToken();
+            } else {
+                throw new SQLParseUnsupportedException(lexer.getToken().getType());
+            }
+            if (equalAny(Literals.STRING, Literals.INT)) {
+                condition.setValue(lexer.getToken().getLiterals());
+                lexer.nextToken();
+            } else {
+                throw new SQLParseUnsupportedException(lexer.getToken().getType());
+            }
+            conditions.add(condition);
+            if (lexer.getToken().getType() == Symbol.SEMI) {
+                break;
+            }
+            if (equalAny(Keyword.AND, Keyword.OR)) {
+                connectors.add((Keyword) lexer.getToken().getType());
+                lexer.nextToken();
+            }
         }
     }
 

@@ -8,7 +8,6 @@ import com.sea.lyrad.parse.SQLParseUnsupportedException;
 import com.sea.lyrad.parse.SQLParser;
 import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.parse.stmt.context.Column;
-import com.sea.lyrad.parse.stmt.context.Condition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,37 +123,5 @@ public class DMLParser extends SQLParser {
         accept(Symbol.SEMI);
         accept(Assist.END);
         return statement;
-    }
-
-    private void parseWhere(DMLStatement statement) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
-        List<Condition> conditions = statement.getConditions();
-        List<Keyword> connectors = statement.getConnectors();
-        while (true) {
-            Condition condition = new Condition();
-            Column column = new Column();
-            column.setColumnName(lexer.getToken().getLiterals());
-            condition.setColumn(column);
-            accept(Literals.IDENTIFIER);
-            if (lexer.getToken().getType() instanceof Symbol) {
-                condition.setOperator((Symbol) lexer.getToken().getType());
-                lexer.nextToken();
-            } else {
-                throw new SQLParseUnsupportedException(lexer.getToken().getType());
-            }
-            if (equalAny(Literals.STRING, Literals.INT)) {
-                condition.setValue(lexer.getToken().getLiterals());
-                lexer.nextToken();
-            } else {
-                throw new SQLParseUnsupportedException(lexer.getToken().getType());
-            }
-            conditions.add(condition);
-            if (lexer.getToken().getType() == Symbol.SEMI) {
-                break;
-            }
-            if (equalAny(Keyword.AND, Keyword.OR)) {
-                connectors.add((Keyword) lexer.getToken().getType());
-                lexer.nextToken();
-            }
-        }
     }
 }
