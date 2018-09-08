@@ -1,4 +1,5 @@
 #!/bin/env python3
+# coding=utf-8
 
 import argparse
 import atexit
@@ -10,9 +11,41 @@ import socket
 import sys
 
 # Tab 自动补全的字符串
-WORDS = ['table', 'select ', 'create ', 'drop ', 'delete ', 'update ', 'insert ', 'where ', 'for',
-         'from ', 'database', 'show ', 'set ', 'into ', 'use ', 'varchar(', 'int ', 'values(',
-         'create ', 'user ', 'alter ', 'identified ', 'by ', 'quit', 'password']
+WORDS = ['table', 'select ', 'create ', 'drop ', 'delete from ', 'update ', 'insert into ', 'where ', 'for',
+         'from ', 'database', 'show ', 'set ', 'use ', 'varchar(', 'int ', 'values(', 'help',
+         'create ', 'user ', 'alter ', 'identified by ', 'by ', 'quit', 'password', 'order by ']
+
+help = '''
+SQL (不区分大小写)
+
+DAL:
+    * USE <DB_NAME>
+    * SHOW DATABASES
+    * SHOW TABLES
+
+DCL:
+    * CREATE USER <USERNAME> IDENTIFED BY "PASSWORD"
+    * ALTER USER <USERNAME> IDENTIFED BY "PASSWORD"
+
+    > 删除用户请使用DELETE操作lyra数据库的user表
+
+DDL:
+    * CREATE DATABASE <DB_NAME>
+    * CREATE TABLE <TABLE_NAME> (<COLUMN_NAME> <TYPE>[,<COLUMN_NAME> <TYPE>]...)
+    * DROP DATABASE <DB_NAME>
+    * DROP TABLE <TABLE_NAME>
+
+    > TYPE 目前支持INT与VARCHAR(length)
+
+DML:
+    * INSERT INTO <TABLE_NAME>[(<COLUMN_NAME>[,<COLUMN_NAME>]...)] VALUES("VALUE"[,"VALUE"]...)
+    * DELETE FROM <TABLE_NAME> [WHERE <COLUMN>{=|>|<|>=|<=|<>|!=}"VALUE" [{AND|OR} <COLUMN>{=|>|<|>=|<=|<>|!=}"VALUE"]...]
+    * UPDATE <TABLE_NAME> SET <COLUMN_NAME>="VALUE"[,<COLUMN_NAME>="VALUE"]... [WHERE <COLUMN>{=|>|<|>=|<=|<>|!=}"VALUE" [{AND|OR} <COLUMN>{=|>|<|>=|<=|<>|!=}"VALUE"]...]
+
+DQL:
+    * SELECT {*|<COLUMN_NAME>[,<COLUMN_NAME>]...} FROM <TABLE_NAME> [WHERE <COLUMN>{=|>|<|>=|<=|<>|!=}"VALUE" [{AND|OR} <COLUMN>{=|>|<|>=|<=|<>|!=}"VALUE"]...] [ORDER BY <COLUMN>[,<COLUMN>]... [{ASC|DESC}]
+
+'''
 
 for string in WORDS.copy():
     WORDS.append(string.upper())
@@ -94,6 +127,12 @@ if __name__ == '__main__':
             print('\nBye.')
             sys.exit(0)
         if cmd == r'\c':
+            sql = ''
+            line = 0
+            cmd = input('lyra [' + cur_db + '] > ')
+            continue
+        if cmd in [r'\h', 'help', 'help;']:
+            print(help)
             sql = ''
             line = 0
             cmd = input('lyra [' + cur_db + '] > ')
