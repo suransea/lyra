@@ -256,3 +256,51 @@ or username='sss'
 ;
 select * from `user`;
 quit
+show databases;
+use lyra;
+select * from lyra
+;
+show tables;
+select * from user;
+select * from `user`;
+insert into `user`(username ,passwd)values("zmm",123);
+select * from `user`;
+insert into `user`(username ,passwd)values(zmm,123);
+insert into `user`(username ,passwd,qq)values(zmm,123,7);
+s
+delete from user where username=zmm;
+delete from `user` where username=zmm;
+delete from `user` where username="zmm";
+quit;
+create  user <zmm> identified by "_2wesaca&*%^$@#R@2";
+create  user zmm identified by "_2wesaca&*%^$@#R@2";
+create  user zmm identified by "_2wesaca&*%^$@#R2";
+create  user zmm identified by "_123wsxc";
+create  user zmm identified by "@#$@$3&*73wsxc";
+user lyra
+;
+use lyra;
+select * from `user`;
+select * from `user`;quit
+;
+quit;
+alert user zmm identified by '1234';
+alert user "zmm" identified by '1234';
+alter user zmm identified by '1234';
+alter user zmm identified by 'zmm1234';
+alter user zmm identified by "1234";
+quit;
+show tables;
+show databases;
+show table;
+show tables;
+show database;
+show databases;
+sho databases;
+show data;
+drop table `user`;
+create database exercise;
+show databases;
+quit
+show databases;
+quit

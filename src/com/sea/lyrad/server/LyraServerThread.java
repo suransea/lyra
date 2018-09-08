@@ -104,7 +104,7 @@ public class LyraServerThread implements Runnable {
     }
 
     private void send(String response) throws IOException {
-        outputStream.write(response.getBytes());
+        outputStream.write(response.getBytes("utf-8"));
         outputStream.flush();
     }
 }

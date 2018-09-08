@@ -64,8 +64,8 @@ if __name__ == '__main__':
     # 登录
     login = 'login ' + username + ' ' + password + '\n'
     try:
-        sk.sendall(login.encode())
-        rev = sk.recv(1024).decode()
+        sk.sendall(login.encode('utf-8'))
+        rev = sk.recv(1024).decode('utf-8')
     except socket.error as e:
         print(e.strerror)
         sys.exit(1)
@@ -101,14 +101,14 @@ if __name__ == '__main__':
         if cmd.endswith(';'):
             sql += cmd
             try:
-                sk.sendall('sql\n'.encode())
-                sk.sendall((sql + '\n').encode())
+                sk.sendall('sql\n'.encode('utf-8'))
+                sk.sendall((sql + '\n').encode('utf-8'))
                 rev = ''
                 while True:
                     data = sk.recv(8192)
                     if not data:
                         break
-                    rev += data.decode()
+                    rev += data.decode('utf-8')
                     if rev.endswith('true\n') or rev.endswith('false\n'):
                         break
             except socket.error as e:
