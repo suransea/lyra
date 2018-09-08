@@ -20,8 +20,8 @@
 #### DAL:
 
 * `USE <DB_NAME>`
-* `SHOW <DB_NAME>`
-* `SHOW <TABLE_NAME>`
+* `SHOW DATABASES`
+* `SHOW TABLES`
 
 #### DCL:
 
