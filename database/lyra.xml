@@ -5,8 +5,7 @@
         <attr name="passwd" type="varchar" length="255"/>
         <data username="root" passwd="Hps5oNDU5L27CNJom5ZH1w=="/>
         <data username="sea" passwd="wS6XKQSxt9Cp9TIpr1gLeA=="/>
-        <data username="bxx" passwd="tH9H39ysQcDTGmTrEcVcXw=="/>
-        <data username="zxc" passwd="tH9H39ysQcDTGmTrEcVcXw=="/>
-        <data username="sss" passwd="SJMVvlfhnIJYaOiNvrFeFQ=="/>
+
+
     </table>
 </database>

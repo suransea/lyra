@@ -246,3 +246,13 @@ use lyra;
 select username,passwd from `user` where username>'r' and username<'s' order by username,passwd;
 select username,passwd from `user` where username>'root' and username<'s' order by username,passwd;
 quit
+use lyra
+;
+select * from lyra;
+select * from `user`;
+delete from `user` where username='bxx'
+or username='zxc'
+or username='sss'
+;
+select * from `user`;
+quit
