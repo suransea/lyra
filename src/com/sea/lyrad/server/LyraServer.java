@@ -2,8 +2,10 @@ package com.sea.lyrad.server;
 
 import com.sea.lyrad.util.Log;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,7 +15,8 @@ public class LyraServer {
     public static void main(String[] args) {
         Properties properties = new Properties();
         try {
-            properties.load(new FileReader("etc/lyrad.conf"));
+            InputStream inputStream = new FileInputStream("etc/lyrad.conf");
+            properties.load(new InputStreamReader(inputStream, "utf-8"));
         } catch (IOException e) {
             Log.pa("The configure file was lost.");
             System.exit(1);

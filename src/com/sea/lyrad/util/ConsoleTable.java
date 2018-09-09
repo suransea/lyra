@@ -1,5 +1,6 @@
 package com.sea.lyrad.util;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -42,7 +43,7 @@ public class ConsoleTable {
         Matcher matcher = pattern.matcher(content);
         int count = 0;
         while (matcher.find()) count++;
-        return content.getBytes().length - count;
+        return content.getBytes(Charset.forName("utf-8")).length - count;
     }
 
     @Override

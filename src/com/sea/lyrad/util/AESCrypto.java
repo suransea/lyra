@@ -20,7 +20,7 @@ public class AESCrypto {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(rule.getBytes());
+            secureRandom.setSeed(rule.getBytes("utf8"));
             keygen.init(128, secureRandom);
             SecretKey originalKey = keygen.generateKey();
             byte[] raw = originalKey.getEncoded();
@@ -40,7 +40,7 @@ public class AESCrypto {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(rule.getBytes());
+            secureRandom.setSeed(rule.getBytes("utf-8"));
             keygen.init(128, secureRandom);
             SecretKey originalKey = keygen.generateKey();
             byte[] raw = originalKey.getEncoded();

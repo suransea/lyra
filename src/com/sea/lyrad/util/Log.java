@@ -1,8 +1,6 @@
 package com.sea.lyrad.util;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,7 +12,8 @@ public class Log {
 
     static {
         try {
-            writer = new FileWriter("lyrad.log", true);
+            OutputStream outputStream = new FileOutputStream("lyrad.log", true);
+            writer = new OutputStreamWriter(outputStream, "utf-8");
         } catch (IOException e) {
             Log.p("Warning: 日志初始化失败.");
         }

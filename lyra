@@ -5,6 +5,7 @@ import argparse
 import atexit
 import configparser
 import getpass
+import os
 import re
 import readline
 import socket
@@ -59,6 +60,9 @@ def completer(text, state):
         return None
 
 
+if not os.path.exists('./sql.history'):
+    os.mknod('./sql.history')
+
 readline.parse_and_bind('tab:complete')
 readline.read_history_file('./sql.history')
 atexit.register(readline.write_history_file, './sql.history')
@@ -83,7 +87,7 @@ if __name__ == '__main__':
 
     # 解析配置文件
     cf = configparser.ConfigParser()
-    cf.read('./lyra.conf')
+    cf.read('./lyra.conf', 'utf-8')
     port = cf.getint('host', 'port')
 
     # 创建socket连接服务器
