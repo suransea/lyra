@@ -51,8 +51,6 @@ public class DALExecutor extends SQLExecutor {
             ConsoleTable consoleTable = new ConsoleTable(1);
             consoleTable.appendRow();
             consoleTable.appendColumn("TABLES");
-            DBManager dbManager = new DBManager();
-            user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));//刷新database对象
             for (Table table : user.getCurrentDB().getTables()) {
                 consoleTable.appendRow();
                 consoleTable.appendColumn(table.getName());

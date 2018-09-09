@@ -64,6 +64,7 @@ public class DDLExecutor extends SQLExecutor {
             }
             DBManager dbManager = new DBManager();
             dbManager.write(database);
+            user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));//刷新
             return String.format("Table %s created.", stmt.getTableName());
         }
         throw new DBProcessException("Unknown error.");
