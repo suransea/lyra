@@ -495,3 +495,16 @@ help;
 quit
 \h
 quit
+show databases;
+use aj;
+show tables;
+select * from cc;
+insert into cc(a) values("三");
+select * from cc;
+quit
+use aj;
+select * from cc;
+quit
+use aj;
+select * from cc;
+quit

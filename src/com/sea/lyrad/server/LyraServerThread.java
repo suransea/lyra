@@ -38,7 +38,7 @@ public class LyraServerThread implements Runnable {
         try {
             inputStream = s.getInputStream();
             outputStream = s.getOutputStream();
-            scanner = new Scanner(inputStream);
+            scanner = new Scanner(inputStream, "utf-8");
         } catch (IOException ioe) {
             ioe.printStackTrace();
             Log.a("ERROR: 流获取失败.");

@@ -2,6 +2,8 @@ package com.sea.lyrad.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConsoleTable {
 
@@ -28,11 +30,19 @@ public class ConsoleTable {
         }
         List<Object> row = rows.get(rows.size() - 1);
         row.add(value);
-        int width = value.toString().getBytes().length;
+        int width = getWidth(value.toString());
         if (columnWidths[row.size() - 1] < width) {
             columnWidths[row.size() - 1] = width;
         }
         return this;
+    }
+
+    private int getWidth(String content) {
+        Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]");
+        Matcher matcher = pattern.matcher(content);
+        int count = 0;
+        while (matcher.find()) count++;
+        return content.getBytes().length - count;
     }
 
     @Override
@@ -55,7 +65,7 @@ public class ConsoleTable {
                 item = rows.get(0).get(i).toString();
             }
             result.append('│').append(repeatChar(' ', MARGIN_WIDTH)).append(item);
-            result.append(repeatChar(' ', columnWidths[i] - item.getBytes().length + MARGIN_WIDTH));
+            result.append(repeatChar(' ', columnWidths[i] - getWidth(item) + MARGIN_WIDTH));
         }
         result.append("│\n");
 
@@ -77,7 +87,7 @@ public class ConsoleTable {
                     item = row.get(i).toString();
                 }
                 result.append('│').append(repeatChar(' ', MARGIN_WIDTH)).append(item);
-                result.append(repeatChar(' ', columnWidths[i] - item.getBytes().length + MARGIN_WIDTH));
+                result.append(repeatChar(' ', columnWidths[i] - getWidth(item) + MARGIN_WIDTH));
             }
             result.append("│\n");
         }
