@@ -5,7 +5,6 @@ import argparse
 import atexit
 import configparser
 import getpass
-import os
 import re
 import readline
 import socket
@@ -60,8 +59,8 @@ def completer(text, state):
         return None
 
 
-if not os.path.exists('./sql.history'):
-    os.mknod('./sql.history')
+with open('./sql.history', 'a+') as sf:
+    pass
 
 readline.parse_and_bind('tab:complete')
 readline.read_history_file('./sql.history')
