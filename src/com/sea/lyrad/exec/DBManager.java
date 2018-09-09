@@ -9,9 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,9 +48,11 @@ public class DBManager {
     public void write(Database database) throws DBProcessException {
         Document document = database.getDocument();
         try {
-            FileWriter writer = new FileWriter(DBManager.PATH + "/" + database.getName() + ".xml");
+            OutputStream outputStream = new FileOutputStream(DBManager.PATH + "/" + database.getName() + ".xml");
+            OutputStreamWriter writer = new OutputStreamWriter(outputStream, "utf-8");
             document.write(writer);
             writer.close();
+            outputStream.close();
         } catch (IOException e) {
             Log.a(e.getMessage());
             throw new DBProcessException("IO error.");
@@ -63,8 +63,10 @@ public class DBManager {
         SAXReader reader = new SAXReader();
         Document document;
         try {
-            document = reader.read(PATH + "/" + dbName + ".xml");
-        } catch (DocumentException e) {
+            InputStream inputStream = new FileInputStream(PATH + "/" + dbName + ".xml");
+            InputStreamReader streamReader = new InputStreamReader(inputStream, "utf-8");
+            document = reader.read(streamReader);
+        } catch (DocumentException | FileNotFoundException | UnsupportedEncodingException e) {
             throw new DBProcessException("Unknown error.");
         }
         Element root = document.getRootElement();
