@@ -4,6 +4,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LockUtil {
+    private LockUtil() {
+    }
+
     private static Lock singleLock = null;
 
     public static Lock getSingleLock() {

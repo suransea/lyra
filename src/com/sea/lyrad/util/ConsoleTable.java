@@ -20,9 +20,10 @@ public class ConsoleTable {
         this.columnWidths = new int[columnCount];
     }
 
-    public void appendRow() {
+    public ConsoleTable appendRow() {
         List<Object> row = new ArrayList<>();
         rows.add(row);
+        return this;
     }
 
     public ConsoleTable appendColumn(Object value) {

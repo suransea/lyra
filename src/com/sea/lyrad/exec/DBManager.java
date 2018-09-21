@@ -19,7 +19,6 @@ public class DBManager {
     private static final String PATH = "./database";
 
     public DBManager() {
-
     }
 
     public List<String> getDBNames() {

@@ -3,10 +3,16 @@ package com.sea.lyrad.db;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 只含属性不含数据的数据库表对象
+ */
 public class Table {
 
     private String name;
 
+    /**
+     * 获取全部属性
+     */
     public List<Attribute> getAttributes() {
         return attributes;
     }
@@ -17,6 +23,9 @@ public class Table {
         return name;
     }
 
+    /**
+     * 获取指定属性名的属性对象
+     */
     public Attribute getAttribute(String name) {
         for (Attribute attr : attributes) {
             if (attr.getName().equals(name)) {
