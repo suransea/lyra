@@ -142,25 +142,30 @@ if __name__ == '__main__':
             continue
         if cmd.endswith(';'):
             sql += cmd
+            rsp = ''
             try:
                 sk.sendall('sql\n'.encode('utf-8'))
                 sk.sendall((sql + '\n').encode('utf-8'))
-                rev = ''
+                rev = bytes()
                 while True:
                     data = sk.recv(8192)
                     if not data:
                         break
-                    rev += data.decode('utf-8')
-                    if rev.endswith('true\n') or rev.endswith('false\n'):
-                        break
+                    rev += data
+                    try:
+                        rsp = rev.decode('utf-8')
+                        if rsp.endswith('true\n') or rsp.endswith('false\n'):
+                            break
+                    except UnicodeDecodeError:
+                        pass
             except socket.error as e:
                 print(e.strerror)
                 sys.exit(1)
             complete = False
-            if rev.endswith('true\n'):
+            if rsp.endswith('true\n'):
                 complete = True
             print()
-            print(rev.rstrip('false\n').rstrip('true\n'))
+            print(rsp.rstrip('false\n').rstrip('true\n'))
             print()
             sub_sql = re.findall(r'\w+', sql)
             if sub_sql[0:3] == ['drop', 'database', cur_db] and complete:

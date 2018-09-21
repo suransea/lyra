@@ -61,6 +61,17 @@ public class LyraServerThread implements Runnable {
             }
         } catch (IOException | NoSuchElementException ioe) {
             Log.pa("连接 " + count + " 已断开.");
+        } finally {
+            lock.unlock();
+            scanner.close();
+            try {
+                inputStream.close();
+                outputStream.close();
+                socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
