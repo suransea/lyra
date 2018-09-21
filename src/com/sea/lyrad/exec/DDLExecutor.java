@@ -78,7 +78,7 @@ public class DDLExecutor extends SQLExecutor {
             }
             DBManager dbManager = new DBManager();
             dbManager.deleteDatabase(stmt.getDBName());
-            if (user.getCurrentDB().getName().equals(stmt.getDBName())) {
+            if (user.getCurrentDB() != null && user.getCurrentDB().getName().equals(stmt.getDBName())) {
                 user.setCurrentDB(null);
             }
             return String.format("Database %s deleted.", stmt.getDBName());
