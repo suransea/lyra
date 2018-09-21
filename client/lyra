@@ -5,17 +5,19 @@ import argparse
 import atexit
 import configparser
 import getpass
+import platform
 import re
-import readline
 import socket
 import sys
+
+import readline
 
 # Tab 自动补全的字符串
 WORDS = ['table', 'select ', 'create ', 'drop ', 'delete from ', 'update ', 'insert into ', 'where ', 'for',
          'from ', 'database', 'show ', 'set ', 'use ', 'varchar(', 'int ', 'values(', 'help',
          'create ', 'user ', 'alter ', 'identified by ', 'by ', 'quit', 'password', 'order by ']
 
-help = '''
+help_info = '''
 SQL (不区分大小写)
 
 DAL:
@@ -59,13 +61,14 @@ def completer(text, state):
         return None
 
 
-with open('./sql.history', 'a+') as sf:
-    pass
-
 readline.parse_and_bind('tab:complete')
-readline.read_history_file('./sql.history')
-atexit.register(readline.write_history_file, './sql.history')
 readline.set_completer(completer)
+sys_type = platform.system()
+if sys_type != 'Windows':
+    readline.read_history_file('./sql.history')
+    atexit.register(readline.write_history_file, './sql.history')
+    with open('./sql.history', 'a+') as sf:
+        pass
 
 if __name__ == '__main__':
     # 解析命令行参数
@@ -135,7 +138,7 @@ if __name__ == '__main__':
             cmd = input('lyra [' + cur_db + '] > ')
             continue
         if cmd in [r'\h', 'help', 'help;']:
-            print(help)
+            print(help_info)
             sql = ''
             line = 0
             cmd = input('lyra [' + cur_db + '] > ')
