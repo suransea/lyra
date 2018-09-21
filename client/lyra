@@ -65,10 +65,10 @@ readline.parse_and_bind('tab:complete')
 readline.set_completer(completer)
 sys_type = platform.system()
 if sys_type != 'Windows':
-    readline.read_history_file('./sql.history')
-    atexit.register(readline.write_history_file, './sql.history')
     with open('./sql.history', 'a+') as sf:
         pass
+    readline.read_history_file('./sql.history')
+    atexit.register(readline.write_history_file, './sql.history')
 
 if __name__ == '__main__':
     # 解析命令行参数
