@@ -6,7 +6,7 @@
 
 ## 使用说明
 
-### lyrad
+### lyrad (server, daemon)
 
 * `java -jar Lyrad.jar`
 
@@ -16,6 +16,8 @@
 * `address`: 服务器ip地址， 默认为127.0.0.1
 * `user`: 用户名
 * `p`: 登录用户是否包含密码
+
+> 默认用户root的初始密码为`123456`
 
 ##### 测试
 
@@ -44,8 +46,6 @@ public class test {
     }
 }
 ```
-
-> 默认用户root的初始密码为`123456`
 
 ### SQL (不区分大小写)
 
