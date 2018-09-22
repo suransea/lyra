@@ -12,7 +12,7 @@ public class test {
             StringBuilder sql = new StringBuilder("insert into test_table values");
             for (int i = 0; i < 100; i++) {
                 sql.append("(12432432,'sdfrg',214325),");
-                //System.out.println(i);
+                System.out.println(i);
             }
             sql.append("(12432432,'sdfrg',214325)");
             statement.execute(sql.toString());
