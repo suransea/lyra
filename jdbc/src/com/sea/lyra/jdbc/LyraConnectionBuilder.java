@@ -5,9 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
-import java.sql.ConnectionBuilder;
 import java.sql.SQLException;
-import java.sql.ShardingKey;
 
 public class LyraConnectionBuilder implements ConnectionBuilder {
 
@@ -28,16 +26,6 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     @Override
     public ConnectionBuilder password(String password) {
         this.password = password;
-        return this;
-    }
-
-    @Override
-    public ConnectionBuilder shardingKey(ShardingKey shardingKey) {
-        return this;
-    }
-
-    @Override
-    public ConnectionBuilder superShardingKey(ShardingKey superShardingKey) {
         return this;
     }
 
