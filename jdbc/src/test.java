@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class test {
     public static void main(String[] args) {
@@ -11,12 +8,20 @@ public class test {
                     .getConnection("jdbc:lyra://localhost:5494/lyra",
                             "root",
                             "123456");
-            System.out.println(connection);
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("select * from `user`");
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("username"));
-                System.out.println(resultSet.getString("passwd"));
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();// 获取列数
+                for (int i = 0; i < columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);//根据索引获取列名
+                    String data = resultSet.getString(columnName);
+                    System.out.println(data);
+                }
+                String username = resultSet.getString("username");//根据列名获取数据
+                String user = resultSet.getString(1);//根据索引获取数据
+                System.out.println(username);
+                System.out.println(user);
             }
         } catch (Exception e) {
             e.printStackTrace();
