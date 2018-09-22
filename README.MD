@@ -6,16 +6,44 @@
 
 ## 使用说明
 
-### lyra
+### lyrad
+
+* `java -jar Lyrad.jar`
+
+### client
 
 * `lyra [-h <address>] [-u <user> [-p]] `
 * `address`: 服务器ip地址， 默认为127.0.0.1
 * `user`: 用户名
 * `p`: 登录用户是否包含密码
 
-### 测试
+##### 测试
 
 * `lyra -u root -p < test.sql`
+
+### JDBC 样例
+
+```java
+public class test {
+    public static void main(String[] args) {
+        try {
+            Class.forName("com.sea.lyra.jdbc.LyraDriver");
+            Connection connection = DriverManager
+                    .getConnection("jdbc:lyra://localhost:5494/lyra",
+                            "root",
+                            "123456");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from `user`");
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString("username"));
+                System.out.println(resultSet.getString("passwd"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 
 > 默认用户root的初始密码为`123456`
 
@@ -55,6 +83,7 @@
 
 #### 当前未支持：
 
+* jdbc 仅实现简单功能
 * GROUP BY
 * 约束
 * IN 和NOT IN

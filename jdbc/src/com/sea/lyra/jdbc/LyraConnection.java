@@ -1,14 +1,77 @@
 package com.sea.lyra.jdbc;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class LyraConnection implements Connection {
+    private URLConnection connection;
+    private InputStream inputStream;
+    private OutputStream outputStream;
+
+    //内建
+    private boolean autoCommit = false;
+    private boolean closed = false;
+    private boolean readOnly = false;
+    private String catalog = "";
+    private int transactionIsolation = 0;
+    private SQLWarning sqlWarning = null;
+    private Map<String, Class<?>> typeMap = null;
+    private int holdability = 0;
+    private Savepoint savepoint = null;
+    private Properties clientInfo = null;
+    private String schema = null;
+
+
+    private void send(String content) throws IOException {
+        outputStream.write(content.getBytes(Charset.forName("utf-8")));
+        outputStream.flush();
+    }
+
+    private String receive() throws IOException {
+        byte[] receive = new byte[1024];
+        inputStream.read(receive);
+        return new String(receive, Charset.forName("utf-8"));
+    }
+
+    LyraConnection(URLConnection urlConnection, String user, String password) throws IOException, SQLException {
+        this.connection = urlConnection;
+        inputStream = connection.getInputStream();
+        outputStream = connection.getOutputStream();
+        JSONObject login = new JSONObject();
+        login.put("tag", "login");
+        login.put("user", user);
+        login.put("password", password);
+        send(login.toString() + "\n");
+        String response = receive();
+        JSONObject json = new JSONObject(response);
+        if (!json.getBoolean("access")) {
+            throw new SQLException("Username or password is not right, permission denied.");
+        }
+        String dbName = connection.getURL().getPath().replaceAll("/", "");
+        String useStmt = "use " + dbName;
+        try {
+            createStatement().execute(useStmt);
+        } catch (SQLException e) {
+            throw new SQLException(String.format("The target database [%s] is not exist.", dbName));
+        }
+    }
+
     @Override
     public Statement createStatement() throws SQLException {
-        return null;
+        try {
+            return new LyraStatement(connection);
+        } catch (IOException e) {
+            throw new SQLException(e);
+        }
     }
 
     @Override
@@ -28,12 +91,12 @@ public class LyraConnection implements Connection {
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-
+        this.autoCommit = autoCommit;
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        return false;
+        return autoCommit;
     }
 
     @Override
@@ -48,12 +111,18 @@ public class LyraConnection implements Connection {
 
     @Override
     public void close() throws SQLException {
-
+        try {
+            inputStream.close();
+            outputStream.close();
+            closed = true;
+        } catch (IOException e) {
+            throw new SQLException(e);
+        }
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        return false;
+        return closed;
     }
 
     @Override
@@ -63,42 +132,42 @@ public class LyraConnection implements Connection {
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-
+        this.readOnly = readOnly;
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        return false;
+        return readOnly;
     }
 
     @Override
     public void setCatalog(String catalog) throws SQLException {
-
+        this.catalog = catalog;
     }
 
     @Override
     public String getCatalog() throws SQLException {
-        return null;
+        return catalog;
     }
 
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
-
+        transactionIsolation = level;
     }
 
     @Override
     public int getTransactionIsolation() throws SQLException {
-        return 0;
+        return transactionIsolation;
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        return null;
+        return sqlWarning;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-
+        sqlWarning = null;
     }
 
     @Override
@@ -118,27 +187,27 @@ public class LyraConnection implements Connection {
 
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        return null;
+        return typeMap;
     }
 
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-
+        this.typeMap = map;
     }
 
     @Override
     public void setHoldability(int holdability) throws SQLException {
-
+        this.holdability = holdability;
     }
 
     @Override
     public int getHoldability() throws SQLException {
-        return 0;
+        return holdability;
     }
 
     @Override
     public Savepoint setSavepoint() throws SQLException {
-        return null;
+        return savepoint;
     }
 
     @Override
@@ -213,22 +282,23 @@ public class LyraConnection implements Connection {
 
     @Override
     public void setClientInfo(String name, String value) throws SQLClientInfoException {
-
+        clientInfo = new Properties();
+        clientInfo.setProperty(name, value);
     }
 
     @Override
     public void setClientInfo(Properties properties) throws SQLClientInfoException {
-
+        clientInfo = properties;
     }
 
     @Override
     public String getClientInfo(String name) throws SQLException {
-        return null;
+        return clientInfo.toString();
     }
 
     @Override
     public Properties getClientInfo() throws SQLException {
-        return null;
+        return clientInfo;
     }
 
     @Override
@@ -243,12 +313,12 @@ public class LyraConnection implements Connection {
 
     @Override
     public void setSchema(String schema) throws SQLException {
-
+        this.schema = schema;
     }
 
     @Override
     public String getSchema() throws SQLException {
-        return null;
+        return schema;
     }
 
     @Override

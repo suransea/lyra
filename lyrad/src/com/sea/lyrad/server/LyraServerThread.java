@@ -94,11 +94,9 @@ public class LyraServerThread implements Runnable {
                 if (access) {
                     response.put("version", VERSION);
                     response.put("count", count);
-                    send(response.toString());
                     user = new User(username);
-                } else {
-                    send(response.toString());
                 }
+                send(response.toString());
                 break;
             }
             case "sql": {
@@ -122,7 +120,8 @@ public class LyraServerThread implements Runnable {
                     response.put("outcome", e.getMessage());
                     response.put("complete", false);
                 }
-                send(String.valueOf(response.toString().getBytes("utf-8").length));
+                outputStream.write(toByteArray(response.toString().getBytes("utf-8").length));
+                outputStream.flush();
                 send(response.toString());
                 break;
             }
@@ -132,5 +131,14 @@ public class LyraServerThread implements Runnable {
     private void send(String response) throws IOException {
         outputStream.write(response.getBytes("utf-8"));
         outputStream.flush();
+    }
+
+    private byte[] toByteArray(int integer) {
+        byte[] bytes = new byte[4];
+        bytes[0] = (byte) ((integer >> 24) & 0xff);
+        bytes[1] = (byte) ((integer >> 16) & 0xff);
+        bytes[2] = (byte) ((integer >> 8) & 0xff);
+        bytes[3] = (byte) (integer & 0xff);
+        return bytes;
     }
 }

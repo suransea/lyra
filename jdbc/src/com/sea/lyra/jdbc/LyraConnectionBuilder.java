@@ -15,7 +15,7 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     private String password;
     private String url;
 
-    public LyraConnectionBuilder(String url) {
+    LyraConnectionBuilder(String url) {
         this.url = url;
     }
 
@@ -49,12 +49,11 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
             URL address = new URL(url);
             URLConnection connection = address.openConnection();
             connection.connect();
-            connection.getInputStream();
+            return new LyraConnection(connection, username, password);
         } catch (MalformedURLException e) {
             return null;
         } catch (IOException e) {
             throw new SQLException(e);
         }
-        return new LyraConnection();
     }
 }
