@@ -249,7 +249,7 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return null;
+        return new LyraResultSetMetaData(columnNames);
     }
 
     @Override
@@ -329,7 +329,7 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public int getRow() throws SQLException {
-        return 0;
+        return rows.size();
     }
 
     @Override
