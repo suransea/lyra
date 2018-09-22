@@ -38,6 +38,7 @@ public class test {
                             "123456");
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("select * from `user`");
+            System.out.println(resultSet.getRow());//获取行数
             while (resultSet.next()) {
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();// 获取列数
