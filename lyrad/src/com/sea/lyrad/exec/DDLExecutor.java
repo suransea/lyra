@@ -93,6 +93,7 @@ public class DDLExecutor extends SQLExecutor {
                     element.detach();
                     DBManager dbManager = new DBManager();
                     dbManager.write(user.getCurrentDB());
+                    user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));//刷新
                     return String.format("Table %s deleted.", stmt.getTableName());
                 }
             }
