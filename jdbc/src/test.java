@@ -9,6 +9,13 @@ public class test {
                             "root",
                             "123456");
             Statement statement = connection.createStatement();
+            StringBuilder sql = new StringBuilder("insert into test_table values");
+            for (int i = 0; i < 100; i++) {
+                sql.append("(12432432,'sdfrg',214325),");
+                //System.out.println(i);
+            }
+            sql.append("(12432432,'sdfrg',214325)");
+            statement.execute(sql.toString());
             ResultSet resultSet = statement.executeQuery("select * from test_table");
             System.out.println(resultSet.getRow());//获取行数
             while (resultSet.next()) {
@@ -19,10 +26,6 @@ public class test {
                     String data = resultSet.getString(columnName);
                     System.out.println(data);
                 }
-//                String username = resultSet.getString("username");//根据列名获取数据
-//                String user = resultSet.getString(1);//根据索引获取数据
-//                System.out.println(username);
-//                System.out.println(user);
             }
         } catch (Exception e) {
             e.printStackTrace();

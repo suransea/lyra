@@ -55,8 +55,8 @@ public class LyraServerThread implements Runnable {
     public void run() {
         try {
             while (true) {
-                lock.lock();
                 String request = scanner.nextLine();
+                lock.lock();
                 parse(request);
                 lock.unlock();
             }
