@@ -5,12 +5,15 @@ import argparse
 import atexit
 import configparser
 import getpass
+import json
 import platform
 import re
 import socket
 import sys
 
 import readline
+
+import table
 
 # Tab 自动补全的字符串
 WORDS = ['table', 'select ', 'create ', 'drop ', 'delete from ', 'update ', 'insert into ', 'where ', 'for',
@@ -101,7 +104,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # 登录
-    login = 'login ' + username + ' ' + password + '\n'
+    login = json.dumps({'tag': 'login', 'user': username, 'password': password})
+    login += '\n'
     try:
         sk.sendall(login.encode('utf-8'))
         rev = sk.recv(1024).decode('utf-8')
@@ -109,16 +113,16 @@ if __name__ == '__main__':
         print(e.strerror)
         sys.exit(1)
 
-    status = re.findall(r'\S+', rev)
-    if status[0] == 'access':
-        version = status[1]
-        count = status[2]
+    rsp = json.loads(rev)
+    if rsp['access']:
+        version = rsp['version']
+        count = rsp['count']
     else:
         print('Username or password is not right.')
         sys.exit(1)
 
     print('\nWelcome to the Lyra monitor.  Commands end with ; .')
-    print('Your connection id is ' + count)
+    print('Your connection id is ' + str(count))
     print("Server version: " + version)
     print()
     print("Type 'help;' or '\\h' for help. Type '\\c' to clear the current input statement.\n\n")
@@ -145,30 +149,24 @@ if __name__ == '__main__':
             continue
         if cmd.endswith(';'):
             sql += cmd
-            rsp = ''
+            req = json.dumps({'tag': 'sql', 'sql': sql})
+            req += '\n'
             try:
-                sk.sendall('sql\n'.encode('utf-8'))
-                sk.sendall((sql + '\n').encode('utf-8'))
+                sk.sendall(req.encode('utf-8'))
                 rev = bytes()
-                while True:
+                data_size = int(sk.recv(1024).decode('utf-8'))
+                rev_size = 0
+                while rev_size < data_size:
                     data = sk.recv(8192)
-                    if not data:
-                        break
                     rev += data
-                    try:
-                        rsp = rev.decode('utf-8')
-                        if rsp.endswith('true\n') or rsp.endswith('false\n'):
-                            break
-                    except UnicodeDecodeError:
-                        pass
+                    rev_size += len(data)
             except socket.error as e:
                 print(e.strerror)
                 sys.exit(1)
-            complete = False
-            if rsp.endswith('true\n'):
-                complete = True
+            rsp = json.loads(rev)
+            complete = rsp['complete']
             print()
-            print(rsp.rstrip('false\n').rstrip('true\n'))
+            table.print_tb(rsp)
             print()
             sub_sql = re.findall(r'\w+', sql)
             if sub_sql[0:3] == ['drop', 'database', cur_db] and complete:

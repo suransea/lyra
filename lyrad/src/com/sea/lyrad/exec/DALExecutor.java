@@ -5,7 +5,9 @@ import com.sea.lyrad.lex.token.Keyword;
 import com.sea.lyrad.parse.stmt.dal.DALStatement;
 import com.sea.lyrad.parse.stmt.dal.ShowStatement;
 import com.sea.lyrad.parse.stmt.dal.UseStatement;
-import com.sea.lyrad.util.ConsoleTable;
+import org.json.JSONArray;
+
+import java.util.Collections;
 
 public class DALExecutor extends SQLExecutor {
 
@@ -36,26 +38,22 @@ public class DALExecutor extends SQLExecutor {
     private String executeShow() throws DBProcessException {
         ShowStatement stmt = (ShowStatement) statement;
         if (stmt.getItem().equals(Keyword.DATABASES)) {
-            ConsoleTable consoleTable = new ConsoleTable(1);
-            consoleTable.appendRow();
-            consoleTable.appendColumn("DATABASES");
+            JSONArray result = new JSONArray();
+            result.put(Collections.singletonList("DATABASES"));
             for (String name : user.getAccessDBNames()) {
-                consoleTable.appendRow();
-                consoleTable.appendColumn(name);
+                result.put(Collections.singletonList(name));
             }
-            return consoleTable.toString();
+            return result.toString();
         } else if (stmt.getItem().equals(Keyword.TABLES)) {
             if (user.getCurrentDB() == null) {
                 throw new DBProcessException("Please select a database firstly.");
             }
-            ConsoleTable consoleTable = new ConsoleTable(1);
-            consoleTable.appendRow();
-            consoleTable.appendColumn("TABLES");
+            JSONArray result = new JSONArray();
+            result.put(Collections.singletonList("TABLES"));
             for (Table table : user.getCurrentDB().getTables()) {
-                consoleTable.appendRow();
-                consoleTable.appendColumn(table.getName());
+                result.put(Collections.singletonList(table.getName()));
             }
-            return consoleTable.toString();
+            return result.toString();
         }
         throw new DBProcessException("Unknown error.");
     }

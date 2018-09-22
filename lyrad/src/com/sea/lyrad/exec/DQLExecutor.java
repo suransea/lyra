@@ -7,7 +7,7 @@ import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.context.Condition;
 import com.sea.lyrad.parse.stmt.dql.DQLStatement;
 import com.sea.lyrad.parse.stmt.dql.SelectStatement;
-import com.sea.lyrad.util.ConsoleTable;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class DQLExecutor extends SQLExecutor {
             }
         }
         List<Map<String, String>> data = database.getRows(table.getName());
-        ConsoleTable consoleTable = new ConsoleTable(selectAttrs.size());
+        JSONArray ren = new JSONArray();
         if (!selectAllRows) {
             for (int i = 0; i < data.size(); i++) {
                 if (!stmt.isMatched(data.get(i))) {
@@ -103,16 +103,14 @@ public class DQLExecutor extends SQLExecutor {
                     return result;
                 }
         );
-        consoleTable.appendRow();
-        for (String column : selectAttrs) {
-            consoleTable.appendColumn(column);
-        }
+        ren.put(selectAttrs);
         for (Map<String, String> entry : data) {
-            consoleTable.appendRow();
+            List<String> row = new ArrayList<>();
             for (String column : selectAttrs) {
-                consoleTable.appendColumn(entry.get(column));
+                row.add(entry.get(column));
             }
+            ren.put(row);
         }
-        return consoleTable.toString();
+        return ren.toString();
     }
 }

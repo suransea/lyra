@@ -12,6 +12,7 @@ import com.sea.lyrad.parse.SQLParser;
 import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.util.LockUtil;
 import com.sea.lyrad.util.Log;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,7 @@ public class LyraServerThread implements Runnable {
     private InputStream inputStream;
     private OutputStream outputStream;
     private Scanner scanner;
-    private User user;
+    private User user = null;
     private SQLExecutor sqlExecutor;
 
     public LyraServerThread(Socket socket, int count) {
@@ -55,8 +56,8 @@ public class LyraServerThread implements Runnable {
         try {
             while (true) {
                 lock.lock();
-                String str = scanner.nextLine();
-                parse(str);
+                String request = scanner.nextLine();
+                parse(request);
                 lock.unlock();
             }
         } catch (IOException | NoSuchElementException ioe) {
@@ -75,12 +76,12 @@ public class LyraServerThread implements Runnable {
         }
     }
 
-    private void parse(String s) throws IOException {
-        Scanner strScanner = new Scanner(s);
-        switch (strScanner.next()) {
+    private void parse(String request) throws IOException {
+        JSONObject json = new JSONObject(request);
+        switch (json.getString("tag")) {
             case "login": {
-                String username = strScanner.next();
-                String password = strScanner.next();
+                String username = json.getString("user");
+                String password = json.getString("password");
                 DBManager dbManager = new DBManager();
                 boolean access;
                 try {
@@ -88,34 +89,41 @@ public class LyraServerThread implements Runnable {
                 } catch (DBProcessException e) {
                     access = false;
                 }
-
+                JSONObject response = new JSONObject();
+                response.put("access", access);
                 if (access) {
-                    send(String.format("access %s %d\n", VERSION, count));
+                    response.put("version", VERSION);
+                    response.put("count", count);
+                    send(response.toString());
                     user = new User(username);
                 } else {
-                    send("refuse\n");
+                    send(response.toString());
                 }
-                outputStream.flush();
                 break;
             }
             case "sql": {
-                String sql = scanner.nextLine();
+                if (user == null) {
+                    return;
+                }
+                String sql = json.getString("sql");
                 Lexer lexer = new Lexer(sql);
                 SQLParser parser = new SQLParser(lexer);
+                JSONObject response = new JSONObject();
                 try {
                     long startTime = System.currentTimeMillis();
                     SQLStatement statement = parser.parse();
                     String outcome = sqlExecutor.execute(user, statement);
                     long time = System.currentTimeMillis() - startTime;
-                    send(outcome);
-                    send(String.format("\n\nConsumption of time: %.3f s.", time / 1000.0));
-                    send("\ntrue\n");
-                    outputStream.flush();
+                    response.put("outcome", outcome);
+                    response.put("time", time);
+                    response.put("complete", true);
                 } catch (DBProcessException | SQLParseException |
                         SQLParseUnsupportedException | UnterminatedCharException e) {
-                    send(e.getMessage());
-                    send("\nfalse\n");
+                    response.put("outcome", e.getMessage());
+                    response.put("complete", false);
                 }
+                send(String.valueOf(response.toString().getBytes("utf-8").length));
+                send(response.toString());
                 break;
             }
         }
