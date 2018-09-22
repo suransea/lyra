@@ -1,4 +1,6 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 
 public class test {
     public static void main(String[] args) {
@@ -10,23 +12,25 @@ public class test {
                             "123456");
             Statement statement = connection.createStatement();
             StringBuilder sql = new StringBuilder("insert into test_table values");
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 100000; i++) {
                 sql.append("(12432432,'sdfrg',214325),");
-                System.out.println(i);
             }
             sql.append("(12432432,'sdfrg',214325)");
+            long time = System.currentTimeMillis();
+            System.out.println("begin");
             statement.execute(sql.toString());
-            ResultSet resultSet = statement.executeQuery("select * from test_table");
-            System.out.println(resultSet.getRow());//获取行数
-            while (resultSet.next()) {
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();// 获取列数
-                for (int i = 0; i < columnCount; i++) {
-                    String columnName = metaData.getColumnName(i);//根据索引获取列名
-                    String data = resultSet.getString(columnName);
-                    System.out.println(data);
-                }
-            }
+            System.out.println(System.currentTimeMillis() - time);
+//            ResultSet resultSet = statement.executeQuery("select * from test_table");
+//            System.out.println(resultSet.getRow());//获取行数
+//            while (resultSet.next()) {
+//                ResultSetMetaData metaData = resultSet.getMetaData();
+//                int columnCount = metaData.getColumnCount();// 获取列数
+//                for (int i = 0; i < columnCount; i++) {
+//                    String columnName = metaData.getColumnName(i);//根据索引获取列名
+//                    String data = resultSet.getString(columnName);
+//                    System.out.println(data);
+//                }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

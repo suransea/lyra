@@ -70,7 +70,7 @@ public class LyraServerThread implements Runnable {
                 outputStream.close();
                 socket.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.a(e.getMessage());
             }
 
         }
