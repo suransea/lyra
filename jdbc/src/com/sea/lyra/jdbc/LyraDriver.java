@@ -27,7 +27,7 @@ public class LyraDriver implements java.sql.Driver {
 
     @Override
     public boolean acceptsURL(String url) throws SQLException {
-        return false;
+        return url.startsWith("jdbc:lyra://");
     }
 
     @Override
