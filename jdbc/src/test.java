@@ -30,6 +30,8 @@ public class test {
                     System.out.println(data);
                 }
             }
+            connection.close();
+            System.out.println();
         } catch (Exception e) {
             e.printStackTrace();
         }

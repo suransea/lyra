@@ -116,7 +116,7 @@ public class LyraConnection implements Connection {
             outputStream.close();
             closed = true;
         } catch (IOException e) {
-            throw new SQLException(e);
+            e.printStackTrace();
         }
     }
 

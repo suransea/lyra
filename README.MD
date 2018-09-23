@@ -52,6 +52,7 @@ public class test {
                 System.out.println(username); 
                 System.out.println(user);
             }
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
