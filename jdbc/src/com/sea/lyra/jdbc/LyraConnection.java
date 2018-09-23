@@ -114,9 +114,10 @@ public class LyraConnection implements Connection {
         try {
             inputStream.close();
             outputStream.close();
-            closed = true;
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            closed = true;
         }
     }
 

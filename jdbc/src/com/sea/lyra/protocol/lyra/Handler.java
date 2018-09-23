@@ -10,15 +10,23 @@ public class Handler extends URLStreamHandler {
     protected URLConnection openConnection(URL url) throws IOException {
         return new URLConnection(url) {
             private Socket socket;
+            private InputStream inputStream = null;
+            private OutputStream outputStream = null;
 
             @Override
             public InputStream getInputStream() throws IOException {
-                return socket.getInputStream();
+                if (inputStream == null) {
+                    inputStream = socket.getInputStream();
+                }
+                return inputStream;
             }
 
             @Override
             public OutputStream getOutputStream() throws IOException {
-                return socket.getOutputStream();
+                if (outputStream == null) {
+                    outputStream = socket.getOutputStream();
+                }
+                return outputStream;
             }
 
             @Override

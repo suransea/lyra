@@ -32,6 +32,12 @@ public class test {
             }
             statement.close();
             connection.close();
+            Connection conn = DriverManager
+                    .getConnection("jdbc:lyra://localhost:5494/test",
+                            "sea",
+                            "(none)");
+            Statement stmt = conn.createStatement();
+            System.out.println(stmt.execute("show databases"));
             System.out.println();
         } catch (Exception e) {
             e.printStackTrace();
