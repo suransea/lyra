@@ -8,6 +8,7 @@ public class test {
                     .getConnection("jdbc:lyra://localhost:5494/lyra",
                             "root",
                             "123456");
+            System.out.println(connection);
             Statement statement = connection.createStatement();
 //            StringBuilder sql = new StringBuilder("insert into test_table values");
 //            for (int i = 0; i < 10; i++) {

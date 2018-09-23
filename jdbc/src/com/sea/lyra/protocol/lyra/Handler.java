@@ -1,4 +1,4 @@
-package com.sea.lyra.jdbc.protocol.lyra;
+package com.sea.lyra.protocol.lyra;
 
 import java.io.IOException;
 import java.io.InputStream;

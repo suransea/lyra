@@ -1,5 +1,7 @@
 package com.sea.lyra.jdbc;
 
+import com.sea.lyra.protocol.lyra.Handler;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,15 +14,6 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     private String username;
     private String password;
     private String url;
-
-    static {
-        String pkgs = System.getProperty("java.protocol.handler.pkgs");
-        if (pkgs == null || pkgs.equals("") || pkgs.equals("null")) {
-            System.setProperty("java.protocol.handler.pkgs", "com.sea.lyra.jdbc.protocol");
-        } else {
-            throw new Error("Cannot define protocol 'lyra', already defined others.");
-        }
-    }
 
     LyraConnectionBuilder(String url) {
         this.url = url;
@@ -42,14 +35,18 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     public Connection build() throws SQLException {
         try {
             url = url.replaceAll("jdbc:", "");
-            URL address = new URL(url);
+            URL address = new URL(null, url, new Handler());
             URLConnection connection = address.openConnection();
             connection.connect();
             return new LyraConnection(connection, username, password);
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             return null;
         } catch (IOException e) {
             throw new SQLException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }
