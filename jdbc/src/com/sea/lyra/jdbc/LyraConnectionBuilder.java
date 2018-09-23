@@ -13,6 +13,15 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     private String password;
     private String url;
 
+    static {
+        String pkgs = System.getProperty("java.protocol.handler.pkgs");
+        if (pkgs == null || pkgs.equals("") || pkgs.equals("null")) {
+            System.setProperty("java.protocol.handler.pkgs", "com.sea.lyra.jdbc.protocol");
+        } else {
+            throw new Error("Cannot define protocol 'lyra', already defined others.");
+        }
+    }
+
     LyraConnectionBuilder(String url) {
         this.url = url;
     }
@@ -32,7 +41,6 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     @Override
     public Connection build() throws SQLException {
         try {
-            URL.setURLStreamHandlerFactory(new LyraURLStreamHandlerFactory());
             url = url.replaceAll("jdbc:", "");
             URL address = new URL(url);
             URLConnection connection = address.openConnection();
