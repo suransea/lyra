@@ -5,14 +5,14 @@ import java.sql.Statement;
 public class test {
     public static void main(String[] args) {
         try {
-            Class.forName("com.sea.lyra.jdbc.LyraDriver");
+            Class.forName("com.sea.lyra.Driver");
             Connection connection = DriverManager
                     .getConnection("jdbc:lyra://localhost:5494/test",
                             "root",
                             "123456");
             Statement statement = connection.createStatement();
             StringBuilder sql = new StringBuilder("insert into test_table values");
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i < 10; i++) {
                 sql.append("(12432432,'sdfrg',214325),");
             }
             sql.append("(12432432,'sdfrg',214325)");

@@ -14,7 +14,7 @@ public class LyraDriver implements java.sql.Driver {
         }
     }
 
-    public LyraDriver() {
+    protected LyraDriver() {
     }
 
     @Override
