@@ -30,6 +30,7 @@ public class test {
                     System.out.println(data);
                 }
             }
+            statement.close();
             connection.close();
             System.out.println();
         } catch (Exception e) {
