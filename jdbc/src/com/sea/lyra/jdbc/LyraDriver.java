@@ -19,6 +19,7 @@ public class LyraDriver implements java.sql.Driver {
 
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
+        if (!acceptsURL(url)) return null;
         ConnectionBuilder builder = new LyraConnectionBuilder(url);
         return builder.user(info.getProperty("user"))
                 .password(info.getProperty("password"))

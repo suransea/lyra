@@ -1,7 +1,5 @@
 package com.sea.lyra.jdbc;
 
-import com.sea.lyra.protocol.lyra.Handler;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,18 +33,14 @@ public class LyraConnectionBuilder implements ConnectionBuilder {
     public Connection build() throws SQLException {
         try {
             url = url.replaceAll("jdbc:", "");
-            URL address = new URL(null, url, new Handler());
+            URL address = new URL(null, url, new com.sea.lyra.protocol.lyra.Handler());
             URLConnection connection = address.openConnection();
             connection.connect();
             return new LyraConnection(connection, username, password);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             return null;
         } catch (IOException e) {
             throw new SQLException(e);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
     }
 }
