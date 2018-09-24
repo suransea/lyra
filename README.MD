@@ -8,11 +8,11 @@
 
 ### lyrad (server, daemon)
 
-* `java -jar Lyrad.jar`
+* `$ java -jar Lyrad.jar`
 
 ### client
 
-* `lyra [-h <address>] [-u <user> [-p]] `
+* `$ lyra [-h <address>] [-u <user> [-p]] `
 * `address`: 服务器ip地址， 默认为127.0.0.1
 * `user`: 用户名
 * `p`: 登录用户是否包含密码
@@ -21,7 +21,7 @@
 
 ##### 测试
 
-* `lyra -u root -p < test.sql`
+* `$ lyra -u root -p < test.sql`
 
 ### JDBC 样例
 
