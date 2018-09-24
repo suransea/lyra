@@ -38,7 +38,7 @@ public class LyraServer {
                 Thread thread = new Thread(new LyraServerThread(socket, count));
                 thread.start();
             }
-        } catch (BindException b) {
+        } catch (BindException e) {
             Log.pa("端口已被占用.");
         } catch (Exception e) {
             e.printStackTrace();
