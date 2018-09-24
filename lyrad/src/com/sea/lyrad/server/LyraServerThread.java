@@ -24,7 +24,7 @@ import java.util.concurrent.locks.Lock;
 
 public class LyraServerThread implements Runnable {
 
-    private static final String VERSION = "0.4";//版本号
+    private static final String VERSION = "0.5";//版本号
 
     private Lock lock;
 
