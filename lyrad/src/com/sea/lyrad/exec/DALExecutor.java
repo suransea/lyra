@@ -30,7 +30,7 @@ public class DALExecutor extends SQLExecutor {
         if (!user.getAccessDBNames().contains(stmt.getDBName())) {
             throw new DBProcessException("The database is not exist.");
         }
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         user.setCurrentDB(dbManager.getDatabase(stmt.getDBName()));
         return "Database changed.";
     }

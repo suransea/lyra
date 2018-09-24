@@ -22,7 +22,7 @@ public class User {
     private Database currentDB = null;
 
     public List<String> getAccessDBNames() {
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         List<String> result = dbManager.getDBNames();
         if (!name.equals("root")) {
             result.remove("lyra");

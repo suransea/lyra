@@ -30,7 +30,7 @@ public class DCLExecutor extends SQLExecutor {
         if (!user.getName().equals("root")) {
             throw new DBProcessException("Permission denied.");
         }
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         Database userDB = dbManager.getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
         Element tableElement = null;
@@ -64,7 +64,7 @@ public class DCLExecutor extends SQLExecutor {
         if (!user.getName().equals("root") && !user.getName().equals(stmt.getUsername())) {
             throw new DBProcessException("Permission denied.");
         }
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         Database userDB = dbManager.getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
         Element tableElement = null;

@@ -17,8 +17,14 @@ import java.util.List;
 public class DBManager {
 
     private static final String PATH = "./database";
+    private static DBManager dbManager = null;
 
-    public DBManager() {
+    private DBManager() {
+    }
+
+    public static DBManager getInstance() {
+        if (dbManager == null) dbManager = new DBManager();
+        return dbManager;
     }
 
     public List<String> getDBNames() {

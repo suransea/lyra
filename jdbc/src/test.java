@@ -5,21 +5,21 @@ public class test {
         try {
             Class.forName("com.sea.lyra.Driver");
             Connection connection = DriverManager
-                    .getConnection("jdbc:lyra://localhost:5494/lyra",
+                    .getConnection("jdbc:lyra://localhost:5494/test",
                             "root",
                             "123456");
             System.out.println(connection);
             Statement statement = connection.createStatement();
-//            StringBuilder sql = new StringBuilder("insert into test_table values");
-//            for (int i = 0; i < 10; i++) {
-//                sql.append("(12432432,'sdfrg',214325),");
-//            }
-//            sql.append("(12432432,'sdfrg',214325)");
-//            long time = System.currentTimeMillis();
-//            System.out.println("begin");
-//            statement.execute(sql.toString());
-//            System.out.println(System.currentTimeMillis() - time);
-            ResultSet resultSet = statement.executeQuery("select * from `user`");
+            StringBuilder sql = new StringBuilder("insert into test_table values");
+            for (int i = 0; i < 10; i++) {
+                sql.append("(12432432,'sdfrg',214325),");
+            }
+            sql.append("(12432432,'sdfrg',214325)");
+            long time = System.currentTimeMillis();
+            System.out.println("begin");
+            statement.execute(sql.toString());
+            System.out.println(System.currentTimeMillis() - time);
+            ResultSet resultSet = statement.executeQuery("select * from test_table");
             System.out.println(resultSet.getRow());//获取行数
             while (resultSet.next()) {
                 ResultSetMetaData metaData = resultSet.getMetaData();
@@ -30,10 +30,6 @@ public class test {
                     System.out.println(data);
                 }
             }
-            statement.close();
-            Statement stmt = connection.createStatement();
-            System.out.println(stmt.execute("show databases"));
-            System.out.println();
             statement.close();
             connection.close();
         } catch (Exception e) {

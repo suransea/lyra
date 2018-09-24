@@ -31,7 +31,7 @@ public class DDLExecutor extends SQLExecutor {
     private String executeCreate() throws DBProcessException {
         CreateStatement stmt = (CreateStatement) statement;
         if (stmt.getItem() == Keyword.DATABASE) {
-            DBManager dbManager = new DBManager();
+            DBManager dbManager = DBManager.getInstance();
             List<String> fileNames = dbManager.getDBNames();
             if (fileNames.contains(stmt.getDBName())) {
                 throw new DBProcessException("The database is already exist.");
@@ -62,9 +62,8 @@ public class DDLExecutor extends SQLExecutor {
                     attrElement.addAttribute("length", Integer.toString(column.getTypeLength()));
                 }
             }
-            DBManager dbManager = new DBManager();
+            DBManager dbManager = DBManager.getInstance();
             dbManager.write(database);
-            user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));//刷新
             return String.format("Table %s created.", stmt.getTableName());
         }
         throw new DBProcessException("Unknown error.");
@@ -76,7 +75,7 @@ public class DDLExecutor extends SQLExecutor {
             if (!user.getAccessDBNames().contains(stmt.getDBName())) {
                 throw new DBProcessException("The target database is not exist.");
             }
-            DBManager dbManager = new DBManager();
+            DBManager dbManager = DBManager.getInstance();
             dbManager.deleteDatabase(stmt.getDBName());
             if (user.getCurrentDB() != null && user.getCurrentDB().getName().equals(stmt.getDBName())) {
                 user.setCurrentDB(null);
@@ -91,9 +90,8 @@ public class DDLExecutor extends SQLExecutor {
                 Element element = it.next();
                 if (element.attributeValue("name").equals(stmt.getTableName())) {
                     element.detach();
-                    DBManager dbManager = new DBManager();
+                    DBManager dbManager = DBManager.getInstance();
                     dbManager.write(user.getCurrentDB());
-                    user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));//刷新
                     return String.format("Table %s deleted.", stmt.getTableName());
                 }
             }

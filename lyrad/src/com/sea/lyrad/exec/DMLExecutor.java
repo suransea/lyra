@@ -101,7 +101,7 @@ public class DMLExecutor extends SQLExecutor {
         }
         elements.forEach(tableElement::add);
         int count = elements.size();
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         dbManager.write(database);
         return String.format("%d item(s) inserted.", count);
     }
@@ -159,7 +159,7 @@ public class DMLExecutor extends SQLExecutor {
                 }
             }
         }
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         dbManager.write(database);
         return String.format("%d item(s) deleted.", count);
     }
@@ -225,7 +225,7 @@ public class DMLExecutor extends SQLExecutor {
                 }
             }
         }
-        DBManager dbManager = new DBManager();
+        DBManager dbManager = DBManager.getInstance();
         dbManager.write(database);
         return String.format("%d item(s) updated.", count);
     }

@@ -82,7 +82,7 @@ public class LyraServerThread implements Runnable {
             case "login": {
                 String username = json.getString("user");
                 String password = json.getString("password");
-                DBManager dbManager = new DBManager();
+                DBManager dbManager = DBManager.getInstance();
                 boolean access;
                 try {
                     access = dbManager.verify(username, password);
