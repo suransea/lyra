@@ -14,6 +14,7 @@ import java.util.Scanner;
 public class LyraStatement implements Statement {
     private InputStream inputStream;
     private OutputStream outputStream;
+    private boolean closed = false;
 
     private void send(String content) throws IOException {
         outputStream.write(content.getBytes(Charset.forName("utf-8")));
@@ -94,12 +95,7 @@ public class LyraStatement implements Statement {
 
     @Override
     public void close() throws SQLException {
-        try {
-            inputStream.close();
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        closed = true;
     }
 
     @Override
@@ -289,7 +285,7 @@ public class LyraStatement implements Statement {
 
     @Override
     public boolean isClosed() throws SQLException {
-        return false;
+        return closed;
     }
 
     @Override
@@ -304,12 +300,12 @@ public class LyraStatement implements Statement {
 
     @Override
     public void closeOnCompletion() throws SQLException {
-
+        closed = true;
     }
 
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
-        return false;
+        return closed;
     }
 
     @Override
