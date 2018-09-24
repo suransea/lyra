@@ -54,7 +54,7 @@ public class LyraResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public String getColumnLabel(int column) throws SQLException {
-        if (column >= columnNames.size()) {
+        if (--column >= columnNames.size()) {
             throw new SQLException("The column index is out of size.");
         }
         return columnNames.get(column);

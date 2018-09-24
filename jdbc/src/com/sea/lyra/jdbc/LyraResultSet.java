@@ -17,7 +17,7 @@ public class LyraResultSet implements ResultSet {
     private int position;
 
     LyraResultSet(String outcome) throws SQLException {
-        position = -1;
+        position = 0;
         columnNames = new ArrayList<>();
         rows = new ArrayList<>();
         try {
@@ -26,7 +26,7 @@ public class LyraResultSet implements ResultSet {
             for (int i = 0; i < head.length(); i++) {
                 columnNames.add(head.getString(i));
             }
-            for (int i = 1; i < array.length(); i++) {
+            for (int i = 0; i < array.length(); i++) {
                 JSONArray item = array.getJSONArray(i);
                 Map<String, Object> row = new HashMap<>();
                 for (int index = 0; index < item.length(); index++) {
@@ -52,12 +52,12 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public boolean wasNull() throws SQLException {
-        return false;
+        return rows.size() == 1;
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        if (columnIndex >= columnNames.size()) {
+        if (--columnIndex >= columnNames.size()) {
             throw new SQLException("Column index is out of size.");
         }
         return rows.get(position).get(columnNames.get(columnIndex)).toString();
@@ -80,6 +80,9 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
+        if (--columnIndex >= columnNames.size()) {
+            throw new SQLException("Column index is out of size.");
+        }
         try {
             return Integer.parseInt(rows.get(position).get(columnNames.get(columnIndex)).toString());
         } catch (NumberFormatException e) {
@@ -264,7 +267,7 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public int findColumn(String columnLabel) throws SQLException {
-        return 0;
+        return columnNames.indexOf(columnLabel) + 1;
     }
 
     @Override
@@ -329,7 +332,7 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public int getRow() throws SQLException {
-        return rows.size();
+        return rows.size() - 1;
     }
 
     @Override
