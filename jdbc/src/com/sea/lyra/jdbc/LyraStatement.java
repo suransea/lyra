@@ -1,5 +1,7 @@
 package com.sea.lyra.jdbc;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -12,9 +14,13 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LyraStatement implements Statement {
+    private Connection connection;
     private InputStream inputStream;
     private OutputStream outputStream;
+
     private boolean closed = false;
+    private ResultSet resultSet = null;
+    private int updateCount = 0;
 
     private void send(String content) throws IOException {
         outputStream.write(content.getBytes(Charset.forName("utf-8")));
@@ -41,56 +47,22 @@ public class LyraStatement implements Statement {
         return new String(receive, Charset.forName("utf-8"));
     }
 
-    LyraStatement(URLConnection connection) throws IOException {
-        inputStream = connection.getInputStream();
-        outputStream = connection.getOutputStream();
+    LyraStatement(URLConnection urlConnection, Connection connection) throws IOException {
+        inputStream = urlConnection.getInputStream();
+        outputStream = urlConnection.getOutputStream();
+        this.connection = connection;
     }
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
-        if (!sql.endsWith(";")) sql += ";";
-        JSONObject request = new JSONObject();
-        request.put("tag", "sql");
-        request.put("sql", sql);
-        try {
-            send(request.toString() + "\n");
-            String response = receive();
-            JSONObject json = new JSONObject(response);
-            if (json.getBoolean("complete")) {
-                String outcome = json.getString("outcome");
-                return new LyraResultSet(outcome);
-            } else {
-                throw new SQLException(json.getString("outcome"));
-            }
-        } catch (IOException e) {
-            throw new SQLException(e);
-        }
+        execute(sql);
+        return resultSet;
     }
 
     @Override
     public int executeUpdate(String sql) throws SQLException {
-        if (!sql.endsWith(";")) sql += ";";
-        JSONObject request = new JSONObject();
-        request.put("tag", "sql");
-        request.put("sql", sql);
-        try {
-            send(request.toString() + "\n");
-            String response = receive();
-            JSONObject json = new JSONObject(response);
-            if (json.getBoolean("complete")) {
-                String outcome = json.getString("outcome");
-                Scanner scanner = new Scanner(outcome);
-                try {
-                    return scanner.nextInt();
-                } catch (InputMismatchException e) {
-                    throw new SQLException("SQL was executed, but not a update statement.");
-                }
-            } else {
-                throw new SQLException(json.getString("outcome"));
-            }
-        } catch (IOException e) {
-            throw new SQLException(e);
-        }
+        execute(sql);
+        return updateCount;
     }
 
     @Override
@@ -159,28 +131,42 @@ public class LyraStatement implements Statement {
         JSONObject request = new JSONObject();
         request.put("tag", "sql");
         request.put("sql", sql);
+        String response;
         try {
             send(request.toString() + "\n");
-            String response = receive();
-            JSONObject json = new JSONObject(response);
-            if (json.getBoolean("complete")) {
-                return true;
-            } else {
-                throw new SQLException(json.getString("outcome"));
-            }
+            response = receive();
         } catch (IOException e) {
             throw new SQLException(e);
+        }
+        JSONObject json = new JSONObject(response);
+        String outcome = json.getString("outcome");
+        if (json.getBoolean("complete")) {
+            try {
+                JSONArray array = new JSONArray(outcome);
+                resultSet = new LyraResultSet(array);
+            } catch (JSONException e) {
+                resultSet = null;
+            }
+            try {
+                Scanner scanner = new Scanner(outcome);
+                updateCount = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                updateCount = 0;
+            }
+            return true;
+        } else {
+            throw new SQLException(outcome);
         }
     }
 
     @Override
     public ResultSet getResultSet() throws SQLException {
-        return null;
+        return resultSet;
     }
 
     @Override
     public int getUpdateCount() throws SQLException {
-        return 0;
+        return updateCount;
     }
 
     @Override
@@ -235,7 +221,7 @@ public class LyraStatement implements Statement {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return null;
+        return connection;
     }
 
     @Override

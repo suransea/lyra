@@ -1,7 +1,6 @@
 package com.sea.lyra.jdbc;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -16,27 +15,21 @@ public class LyraResultSet implements ResultSet {
     private List<Map<String, Object>> rows;
     private int position;
 
-    LyraResultSet(String outcome) throws SQLException {
+    LyraResultSet(JSONArray array) {
         position = 0;
         columnNames = new ArrayList<>();
         rows = new ArrayList<>();
-        try {
-            JSONArray array = new JSONArray(outcome);
-            JSONArray head = array.getJSONArray(0);
-            for (int i = 0; i < head.length(); i++) {
-                columnNames.add(head.getString(i));
+        JSONArray head = array.getJSONArray(0);
+        for (int i = 0; i < head.length(); i++) {
+            columnNames.add(head.getString(i));
+        }
+        for (int i = 0; i < array.length(); i++) {
+            JSONArray item = array.getJSONArray(i);
+            Map<String, Object> row = new HashMap<>();
+            for (int index = 0; index < item.length(); index++) {
+                row.put(columnNames.get(index), item.get(index));
             }
-            for (int i = 0; i < array.length(); i++) {
-                JSONArray item = array.getJSONArray(i);
-                Map<String, Object> row = new HashMap<>();
-                for (int index = 0; index < item.length(); index++) {
-                    row.put(columnNames.get(index), item.get(index));
-                }
-                rows.add(row);
-            }
-            System.out.println();
-        } catch (JSONException e) {
-            throw new SQLException("SQL is executed, but is not a select statement.");
+            rows.add(row);
         }
     }
 
