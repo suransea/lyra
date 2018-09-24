@@ -159,7 +159,7 @@ if __name__ == '__main__':
                              | ((size_data[2] & 0xff) << 8) | (size_data[3] & 0xff))
                 rev_size = 0
                 while rev_size < data_size:
-                    data = sk.recv(8192)
+                    data = sk.recv(1048576)
                     rev += data
                     rev_size += len(data)
             except socket.error as e:

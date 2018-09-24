@@ -36,7 +36,7 @@ public class LyraStatement implements Statement {
                 | (receive[3] & 0xff);
         int receivedSize = 0;
         while (receivedSize < size) {
-            byte[] data = new byte[4096];
+            byte[] data = new byte[1048576];
             int length = inputStream.read(data);
             byte[] newReceive = new byte[receivedSize + length];
             System.arraycopy(receive, 0, newReceive, 0, receivedSize);
