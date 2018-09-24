@@ -42,7 +42,7 @@ public class test {
             while (resultSet.next()) {
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();// 获取列数
-                for (int i = 0; i < columnCount; i++) {
+                for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);//根据索引获取列名
                     String data = resultSet.getString(columnName);
                     System.out.println(data);
