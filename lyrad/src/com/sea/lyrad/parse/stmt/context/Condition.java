@@ -19,6 +19,9 @@ public class Condition {
         }
         switch (operator) {
             case EQ:
+                if (value.matches(this.value)) {
+                    return true;
+                }
                 return outcome == 0;
             case GT:
                 return outcome > 0;
