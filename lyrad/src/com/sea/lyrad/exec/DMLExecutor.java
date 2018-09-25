@@ -122,7 +122,7 @@ public class DMLExecutor extends SQLExecutor {
             }
         }
         Element rootElement = database.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        Element tableElement = XMLUtil.getTableElement(rootElement, stmt.getTableName());
         if (tableElement == null) {
             String message = "Error: data inconsistency.";
             Log.a(message);
@@ -185,7 +185,7 @@ public class DMLExecutor extends SQLExecutor {
             }
         }
         Element rootElement = database.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        Element tableElement = XMLUtil.getTableElement(rootElement, stmt.getTableName());
         if (tableElement == null) {
             String message = "Error: data inconsistency.";
             Log.a(message);
@@ -221,7 +221,13 @@ public class DMLExecutor extends SQLExecutor {
         for (Column column : stmt.getColumns()) {
             Attribute attribute = table.getAttribute(column.getColumnName());
             attribute.checkType(column.getValue());
-            element.setAttributeValue(column.getColumnName(), column.getValue());
+            for (Iterator<org.dom4j.Attribute> it = element.attributeIterator(); it.hasNext(); ) {
+                org.dom4j.Attribute attr = it.next();
+                if (attr.getName().equals(column.getColumnName())) {
+                    attr.setValue(column.getValue());
+                    break;
+                }
+            }
         }
     }
 }
