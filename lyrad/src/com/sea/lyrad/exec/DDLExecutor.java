@@ -1,8 +1,8 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
-import com.sea.lyrad.db.table.Attribute;
 import com.sea.lyrad.db.table.Table;
+import com.sea.lyrad.db.table.TableAttribute;
 import com.sea.lyrad.lex.token.Keyword;
 import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.ddl.CreateStatement;
@@ -58,13 +58,13 @@ public class DDLExecutor extends SQLExecutor {
             Table table = new Table(stmt.getTableName());
             tableElement.addAttribute("name", stmt.getTableName());
             for (Column column : stmt.getColumns()) {
-                Attribute attribute = new Attribute(
+                TableAttribute tableAttribute = new TableAttribute(
                         column.getColumnName(),
                         column.getType().name().toLowerCase(),
                         column.getTypeLength()
                 );
                 Element attrElement = tableElement.addElement("attr");
-                table.addAttribute(attribute);
+                table.addAttribute(tableAttribute);
                 attrElement.addAttribute("name", column.getColumnName());
                 attrElement.addAttribute("type", column.getType().name().toLowerCase());
                 if (column.getTypeLength() != -1) {

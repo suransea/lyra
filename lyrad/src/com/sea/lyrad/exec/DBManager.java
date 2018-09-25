@@ -2,8 +2,8 @@ package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
 import com.sea.lyrad.db.DatabasePool;
-import com.sea.lyrad.db.table.Attribute;
 import com.sea.lyrad.db.table.Table;
+import com.sea.lyrad.db.table.TableAttribute;
 import com.sea.lyrad.util.AESCrypto;
 import com.sea.lyrad.util.Log;
 import com.sea.lyrad.util.XMLUtil;
@@ -97,8 +97,8 @@ public class DBManager {
                 String name = attributeElement.attributeValue("name");
                 String type = attributeElement.attributeValue("type");
                 String length = attributeElement.attributeValue("length");
-                Attribute attribute = new Attribute(name, type, length);
-                table.addAttribute(attribute);
+                TableAttribute tableAttribute = new TableAttribute(name, type, length);
+                table.addAttribute(tableAttribute);
             }
             database.getTables().add(table);
         }

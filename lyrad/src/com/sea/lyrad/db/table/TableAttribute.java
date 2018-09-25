@@ -2,7 +2,7 @@ package com.sea.lyrad.db.table;
 
 import com.sea.lyrad.exec.DBProcessException;
 
-public class Attribute {
+public class TableAttribute {
     private String name;
     private DataType type;
 
@@ -20,7 +20,7 @@ public class Attribute {
 
     private int length;
 
-    public Attribute(String name, String type, String length) {
+    public TableAttribute(String name, String type, String length) {
         this.name = name;
         for (DataType dataType : DataType.values()) {
             if (dataType.name().equals(type)) {
@@ -35,7 +35,7 @@ public class Attribute {
         this.length = Integer.parseInt(length);
     }
 
-    public Attribute(String name, String type, int length) {
+    public TableAttribute(String name, String type, int length) {
         this.name = name;
         for (DataType dataType : DataType.values()) {
             if (dataType.name().equals(type)) {

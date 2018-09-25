@@ -1,8 +1,8 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
-import com.sea.lyrad.db.table.Attribute;
 import com.sea.lyrad.db.table.Table;
+import com.sea.lyrad.db.table.TableAttribute;
 import com.sea.lyrad.parse.SQLParseException;
 import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.context.Condition;
@@ -12,6 +12,7 @@ import com.sea.lyrad.parse.stmt.dml.InsertStatement;
 import com.sea.lyrad.parse.stmt.dml.UpdateStatement;
 import com.sea.lyrad.util.Log;
 import com.sea.lyrad.util.XMLUtil;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
@@ -62,7 +63,7 @@ public class DMLExecutor extends SQLExecutor {
                 }
             }
         } else {
-            for (Attribute attr : table.getAttributes()) {
+            for (TableAttribute attr : table.getAttributes()) {
                 Column column = new Column();
                 column.setColumnName(attr.getName());
                 columns.add(column);
@@ -79,14 +80,14 @@ public class DMLExecutor extends SQLExecutor {
             }
             Element element = new DefaultElement("data");
             for (int i = 0; i < table.getAttributes().size(); i++) {
-                Attribute attribute = table.getAttributes().get(i);
-                String subValue = data.get(attribute.getName());
+                TableAttribute tableAttribute = table.getAttributes().get(i);
+                String subValue = data.get(tableAttribute.getName());
                 if (subValue == null) {
-                    element.addAttribute(attribute.getName(), "(none)");
+                    element.addAttribute(tableAttribute.getName(), "(none)");
                     continue;
                 }
-                attribute.checkType(subValue);
-                element.addAttribute(attribute.getName(), subValue);
+                tableAttribute.checkType(subValue);
+                element.addAttribute(tableAttribute.getName(), subValue);
             }
             elements.add(element);
         }
@@ -108,7 +109,7 @@ public class DMLExecutor extends SQLExecutor {
             throw new DBProcessException("The target table is not exist.");
         }
         List<String> allAttrs = new ArrayList<>();
-        for (Attribute attr : table.getAttributes()) {
+        for (TableAttribute attr : table.getAttributes()) {
             allAttrs.add(attr.getName());
         }
         boolean deleteAll = stmt.getConditions().size() == 0;
@@ -138,8 +139,8 @@ public class DMLExecutor extends SQLExecutor {
             for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
                 Element element = it.next();
                 Map<String, String> data = new HashMap<>();
-                for (Iterator<org.dom4j.Attribute> attrIt = element.attributeIterator(); attrIt.hasNext(); ) {
-                    org.dom4j.Attribute attribute = attrIt.next();
+                for (Iterator<Attribute> attrIt = element.attributeIterator(); attrIt.hasNext(); ) {
+                    Attribute attribute = attrIt.next();
                     data.put(attribute.getName(), attribute.getValue());
                 }
                 if (stmt.isMatched(data)) {
@@ -164,7 +165,7 @@ public class DMLExecutor extends SQLExecutor {
             throw new DBProcessException("The target table is not exist.");
         }
         List<String> allAttrs = new ArrayList<>();
-        for (Attribute attr : table.getAttributes()) {
+        for (TableAttribute attr : table.getAttributes()) {
             allAttrs.add(attr.getName());
         }
         List<String> updateAttrs = new ArrayList<>();
@@ -202,8 +203,8 @@ public class DMLExecutor extends SQLExecutor {
             for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
                 Element element = it.next();
                 Map<String, String> data = new HashMap<>();
-                for (Iterator<org.dom4j.Attribute> attrIt = element.attributeIterator(); attrIt.hasNext(); ) {
-                    org.dom4j.Attribute attribute = attrIt.next();
+                for (Iterator<Attribute> attrIt = element.attributeIterator(); attrIt.hasNext(); ) {
+                    Attribute attribute = attrIt.next();
                     data.put(attribute.getName(), attribute.getValue());
                 }
                 if (stmt.isMatched(data)) {
@@ -219,10 +220,10 @@ public class DMLExecutor extends SQLExecutor {
 
     private void updateRow(UpdateStatement stmt, Table table, Element element) throws DBProcessException {
         for (Column column : stmt.getColumns()) {
-            Attribute attribute = table.getAttribute(column.getColumnName());
-            attribute.checkType(column.getValue());
-            for (Iterator<org.dom4j.Attribute> it = element.attributeIterator(); it.hasNext(); ) {
-                org.dom4j.Attribute attr = it.next();
+            TableAttribute tableAttribute = table.getAttribute(column.getColumnName());
+            tableAttribute.checkType(column.getValue());
+            for (Iterator<Attribute> it = element.attributeIterator(); it.hasNext(); ) {
+                Attribute attr = it.next();
                 if (attr.getName().equals(column.getColumnName())) {
                     attr.setValue(column.getValue());
                     break;

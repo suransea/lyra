@@ -13,11 +13,11 @@ public class Table {
     /**
      * 获取全部属性
      */
-    public List<Attribute> getAttributes() {
+    public List<TableAttribute> getAttributes() {
         return attributes;
     }
 
-    private List<Attribute> attributes;
+    private List<TableAttribute> attributes;
 
     public String getName() {
         return name;
@@ -26,8 +26,8 @@ public class Table {
     /**
      * 获取指定属性名的属性对象
      */
-    public Attribute getAttribute(String name) {
-        for (Attribute attribute : attributes) {
+    public TableAttribute getAttribute(String name) {
+        for (TableAttribute attribute : attributes) {
             if (attribute.getName().equals(name)) {
                 return attribute;
             }
@@ -35,8 +35,8 @@ public class Table {
         return null;
     }
 
-    public boolean addAttribute(Attribute attribute) {
-        return attributes.add(attribute);
+    public boolean addAttribute(TableAttribute tableAttribute) {
+        return attributes.add(tableAttribute);
     }
 
     public Table(String name) {
