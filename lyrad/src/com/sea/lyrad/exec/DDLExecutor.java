@@ -1,6 +1,8 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
+import com.sea.lyrad.db.table.Attribute;
+import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.lex.token.Keyword;
 import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.ddl.CreateStatement;
@@ -53,15 +55,23 @@ public class DDLExecutor extends SQLExecutor {
             Document document = database.getDocument();
             Element root = document.getRootElement();
             Element tableElement = root.addElement("table");
+            Table table = new Table(stmt.getTableName());
             tableElement.addAttribute("name", stmt.getTableName());
             for (Column column : stmt.getColumns()) {
+                Attribute attribute = new Attribute(
+                        column.getColumnName(),
+                        column.getType().name().toLowerCase(),
+                        column.getTypeLength()
+                );
                 Element attrElement = tableElement.addElement("attr");
+                table.addAttribute(attribute);
                 attrElement.addAttribute("name", column.getColumnName());
                 attrElement.addAttribute("type", column.getType().name().toLowerCase());
                 if (column.getTypeLength() != -1) {
                     attrElement.addAttribute("length", Integer.toString(column.getTypeLength()));
                 }
             }
+            database.addTable(table);
             DBManager dbManager = DBManager.getInstance();
             dbManager.write(database);
             return String.format("Table %s created.", stmt.getTableName());
@@ -90,6 +100,7 @@ public class DDLExecutor extends SQLExecutor {
                 Element element = it.next();
                 if (element.attributeValue("name").equals(stmt.getTableName())) {
                     element.detach();
+                    user.getCurrentDB().removeTable(stmt.getTableName());
                     DBManager dbManager = DBManager.getInstance();
                     dbManager.write(user.getCurrentDB());
                     return String.format("Table %s deleted.", stmt.getTableName());

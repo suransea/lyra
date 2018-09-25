@@ -11,10 +11,6 @@ import com.sea.lyrad.parse.stmt.dql.DQLStatement;
 public class SQLExecutor {
 
     public String execute(User user, SQLStatement statement) throws DBProcessException, SQLParseException {
-        if (user.getCurrentDB() != null) {
-            DBManager dbManager = DBManager.getInstance();
-            user.setCurrentDB(dbManager.getDatabase(user.getCurrentDB().getName()));//刷新
-        }
         if (statement instanceof DALStatement) {
             return new DALExecutor().execute(user, (DALStatement) statement);
         } else if (statement instanceof DDLStatement) {

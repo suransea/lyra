@@ -1,7 +1,8 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
-import com.sea.lyrad.db.Table;
+import com.sea.lyrad.db.table.Attribute;
+import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.parse.SQLParseException;
 import com.sea.lyrad.parse.stmt.context.Column;
 import com.sea.lyrad.parse.stmt.context.Condition;
@@ -37,7 +38,7 @@ public class DQLExecutor extends SQLExecutor {
             throw new DBProcessException("The target table is not exist.");
         }
         List<String> allAttrs = new ArrayList<>();
-        for (Table.Attribute attr : table.getAttributes()) {
+        for (Attribute attr : table.getAttributes()) {
             allAttrs.add(attr.getName());
         }
         boolean selectAllRows = stmt.getConditions().size() == 0;

@@ -1,6 +1,8 @@
 package com.sea.lyrad.db;
 
+import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.exec.DBProcessException;
+import com.sea.lyrad.util.XMLUtil;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -44,6 +46,14 @@ public class Database {
         return null;
     }
 
+    public void removeTable(String name) {
+        tables.removeIf(x -> x.getName().equals(name));
+    }
+
+    public boolean addTable(Table table) {
+        return tables.add(table);
+    }
+
     /**
      * 获取全部行的数据
      *
@@ -54,14 +64,7 @@ public class Database {
     public List<Map<String, String>> getRows(String tableName) throws DBProcessException {
         List<Map<String, String>> result = new ArrayList<>();
         Element rootElement = document.getRootElement();
-        Element tableElement = null;
-        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
-            Element element = it.next();
-            if (element.attributeValue("name").equals(tableName)) {
-                tableElement = element;
-                break;
-            }
-        }
+        Element tableElement = XMLUtil.getTableElement(rootElement, tableName);
         if (tableElement == null) {
             throw new DBProcessException("The target table is not exist.");
         }

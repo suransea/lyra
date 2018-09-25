@@ -28,6 +28,7 @@ public class LyraServer {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             Log.pa("The server is running.");
+            //noinspection InfiniteLoopStatement
             while (true) {
                 Socket socket = serverSocket.accept();
                 count++;

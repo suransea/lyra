@@ -1,9 +1,12 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
-import com.sea.lyrad.db.Table;
+import com.sea.lyrad.db.DatabasePool;
+import com.sea.lyrad.db.table.Attribute;
+import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.util.AESCrypto;
 import com.sea.lyrad.util.Log;
+import com.sea.lyrad.util.XMLUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -19,11 +22,16 @@ public class DBManager {
     private static final String PATH = "./database";
     private static DBManager dbManager = null;
 
+    private DatabasePool databasePool;
+
     private DBManager() {
+        databasePool = new DatabasePool();
     }
 
     public static DBManager getInstance() {
-        if (dbManager == null) dbManager = new DBManager();
+        if (dbManager == null) {
+            dbManager = new DBManager();
+        }
         return dbManager;
     }
 
@@ -64,7 +72,11 @@ public class DBManager {
         }
     }
 
-    public Database getDatabase(String dbName) throws DBProcessException {
+    public Database getDatabase(String name) throws DBProcessException {
+        return databasePool.getDatabase(name);
+    }
+
+    public Database takeDatabase(String dbName) throws DBProcessException {
         SAXReader reader = new SAXReader();
         Document document;
         try {
@@ -72,39 +84,21 @@ public class DBManager {
             InputStreamReader streamReader = new InputStreamReader(inputStream, "utf-8");
             document = reader.read(streamReader);
         } catch (DocumentException | FileNotFoundException | UnsupportedEncodingException e) {
+            Log.a(e.getMessage());
             throw new DBProcessException("Unknown error.");
         }
-        Element root = document.getRootElement();
-        Database database = new Database(root.attributeValue("name"), document);
-        Iterator<Element> it = root.elementIterator("table");
-        while (it.hasNext()) {
-            Element element = it.next();
-            Table table = new Table(element.attributeValue("name"));
-            Iterator<Element> subIt = element.elementIterator("attr");
-            while (subIt.hasNext()) {
-                Element attr = subIt.next();
-                String name = attr.attributeValue("name");
-                switch (attr.attributeValue("type")) {
-                    case "varchar": {
-                        table.getAttributes().add(
-                                new Table.Attribute(
-                                        name,
-                                        Table.Attribute.Type.VARCHAR,
-                                        Integer.parseInt(attr.attributeValue("length"))
-                                )
-                        );
-                        break;
-                    }
-                    case "int": {
-                        table.getAttributes().add(
-                                new Table.Attribute(
-                                        name,
-                                        Table.Attribute.Type.INT
-                                )
-                        );
-                        break;
-                    }
-                }
+        Element rootElement = document.getRootElement();
+        Database database = new Database(rootElement.attributeValue("name"), document);
+        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
+            Element tableElement = it.next();
+            Table table = new Table(tableElement.attributeValue("name"));
+            for (Iterator<Element> subIt = tableElement.elementIterator("attr"); subIt.hasNext(); ) {
+                Element attributeElement = subIt.next();
+                String name = attributeElement.attributeValue("name");
+                String type = attributeElement.attributeValue("type");
+                String length = attributeElement.attributeValue("length");
+                Attribute attribute = new Attribute(name, type, length);
+                table.addAttribute(attribute);
             }
             database.getTables().add(table);
         }
@@ -116,13 +110,11 @@ public class DBManager {
         String encodePassword = aes.encode(password);
         Database userDB = getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
-        Element tableElement = null;
-        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
-            Element element = it.next();
-            if (element.attributeValue("name").equals("user")) {
-                tableElement = element;
-                break;
-            }
+        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        if (tableElement == null) {
+            String message = "Error: inside table `user` lost";
+            Log.a(message);
+            throw new DBProcessException(message);
         }
         for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
             Element element = it.next();

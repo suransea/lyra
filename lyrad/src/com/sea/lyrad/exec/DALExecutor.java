@@ -1,6 +1,6 @@
 package com.sea.lyrad.exec;
 
-import com.sea.lyrad.db.Table;
+import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.lex.token.Keyword;
 import com.sea.lyrad.parse.stmt.dal.DALStatement;
 import com.sea.lyrad.parse.stmt.dal.ShowStatement;

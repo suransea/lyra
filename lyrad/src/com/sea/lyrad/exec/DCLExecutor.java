@@ -5,6 +5,8 @@ import com.sea.lyrad.parse.stmt.dcl.AlterUserStatement;
 import com.sea.lyrad.parse.stmt.dcl.CreateUserStatement;
 import com.sea.lyrad.parse.stmt.dcl.DCLStatement;
 import com.sea.lyrad.util.AESCrypto;
+import com.sea.lyrad.util.Log;
+import com.sea.lyrad.util.XMLUtil;
 import org.dom4j.Element;
 
 import java.util.Iterator;
@@ -33,13 +35,11 @@ public class DCLExecutor extends SQLExecutor {
         DBManager dbManager = DBManager.getInstance();
         Database userDB = dbManager.getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
-        Element tableElement = null;
-        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
-            Element element = it.next();
-            if (element.attributeValue("name").equals("user")) {
-                tableElement = element;
-                break;
-            }
+        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        if (tableElement == null) {
+            String message = "Error: inside table `user` lost";
+            Log.a(message);
+            throw new DBProcessException(message);
         }
         for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
             Element element = it.next();
@@ -67,13 +67,11 @@ public class DCLExecutor extends SQLExecutor {
         DBManager dbManager = DBManager.getInstance();
         Database userDB = dbManager.getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
-        Element tableElement = null;
-        for (Iterator<Element> it = rootElement.elementIterator("table"); it.hasNext(); ) {
-            Element element = it.next();
-            if (element.attributeValue("name").equals("user")) {
-                tableElement = element;
-                break;
-            }
+        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        if (tableElement == null) {
+            String message = "Error: inside table `user` lost";
+            Log.a(message);
+            throw new DBProcessException(message);
         }
         for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
             Element element = it.next();

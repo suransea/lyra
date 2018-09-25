@@ -54,6 +54,7 @@ public class LyraServerThread implements Runnable {
     @Override
     public void run() {
         try {
+            //noinspection InfiniteLoopStatement
             while (true) {
                 String request = scanner.nextLine();
                 lock.lock();
