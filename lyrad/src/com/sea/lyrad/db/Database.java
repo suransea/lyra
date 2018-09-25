@@ -2,6 +2,8 @@ package com.sea.lyrad.db;
 
 import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.exec.DBProcessException;
+import com.sea.lyrad.parse.SQLParseException;
+import com.sea.lyrad.parse.stmt.SQLStatement;
 import com.sea.lyrad.util.XMLUtil;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -75,6 +77,24 @@ public class Database {
                 values.put(attribute.getName(), attribute.getValue());
             }
             result.add(values);
+        }
+        return result;
+    }
+
+    public List<Map<String, String>> getRows(String tableName, SQLStatement statement) throws SQLParseException, DBProcessException {
+        List<Map<String, String>> result = new ArrayList<>();
+        Element rootElement = document.getRootElement();
+        Element tableElement = XMLUtil.getTableElement(rootElement, tableName);
+        if (tableElement == null) {
+            throw new DBProcessException("The target table is not exist.");
+        }
+        for (Iterator<Element> it = tableElement.elementIterator("data"); it.hasNext(); ) {
+            Map<String, String> values = new HashMap<>();
+            for (Iterator<Attribute> attrIt = it.next().attributeIterator(); attrIt.hasNext(); ) {
+                Attribute attribute = attrIt.next();
+                values.put(attribute.getName(), attribute.getValue());
+            }
+            if (statement.isMatched(values)) result.add(values);
         }
         return result;
     }

@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.Random;
 
 public class test {
     public static void main(String[] args) {
@@ -10,20 +11,23 @@ public class test {
                             "123456");
             System.out.println(connection);
             Statement statement = connection.createStatement();
-//            StringBuilder sql = new StringBuilder("insert into test_table values");
-//            Random random = new Random();
-//            for (int i = 0; i < 500000; i++) {
-//                sql.append(String.format("(%d,'%s',%d),",
-//                        random.nextInt(),
-//                        String.valueOf(random.nextInt()),
-//                        random.nextInt()
-//                ));
-//            }
-//            sql.append("(12432432,'sdfrg',214325)");
-//            long time = System.currentTimeMillis();
-//            System.out.println("begin");
-//            statement.execute(sql.toString());
-//            System.out.println(System.currentTimeMillis() - time);
+            statement.execute("create table test_table (id int,a int ,b varchar(100),c int , d varchar(10))");
+            StringBuilder sql = new StringBuilder("insert into test_table values");
+            Random random = new Random();
+            for (int i = 0; i < 1000000; i++) {
+                sql.append(String.format("(%d,%d,'%d',%d,'%d'),",
+                        i,
+                        random.nextInt(),
+                        random.nextInt(),
+                        random.nextInt(),
+                        random.nextInt()
+                ));
+            }
+            sql.append("(1000000,213812,'end',214325,'wuuewu')");
+            long time = System.currentTimeMillis();
+            System.out.println("begin");
+            statement.execute(sql.toString());
+            System.out.println(System.currentTimeMillis() - time);
             ResultSet resultSet = statement.executeQuery("select * from test_table");
             System.out.println(resultSet.getRow());//获取行数
             while (resultSet.next()) {

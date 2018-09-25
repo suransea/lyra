@@ -74,15 +74,10 @@ public class DQLExecutor extends SQLExecutor {
                 throw new DBProcessException("The order column is not exist.");
             }
         }
-        List<Map<String, String>> data = database.getRows(table.getName());
-        JSONArray ren = new JSONArray();
-        if (!selectAllRows) {
-            for (int i = 0; i < data.size(); i++) {
-                if (!stmt.isMatched(data.get(i))) {
-                    data.remove(i--);
-                }
-            }
-        }
+        List<Map<String, String>> data = selectAllRows ?
+                database.getRows(table.getName()) :
+                database.getRows(table.getName(), stmt);
+        JSONArray outcome = new JSONArray();
         data.sort(
                 (x, y) -> {
                     int result = 0;
@@ -104,14 +99,14 @@ public class DQLExecutor extends SQLExecutor {
                     return result;
                 }
         );
-        ren.put(selectAttrs);
+        outcome.put(selectAttrs);
         for (Map<String, String> entry : data) {
             List<String> row = new ArrayList<>();
             for (String column : selectAttrs) {
                 row.add(entry.get(column));
             }
-            ren.put(row);
+            outcome.put(row);
         }
-        return ren.toString();
+        return outcome.toString();
     }
 }
