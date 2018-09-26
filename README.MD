@@ -27,9 +27,11 @@
 
 ```java
 import java.sql.*;
+import com.sea.lyra.jdbc.LyraDataSource;
 
 public class test {
     public static void main(String[] args) {
+        //传统方式
         try {
             Class.forName("com.sea.lyra.Driver");
             Connection connection = DriverManager
@@ -55,6 +57,17 @@ public class test {
             statement.close();
             connection.close();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //数据源方式
+        try{ 
+            LyraDataSource dataSource = new LyraDataSource();
+            dataSource.setUrl("jdbc:lyra://localhost:5494/test");
+            Connection connection = dataSource.getConnection("root", "123456");
+            Statement statement = connection.createStatement();
+            //执行SQL...
+            connection.close();
+        } catch (Exception e) { 
             e.printStackTrace();
         }
     }
