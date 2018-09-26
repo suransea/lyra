@@ -2,6 +2,8 @@ package com.sea.lyra.jdbc;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -18,7 +20,6 @@ public class LyraDataSource implements DataSource {
     }
 
     private static Stack<LyraConnectionWrapper> pool = new Stack<>();
-    private static Stack<String> urls = new Stack<>();
 
     public String getUrl() {
         return url;
@@ -59,23 +60,32 @@ public class LyraDataSource implements DataSource {
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        if (!pool.empty() && urls.peek().equals(url)) {
-            urls.pop();
-            return pool.pop();
+        if (!url.matches("jdbc:lyra://.+:\\d+/\\w+/?")) {
+            throw new SQLException(String.format("Error url [%s].", url));
+        }
+        url = url.replaceAll("jdbc:", "");
+        if (!pool.empty()) {
+            LyraConnectionWrapper wrapper = pool.pop();
+            String use = "use ";
+            try {
+                URL address = new URL(null, url, new com.sea.lyra.protocol.lyra.Handler());
+                use += address.getPath().replaceAll("/", "");
+            } catch (MalformedURLException e) {
+                throw new SQLException("error url.");
+            }
+            wrapper.createStatement().execute(use);
+            return wrapper;
         }
         ConnectionBuilder connectionBuilder = new LyraConnectionBuilder(url);
         Connection connection = connectionBuilder
                 .user(username)
                 .password(password)
                 .build();
-        return new LyraConnectionWrapper(connection, x -> {
-            pool.push(x);
-            urls.push(url);
-        });
+        return new LyraConnectionWrapper(connection, x -> pool.push((LyraConnectionWrapper) x));
     }
 
-    public interface CloseAction {
-        void act(LyraConnectionWrapper wrapper);
+    interface Action {
+        void act(Object obj);
     }
 
     @Override

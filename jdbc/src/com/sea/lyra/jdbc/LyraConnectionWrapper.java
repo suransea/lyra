@@ -8,13 +8,12 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class LyraConnectionWrapper implements Connection {
-    private LyraDataSource.CloseAction action;
+    private LyraDataSource.Action action;
     private Connection connection;
     private List<Statement> statements;
     private boolean closed;
 
-    LyraConnectionWrapper(Connection connection,
-                          LyraDataSource.CloseAction action) {
+    LyraConnectionWrapper(Connection connection, LyraDataSource.Action action) {
         this.connection = connection;
         this.action = action;
         closed = false;
