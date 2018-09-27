@@ -81,11 +81,12 @@ public class LyraDataSource implements DataSource {
                 .user(username)
                 .password(password)
                 .build();
-        return new LyraConnectionWrapper(connection, x -> pool.push((LyraConnectionWrapper) x));
+        Callback callback = x -> pool.push((LyraConnectionWrapper) x);
+        return new LyraConnectionWrapper(connection, callback);
     }
 
-    interface Action {
-        void act(Object obj);
+    interface Callback {
+        void run(Object obj);
     }
 
     @Override
