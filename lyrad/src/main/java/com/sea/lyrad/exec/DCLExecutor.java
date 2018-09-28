@@ -12,7 +12,12 @@ import org.dom4j.Element;
 import java.util.Iterator;
 
 public class DCLExecutor extends SQLExecutor {
-    private static final String PASSWORD_REGEX = "^([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~\uff01@#\uffe5%\u2026\u2026&*\uff08\uff09\u2014\u2014+|{}\u3010\u3011\u2018\uff1b\uff1a\u201d\u201c'\u3002\uff0c\u3001\uff1f]){6,20}$";
+    private static final String PASSWORD_REGEX;
+
+    static {
+        PASSWORD_REGEX = "^([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~\uff01@#\uffe5%\u2026\u2026&*\uff08\uff09\u2014\u2014+|{}\u3010\u3011\u2018\uff1b\uff1a\u201d\u201c'\u3002\uff0c\u3001\uff1f]){6,20}$";
+    }
+
     private User user;
     private DCLStatement statement;
 
