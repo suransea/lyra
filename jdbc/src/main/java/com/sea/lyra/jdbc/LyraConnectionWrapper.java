@@ -8,12 +8,12 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class LyraConnectionWrapper implements Connection {
-    private LyraDataSource.Callback callback;
+    private Function callback;
     private Connection connection;
     private List<Statement> statements;
     private boolean closed;
 
-    LyraConnectionWrapper(Connection connection, LyraDataSource.Callback callback) {
+    LyraConnectionWrapper(Connection connection, Function callback) {
         this.connection = connection;
         this.callback = callback;
         closed = false;
@@ -73,7 +73,7 @@ public class LyraConnectionWrapper implements Connection {
                     statement.close();
                 }
             }
-            callback.run(LyraConnectionWrapper.this);
+            callback.call(LyraConnectionWrapper.this);
             closed = true;
         }
     }

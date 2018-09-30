@@ -68,7 +68,7 @@ public class LyraConnection implements Connection {
     @Override
     public Statement createStatement() throws SQLException {
         try {
-            return new LyraStatement(connection, this);
+            return new LyraStatement(connection, LyraConnection.this);
         } catch (IOException e) {
             throw new SQLException(e);
         }
@@ -76,7 +76,11 @@ public class LyraConnection implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return null;
+        try {
+            return new LyraPreparedStatement(connection, LyraConnection.this, sql);
+        } catch (IOException e) {
+            throw new SQLException(e);
+        }
     }
 
     @Override

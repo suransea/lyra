@@ -60,6 +60,7 @@ public class LyraDataSource implements DataSource {
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
+        ConnectionBuilder connectionBuilder = new LyraConnectionBuilder(url);
         if (!url.matches("jdbc:lyra://.+:\\d+/\\w+/?")) {
             throw new SQLException(String.format("Error url [%s].", url));
         }
@@ -73,20 +74,21 @@ public class LyraDataSource implements DataSource {
             } catch (MalformedURLException e) {
                 throw new SQLException("error url.");
             }
+            connectionBuilder.user(username).password(password).build().close();
             wrapper.createStatement().execute(use);
             return wrapper;
         }
-        ConnectionBuilder connectionBuilder = new LyraConnectionBuilder(url);
         Connection connection = connectionBuilder
                 .user(username)
                 .password(password)
                 .build();
-        Callback callback = x -> pool.push((LyraConnectionWrapper) x);
+        Function callback = new Function() {
+            @Override
+            public void call(Object... objects) {
+                pool.push((LyraConnectionWrapper) objects[0]);
+            }
+        };
         return new LyraConnectionWrapper(connection, callback);
-    }
-
-    interface Callback {
-        void run(Object obj);
     }
 
     @Override

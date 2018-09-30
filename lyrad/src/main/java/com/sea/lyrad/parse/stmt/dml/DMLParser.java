@@ -3,6 +3,7 @@ package com.sea.lyrad.parse.stmt.dml;
 import com.sea.lyrad.lex.Lexer;
 import com.sea.lyrad.lex.analyze.UnterminatedCharException;
 import com.sea.lyrad.lex.token.*;
+import com.sea.lyrad.parse.SQLCompileUnsupportedException;
 import com.sea.lyrad.parse.SQLParseException;
 import com.sea.lyrad.parse.SQLParseUnsupportedException;
 import com.sea.lyrad.parse.SQLParser;
@@ -17,19 +18,19 @@ public class DMLParser extends SQLParser {
         super(lexer);
     }
 
-    public SQLStatement parse() throws SQLParseUnsupportedException, SQLParseException, UnterminatedCharException {
+    public SQLStatement parse() throws SQLParseUnsupportedException, SQLParseException, UnterminatedCharException, SQLCompileUnsupportedException {
         Token token = lexer.getToken();
         if (token.getType() == Keyword.INSERT) {
-            return parseInsert();
+            return parseInsert(false);
         } else if (token.getType() == Keyword.DELETE) {
             return parseDelete();
         } else if (token.getType() == Keyword.UPDATE) {
-            return parseUpdate();
+            return parseUpdate(false);
         }
         throw new SQLParseUnsupportedException(token.getType());
     }
 
-    private SQLStatement parseInsert() throws SQLParseException, UnterminatedCharException {
+    protected SQLStatement parseInsert(boolean prepared) throws SQLParseException, UnterminatedCharException {
         InsertStatement statement = new InsertStatement(lexer.getContent());
         accept(Keyword.INSERT);
         accept(Keyword.INTO);
@@ -54,9 +55,14 @@ public class DMLParser extends SQLParser {
             accept(Symbol.LEFT_PAREN);
             List<String> value = new ArrayList<>();
             while (true) {
-                value.add(lexer.getToken().getLiterals());
-                if (equalAny(Literals.INT, Literals.STRING)) {
-                    lexer.nextToken();
+                if (prepared) {
+                    value.add("(none)");
+                    accept(Symbol.QUESTION);
+                } else {
+                    value.add(lexer.getToken().getLiterals());
+                    if (equalAny(Literals.INT, Literals.STRING)) {
+                        lexer.nextToken();
+                    }
                 }
                 if (lexer.getToken().getType() == Symbol.RIGHT_PAREN) {
                     accept(Symbol.RIGHT_PAREN);
@@ -85,13 +91,13 @@ public class DMLParser extends SQLParser {
             accept(Assist.END);
             return statement;
         }
-        parseWhere(statement);
+        parseWhere(statement, false);
         accept(Symbol.SEMI);
         accept(Assist.END);
         return statement;
     }
 
-    private SQLStatement parseUpdate() throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+    protected SQLStatement parseUpdate(boolean prepared) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
         UpdateStatement statement = new UpdateStatement(lexer.getContent());
         accept(Keyword.UPDATE);
         statement.setTableName(lexer.getToken().getLiterals());
@@ -102,9 +108,14 @@ public class DMLParser extends SQLParser {
             column.setColumnName(lexer.getToken().getLiterals());
             accept(Literals.IDENTIFIER);
             accept(Symbol.EQ);
-            if (equalAny(Literals.INT, Literals.STRING)) {
-                column.setValue(lexer.getToken().getLiterals());
-                lexer.nextToken();
+            if (prepared) {
+                column.setValue("(none)");
+                accept(Symbol.QUESTION);
+            } else {
+                if (equalAny(Literals.INT, Literals.STRING)) {
+                    column.setValue(lexer.getToken().getLiterals());
+                    lexer.nextToken();
+                }
             }
             statement.getColumns().add(column);
             if (lexer.getToken().getType() != Symbol.COMMA) {
@@ -117,7 +128,7 @@ public class DMLParser extends SQLParser {
             accept(Assist.END);
             return statement;
         }
-        parseWhere(statement);
+        parseWhere(statement, prepared);
         accept(Symbol.SEMI);
         accept(Assist.END);
         return statement;

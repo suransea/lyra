@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.util.Properties;
 
 public class LyraServer {
+    public static final String VERSION = "0.5"; //版本号
+
     public static void main(String[] args) {
         Properties properties = new Properties();
         try {

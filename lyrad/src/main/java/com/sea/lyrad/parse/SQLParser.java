@@ -25,7 +25,7 @@ public class SQLParser {
         this.lexer = lexer;
     }
 
-    public SQLStatement parse() throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+    public SQLStatement parse() throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException, SQLCompileUnsupportedException {
         Token token = lexer.nextToken();
         if (equalAny(Keyword.USE, Keyword.SHOW, Keyword.DESCRIBE)) {
             return new DALParser(lexer).parse();
@@ -51,7 +51,7 @@ public class SQLParser {
         }
     }
 
-    protected void parseWhere(SQLStatement statement) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+    protected void parseWhere(SQLStatement statement, boolean prepared) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
         List<Condition> conditions = statement.getConditions();
         List<Keyword> connectors = statement.getConnectors();
         accept(Keyword.WHERE);
@@ -67,11 +67,16 @@ public class SQLParser {
             } else {
                 throw new SQLParseUnsupportedException(lexer.getToken().getType());
             }
-            if (equalAny(Literals.STRING, Literals.INT)) {
-                condition.setValue(lexer.getToken().getLiterals());
-                lexer.nextToken();
+            if (prepared) {
+                condition.setValue("(none)");
+                accept(Symbol.QUESTION);
             } else {
-                throw new SQLParseUnsupportedException(lexer.getToken().getType());
+                if (equalAny(Literals.STRING, Literals.INT)) {
+                    condition.setValue(lexer.getToken().getLiterals());
+                    lexer.nextToken();
+                } else {
+                    throw new SQLParseUnsupportedException(lexer.getToken().getType());
+                }
             }
             conditions.add(condition);
             if (!equalAny(Keyword.AND, Keyword.OR)) {

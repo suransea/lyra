@@ -1,8 +1,11 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
+import com.sea.lyrad.parse.stmt.PreparedStatement;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class User {
     public String getName() {
@@ -10,6 +13,20 @@ public class User {
     }
 
     private String name;
+
+    private Map<Integer, PreparedStatement> preparedStatements;
+
+    public void addPreparedStatement(int hashcode, PreparedStatement preparedStatement) {
+        preparedStatements.put(hashcode, preparedStatement);
+    }
+
+    public PreparedStatement getPreparedStatement(int hashcode) {
+        return preparedStatements.get(hashcode);
+    }
+
+    public void removePreparedStatement(int hashcode) {
+        preparedStatements.remove(hashcode);
+    }
 
     public Database getCurrentDB() {
         return currentDB;
@@ -32,5 +49,6 @@ public class User {
 
     public User(String name) {
         this.name = name;
+        preparedStatements = new HashMap<>();
     }
 }

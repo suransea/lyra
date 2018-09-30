@@ -19,15 +19,15 @@ public class LyraStatement implements Statement {
     private OutputStream outputStream;
 
     private boolean closed = false;
-    private ResultSet resultSet = null;
-    private int updateCount = 0;
+    protected ResultSet resultSet = null;
+    protected int updateCount = 0;
 
-    private void send(String content) throws IOException {
+    protected void send(String content) throws IOException {
         outputStream.write(content.getBytes(Charset.forName("utf-8")));
         outputStream.flush();
     }
 
-    private String receive() throws IOException {
+    protected String receive() throws IOException {
         byte[] receive = new byte[4];
         inputStream.read(receive);
         int size = ((receive[0] & 0xff) << 24)
@@ -139,8 +139,12 @@ public class LyraStatement implements Statement {
             throw new SQLException(e);
         }
         JSONObject json = new JSONObject(response);
-        String outcome = json.getString("outcome");
-        if (json.getBoolean("complete")) {
+        return getOutcome(json);
+    }
+
+    protected boolean getOutcome(JSONObject response) throws SQLException {
+        String outcome = response.getString("outcome");
+        if (response.getBoolean("complete")) {
             try {
                 JSONArray array = new JSONArray(outcome);
                 resultSet = new LyraResultSet(array);

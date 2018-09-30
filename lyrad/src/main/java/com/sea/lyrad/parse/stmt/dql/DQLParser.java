@@ -20,12 +20,12 @@ public class DQLParser extends SQLParser {
     public SQLStatement parse() throws SQLParseUnsupportedException, SQLParseException, UnterminatedCharException {
         Token token = lexer.getToken();
         if (token.getType() == Keyword.SELECT) {
-            return parseSelect();
+            return parseSelect(false);
         }
         throw new SQLParseUnsupportedException(token.getType());
     }
 
-    private SQLStatement parseSelect() throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
+    protected SQLStatement parseSelect(boolean prepared) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
         accept(Keyword.SELECT);
         SelectStatement statement = new SelectStatement(lexer.getContent());
         if (lexer.getToken().getType() == Symbol.STAR) {
@@ -48,7 +48,7 @@ public class DQLParser extends SQLParser {
             accept(Assist.END);
             return statement;
         }
-        parseWhere(statement);
+        parseWhere(statement, prepared);
         if (lexer.getToken().getType() == Symbol.SEMI) {
             accept(Symbol.SEMI);
             accept(Assist.END);
