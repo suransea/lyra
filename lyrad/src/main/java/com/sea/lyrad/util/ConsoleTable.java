@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 拼接文字表格工具
+ */
 public class ConsoleTable {
 
     private final static int MARGIN_WIDTH = 2;

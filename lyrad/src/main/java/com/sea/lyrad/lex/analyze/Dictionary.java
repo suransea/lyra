@@ -15,11 +15,24 @@ public class Dictionary {
         }
     }
 
+    /**
+     * 根据词素类型名称返回类型
+     *
+     * @param literals         类型名
+     * @param defaultTokenType 默认类型
+     * @return type of literals or default type
+     */
     TokenType findTokenType(String literals, TokenType defaultTokenType) {
         String key = null == literals ? null : literals.toUpperCase();
         return tokens.containsKey(key) ? tokens.get(key) : defaultTokenType;
     }
 
+    /**
+     * 根据词素类型名称返回类型
+     *
+     * @param literals 类型名
+     * @return type
+     */
     TokenType findTokenType(String literals) {
         String key = null == literals ? null : literals.toUpperCase();
         if (tokens.containsKey(key)) {

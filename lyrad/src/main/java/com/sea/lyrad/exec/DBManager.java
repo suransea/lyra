@@ -17,9 +17,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 涉及到文件操作时的数据库管理器
+ */
 public class DBManager {
 
-    private static final String PATH = "./database";
+    private static final String PATH = "./database";//数据库文件存储位置
     private static DBManager dbManager = null;
 
     private DatabasePool databasePool;
@@ -28,6 +31,11 @@ public class DBManager {
         databasePool = new DatabasePool();
     }
 
+    /**
+     * 获取DBManager的实例
+     *
+     * @return DBManager对象
+     */
     public static DBManager getInstance() {
         if (dbManager == null) {
             dbManager = new DBManager();
@@ -35,6 +43,11 @@ public class DBManager {
         return dbManager;
     }
 
+    /**
+     * 获取全部数据库的名字列表
+     *
+     * @return names
+     */
     public List<String> getDBNames() {
         File database = new File(PATH);
         List<String> fileNames = new ArrayList<>();
@@ -51,6 +64,12 @@ public class DBManager {
         return fileNames;
     }
 
+    /**
+     * 删除目标数据库
+     *
+     * @param name 数据库名
+     * @throws DBProcessException 目标数据库不存在
+     */
     public void deleteDatabase(String name) throws DBProcessException {
         File file = new File(PATH + "/" + name + ".xml");
         if (!file.delete()) {
@@ -58,6 +77,12 @@ public class DBManager {
         }
     }
 
+    /**
+     * 将目标数据库对象写入文件，通常是修改后的数据库对象调用此方法与文件同步
+     *
+     * @param database 目标数据库对象
+     * @throws DBProcessException 文件IO异常
+     */
     public void write(Database database) throws DBProcessException {
         Document document = database.getDocument();
         try {
@@ -72,10 +97,24 @@ public class DBManager {
         }
     }
 
+    /**
+     * 从数据库对象池中获取数据库对象
+     *
+     * @param name 目标数据库名
+     * @return 数据库对象
+     * @throws DBProcessException 目标数据库不存在
+     */
     public Database getDatabase(String name) throws DBProcessException {
         return databasePool.getDatabase(name);
     }
 
+    /**
+     * 从文件中创建出数据库对象
+     *
+     * @param dbName 目标数据库名
+     * @return 数据库对象
+     * @throws DBProcessException 文件无法读取
+     */
     public Database takeDatabase(String dbName) throws DBProcessException {
         SAXReader reader = new SAXReader();
         Document document;
@@ -105,6 +144,14 @@ public class DBManager {
         return database;
     }
 
+    /**
+     * 认证密码是否正确
+     *
+     * @param name     用户名
+     * @param password 密码
+     * @return true if password is right
+     * @throws DBProcessException 内部表“user”丢失
+     */
     public boolean verify(String name, String password) throws DBProcessException {
         AESCrypto aes = new AESCrypto("5494");
         String encodePassword = aes.encode(password);

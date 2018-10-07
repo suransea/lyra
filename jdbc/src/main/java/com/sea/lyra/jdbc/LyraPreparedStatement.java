@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LyraPreparedStatement extends LyraStatement implements PreparedStatement {
-    List<String> params;
+    private List<String> params;
     private String sql;
 
     LyraPreparedStatement(URLConnection urlConnection, Connection connection, String sql) throws IOException, SQLException {
@@ -27,6 +27,7 @@ public class LyraPreparedStatement extends LyraStatement implements PreparedStat
 
     @Override
     public void close() throws SQLException {
+        if (isClosed()) return;
         JSONObject request = new JSONObject();
         request.put("tag", "close");
         request.put("hash", this.hashCode());
@@ -41,7 +42,7 @@ public class LyraPreparedStatement extends LyraStatement implements PreparedStat
 
     private void init() throws SQLException {
         if (!sql.endsWith(";")) sql += ";";
-        int count = sql.length() - sql.replaceAll("\\?", "").length();
+        int count = sql.length() - sql.replaceAll("\\?", "").length();//问号个数
         params = new ArrayList<>(Collections.nCopies(count, ""));
         JSONObject request = new JSONObject();
         request.put("tag", "pre");

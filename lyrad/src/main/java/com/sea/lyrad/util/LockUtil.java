@@ -3,6 +3,9 @@ package com.sea.lyrad.util;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * 重入锁工具
+ */
 public class LockUtil {
     private static Lock singleLock = null;
 

@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class SelectStatement extends DQLStatement {
     private List<Column> columns;
-    private boolean star = false;
+    private boolean star = false;//select语句中的星号
     private String tableName;
     private OrderExpression orderExpression;
     private WhereExpression whereExpression;

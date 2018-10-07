@@ -3,6 +3,9 @@ package com.sea.lyrad.stmt.common;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * order表达式
+ */
 public class OrderExpression {
     private List<Column> columns;
     private boolean asc = true;

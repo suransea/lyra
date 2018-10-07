@@ -61,11 +61,16 @@ public class test {
         }
         //数据源方式
         try{ 
-            LyraDataSource dataSource = new LyraDataSource();
-            dataSource.setUrl("jdbc:lyra://localhost:5494/test");
+            DataSource dataSource = new LyraDataSource("jdbc:lyra://localhost:5494/person");
             Connection connection = dataSource.getConnection("root", "123456");
-            Statement statement = connection.createStatement();
-            //执行SQL...
+            //此处使用了PreparedStatement， 普通Statement亦可
+            PreparedStatement statement = connection.prepareStatement("insert into info values (?,?)");
+            statement.setString(1, "三剑客");
+            statement.setInt(2, 63);
+            System.out.println(statement.executeUpdate());
+            statement.setString(1, "四方an");
+            statement.setInt(2, 32);
+            System.out.println(statement.executeUpdate());
             connection.close();
         } catch (Exception e) { 
             e.printStackTrace();

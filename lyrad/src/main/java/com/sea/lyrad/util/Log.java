@@ -4,6 +4,9 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * 日至工具
+ */
 public class Log {
     private static Writer writer = null;
 

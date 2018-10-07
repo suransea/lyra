@@ -33,6 +33,7 @@ public class LyraStatement implements Statement {
     }
 
     protected String receive() throws IOException {
+        //前4个字节为数据包长度
         byte[] receive = new byte[4];
         inputStream.read(receive);
         int size = ((receive[0] & 0xff) << 24)
@@ -66,6 +67,7 @@ public class LyraStatement implements Statement {
 
     @Override
     public void close() throws SQLException {
+        if (closed) return;
         closed = true;
     }
 
@@ -126,7 +128,7 @@ public class LyraStatement implements Statement {
 
     @Override
     public boolean execute(String sql) throws SQLException {
-        if (!sql.endsWith(";")) sql += ";";
+        if (!sql.endsWith(";")) sql += ";";//编译器会做StringBuilder优化
         JSONObject request = new JSONObject();
         request.put("tag", "sql");
         request.put("sql", sql);
@@ -141,6 +143,13 @@ public class LyraStatement implements Statement {
         return getOutcome(json);
     }
 
+    /**
+     * 从response中提取出执行结果
+     *
+     * @param response 响应JSON
+     * @return 执行是否成功
+     * @throws SQLException 执行失败引发SQLException
+     */
     protected boolean getOutcome(JSONObject response) throws SQLException {
         String outcome = response.getString("outcome");
         if (response.getBoolean("complete")) {

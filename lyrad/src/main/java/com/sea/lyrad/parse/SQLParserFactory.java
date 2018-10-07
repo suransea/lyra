@@ -7,12 +7,24 @@ import com.sea.lyrad.lex.token.Token;
 import com.sea.lyrad.lex.token.TokenType;
 import com.sea.lyrad.parse.stmt.*;
 
+/**
+ * SQL解析器工厂
+ */
 public class SQLParserFactory {
     private Lexer lexer;
 
     public SQLParserFactory() {
     }
 
+    /**
+     * 根据指定sql创建对应的sql解析器对象
+     *
+     * @param sql sql语句
+     * @return sql解析器
+     * @throws SQLParseException            无法解析的词素类型
+     * @throws UnterminatedCharException    有开始却无匹配的结束字符（串）
+     * @throws SQLParseUnsupportedException 不支持的sql语句
+     */
     public SQLParser createInstance(String sql) throws SQLParseException, UnterminatedCharException, SQLParseUnsupportedException {
         lexer = new Lexer(sql);
         Token token = lexer.nextToken();
@@ -40,6 +52,12 @@ public class SQLParserFactory {
         }
     }
 
+    /**
+     * 当前词素类型是否与目标词素类型列表之一匹配
+     *
+     * @param tokenTypes 词素类型列表
+     * @return true if matched
+     */
     private boolean equalAny(TokenType... tokenTypes) {
         for (TokenType each : tokenTypes) {
             if (each == lexer.getToken().getType()) {

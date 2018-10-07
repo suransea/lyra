@@ -88,7 +88,7 @@ public class DMLExecutor implements SQLExecutor {
                     element.addAttribute(tableAttribute.getName(), "(none)");
                     continue;
                 }
-                tableAttribute.checkType(subValue);
+                tableAttribute.check(subValue);
                 element.addAttribute(tableAttribute.getName(), subValue);
             }
             elements.add(element);
@@ -220,10 +220,18 @@ public class DMLExecutor implements SQLExecutor {
         return String.format("%d item(s) updated.", count);
     }
 
+    /**
+     * 更新行
+     *
+     * @param stmt    语句
+     * @param table   目标表
+     * @param element 目标元素
+     * @throws DBProcessException 值不符合属性约束
+     */
     private void updateRow(UpdateStatement stmt, Table table, Element element) throws DBProcessException {
         for (Column column : stmt.getColumns()) {
             TableAttribute tableAttribute = table.getAttribute(column.getColumnName());
-            tableAttribute.checkType(column.getValue());
+            tableAttribute.check(column.getValue());
             for (Iterator<Attribute> it = element.attributeIterator(); it.hasNext(); ) {
                 Attribute attr = it.next();
                 if (attr.getName().equals(column.getColumnName())) {

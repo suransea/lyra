@@ -33,6 +33,13 @@ public class LyraHandler {
         sqlCompilerFactory = new SQLCompilerFactory();
     }
 
+    /**
+     * 处理登录请求
+     *
+     * @param request 请求JSON
+     * @param count   当前连接ID
+     * @throws IOException 返回响应时连接异常
+     */
     public void handleLogin(JSONObject request, int count) throws IOException {
         String username = request.getString("user");
         String password = request.getString("password");
@@ -53,6 +60,12 @@ public class LyraHandler {
         send(response.toString());
     }
 
+    /**
+     * 处理sql请求
+     *
+     * @param request 请求JSON
+     * @throws IOException 返回响应时连接异常
+     */
     public void handleSQL(JSONObject request) throws IOException {
         if (user == null) {
             return;
@@ -79,6 +92,12 @@ public class LyraHandler {
         send(response.toString());
     }
 
+    /**
+     * 处理prepare请求，即编译SQL语句
+     *
+     * @param request 请求JSON
+     * @throws IOException 返回响应时连接异常
+     */
     public void handlePrepare(JSONObject request) throws IOException {
         if (user == null) {
             return;
@@ -103,6 +122,11 @@ public class LyraHandler {
         send(response.toString());
     }
 
+    /**
+     * 处理关闭statement请求
+     *
+     * @param request 请求JSON
+     */
     public void handleClose(JSONObject request) {
         if (user == null) {
             return;
@@ -111,6 +135,12 @@ public class LyraHandler {
         user.removePreparedStatement(hashcode);
     }
 
+    /**
+     * 处理prepared语句的执行请求
+     *
+     * @param request 请求JSON
+     * @throws IOException 返回响应时连接异常
+     */
     public void handleExecute(JSONObject request) throws IOException {
         if (user == null) {
             return;
@@ -140,6 +170,12 @@ public class LyraHandler {
         outputStream.flush();
     }
 
+    /**
+     * 将int值转换成字节数组，高位在前
+     *
+     * @param integer 目标整数
+     * @return 转换后的字节数组
+     */
     private byte[] toByteArray(int integer) {
         byte[] bytes = new byte[4];
         bytes[0] = (byte) ((integer >> 24) & 0xff);

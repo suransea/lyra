@@ -1,5 +1,8 @@
 package com.sea.lyrad.util;
 
+/**
+ * 字符工具
+ */
 public class CharUtil {
 
     /**

@@ -45,6 +45,11 @@ public class User {
         this.currentDB = currentDB;
     }
 
+    /**
+     * 获取当前用户能访问到的数据库名列表
+     *
+     * @return 数据库名列表
+     */
     public List<String> getAccessDBNames() {
         DBManager dbManager = DBManager.getInstance();
         List<String> result = dbManager.getDBNames();
@@ -54,6 +59,14 @@ public class User {
         return result;
     }
 
+    /**
+     * 执行statement语句
+     *
+     * @param statement 待执行的语句
+     * @return 执行结果
+     * @throws DBProcessException 执行期间异常
+     * @throws SQLParseException  解析期间异常
+     */
     public String execute(SQLStatement statement) throws DBProcessException, SQLParseException {
         SQLExecutor executor = sqlExecutorFactory.createInstance(statement);
         return executor.execute(User.this, statement);

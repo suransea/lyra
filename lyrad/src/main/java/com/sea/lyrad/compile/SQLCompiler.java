@@ -6,5 +6,10 @@ import com.sea.lyrad.parse.SQLParseUnsupportedException;
 import com.sea.lyrad.stmt.PreparedStatement;
 
 public interface SQLCompiler {
+    /**
+     * 编译sql语句
+     *
+     * @return 编译结果：PreparedStatement
+     */
     PreparedStatement compile() throws SQLParseUnsupportedException, SQLParseException, UnterminatedCharException, SQLCompileUnsupportedException;
 }

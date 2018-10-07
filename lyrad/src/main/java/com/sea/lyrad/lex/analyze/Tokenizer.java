@@ -3,6 +3,9 @@ package com.sea.lyrad.lex.analyze;
 import com.sea.lyrad.lex.token.*;
 import com.sea.lyrad.util.CharUtil;
 
+/**
+ * 分词器
+ */
 public class Tokenizer {
 
     private String content;
@@ -31,6 +34,13 @@ public class Tokenizer {
         return start + length;
     }
 
+    /**
+     * eat comment
+     *
+     * @param start position
+     * @return new position
+     * @throws UnterminatedCharException 注释未关闭
+     */
     public int eatComment(int start) throws UnterminatedCharException {
         char current = charAt(start);
         char next = charAt(start + 1);

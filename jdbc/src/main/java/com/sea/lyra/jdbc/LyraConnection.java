@@ -39,14 +39,18 @@ public class LyraConnection implements Connection {
         login.put("tag", "login");
         login.put("user", user);
         login.put("password", password);
+
+        //验证密码
         send(login.toString() + "\n");
         String response = receive();
         JSONObject json = new JSONObject(response);
         if (!json.getBoolean("access")) {
             throw new SQLException("Username or password is not right, permission denied.");
         }
+
+        //切换数据库
         String dbName = connection.getURL().getPath().replaceAll("/", "");
-        String useStmt = "use " + dbName;
+        String useStmt = String.format("use %s", dbName);
         try {
             createStatement().execute(useStmt);
         } catch (SQLException e) {
@@ -115,6 +119,7 @@ public class LyraConnection implements Connection {
 
     @Override
     public void close() throws SQLException {
+        if (closed) return;
         try {
             inputStream.close();
             outputStream.close();

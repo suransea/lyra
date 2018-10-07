@@ -23,6 +23,7 @@ public class LyraResultSet implements ResultSet {
         for (int i = 0; i < head.length(); i++) {
             columnNames.add(head.getString(i));
         }
+        //从array中取出数据填充到List中
         for (int i = 0; i < array.length(); i++) {
             JSONArray item = array.getJSONArray(i);
             Map<String, Object> row = new HashMap<>();

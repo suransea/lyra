@@ -10,6 +10,9 @@ import org.json.JSONArray;
 
 import java.util.List;
 
+/**
+ * 编译后的sql语句
+ */
 public class PreparedStatement {
     private SQLStatement statement;
 
@@ -17,6 +20,13 @@ public class PreparedStatement {
         this.statement = statement;
     }
 
+    /**
+     * 填充参数以转换成标准的sql语句对象
+     *
+     * @param params 待填充的参数
+     * @return 标准sql语句对象
+     * @throws SQLParseException 参数数量不匹配
+     */
     public SQLStatement toSQLStatement(JSONArray params) throws SQLParseException {
         if (statement instanceof SelectStatement) {
             SelectStatement stmt = (SelectStatement) statement;

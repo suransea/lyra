@@ -11,45 +11,20 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 public class LyraDataSource implements DataSource {
+    //连接池
     private static Stack<LyraConnectionWrapper> pool = new Stack<>();
-    private String url = "";
+    private String url;
     private String user = "";
     private String password = "";
-    private String driverClassName = "";
 
-    public LyraDataSource() {
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
+    public LyraDataSource(String url) {
         this.url = url;
     }
 
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
+    public LyraDataSource(String url, String user, String password) {
+        this.url = url;
         this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getDriverClassName() {
-        return driverClassName;
-    }
-
-    public void setDriverClassName(String driverClassName) {
-        this.driverClassName = driverClassName;
     }
 
     @Override
@@ -66,21 +41,23 @@ public class LyraDataSource implements DataSource {
         url = url.replaceAll("jdbc:", "");
         if (!pool.empty()) {
             LyraConnectionWrapper wrapper = pool.pop();
-            String use = "use ";
+            String useStmt;
             try {
                 URL address = new URL(null, url, new com.sea.lyra.protocol.lyra.Handler());
-                use += address.getPath().replaceAll("/", "");
+                useStmt = String.format("use %s", address.getPath().replaceAll("/", ""));
             } catch (MalformedURLException e) {
                 throw new SQLException("error url.");
             }
-            connectionBuilder.user(username).password(password).build().close();
-            wrapper.createStatement().execute(use);
+            connectionBuilder.user(username).password(password).build().close();//验证密码
+            wrapper.createStatement().execute(useStmt);//切换数据库
             return wrapper;
         }
         Connection connection = connectionBuilder
                 .user(username)
                 .password(password)
                 .build();
+
+        //connection wrapper的close方法调用时调用此回调方法释放连接
         Function callback = new Function() {
             @Override
             public void call(Object... objects) {

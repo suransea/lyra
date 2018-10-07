@@ -8,14 +8,26 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+/**
+ * AES加密解密工具
+ */
 public class AESCrypto {
 
     private String rule;
 
+    /**
+     * @param rule 密钥
+     */
     public AESCrypto(String rule) {
         this.rule = rule;
     }
 
+    /**
+     * 加密
+     *
+     * @param content 待加密字符串
+     * @return 加密后的字符串
+     */
     public String encode(String content) {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -36,6 +48,12 @@ public class AESCrypto {
         }
     }
 
+    /**
+     * 解密
+     *
+     * @param content 待解密字符串
+     * @return 解密后的字符串
+     */
     public String decode(String content) {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");

@@ -5,7 +5,7 @@ import com.sea.lyrad.stmt.BaseSQLStatement;
 import com.sea.lyrad.stmt.SQLStatement;
 
 public class DDLStatement extends BaseSQLStatement implements SQLStatement {
-    private Keyword item;
+    private Keyword item;//value is database or table
     private String dbName;
     private String tableName;
 

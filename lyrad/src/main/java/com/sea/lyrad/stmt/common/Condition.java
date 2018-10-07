@@ -3,6 +3,9 @@ package com.sea.lyrad.stmt.common;
 import com.sea.lyrad.lex.token.Symbol;
 import com.sea.lyrad.parse.SQLParseException;
 
+/**
+ * where表达式的条件
+ */
 public class Condition {
     private Column column;
     private Symbol operator;

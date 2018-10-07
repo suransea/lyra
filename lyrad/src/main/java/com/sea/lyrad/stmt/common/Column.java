@@ -5,6 +5,9 @@ import com.sea.lyrad.lex.token.Keyword;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SQL语句的列
+ */
 public class Column {
     private String columnName;
     private Keyword type;

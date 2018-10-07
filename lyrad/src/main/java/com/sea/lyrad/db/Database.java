@@ -52,6 +52,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * 移除该数据库对象中的目标表对象
+     *
+     * @param name 表名
+     */
     public void removeTable(String name) {
         tables.removeIf(x -> x.getName().equals(name));
     }
@@ -65,7 +70,7 @@ public class Database {
      *
      * @param tableName 表名
      * @return 数据
-     * @throws DBProcessException 表名不存在时
+     * @throws DBProcessException 表名不存在
      */
     public List<Map<String, String>> getRows(String tableName) throws DBProcessException {
         List<Map<String, String>> result = new ArrayList<>();
@@ -85,6 +90,15 @@ public class Database {
         return result;
     }
 
+    /**
+     * 获取筛选后的行数据
+     *
+     * @param tableName  表名
+     * @param expression 包含筛选条件的where表达式
+     * @return 数据
+     * @throws SQLParseException  表达式中包含无法解析的条件
+     * @throws DBProcessException 表名不存在
+     */
     public List<Map<String, String>> getRows(String tableName, WhereExpression expression) throws SQLParseException, DBProcessException {
         List<Map<String, String>> result = new ArrayList<>();
         Element rootElement = document.getRootElement();

@@ -7,6 +7,9 @@ import com.sea.lyrad.lex.token.Token;
 import com.sea.lyrad.parse.SQLParseException;
 import com.sea.lyrad.util.CharUtil;
 
+/**
+ * 词法分析器
+ */
 public class Lexer {
 
     private String content;
@@ -24,6 +27,9 @@ public class Lexer {
         return content;
     }
 
+    /**
+     * @return 当前词素
+     */
     public Token getToken() {
         return token;
     }
@@ -32,6 +38,13 @@ public class Lexer {
         return this.position + position >= content.length() ? CharUtil.getEOI() : content.charAt(this.position + position);
     }
 
+    /**
+     * 移动pos至下一词素
+     *
+     * @return 下一词素
+     * @throws UnterminatedCharException 有开始却无匹配的结束字符（串）
+     * @throws SQLParseException         无法解析的词素类型
+     */
     public Token nextToken() throws UnterminatedCharException, SQLParseException {
         skipIgnoredToken();
         if (isVariableBegin()) {
@@ -55,6 +68,11 @@ public class Lexer {
         return token;
     }
 
+    /**
+     * 跳过无意义词素
+     *
+     * @throws UnterminatedCharException 有开始却无匹配的结束字符（串）
+     */
     private void skipIgnoredToken() throws UnterminatedCharException {
         position = tokenizer.eatWhitespace(position);
         while (isHintBegin()) {

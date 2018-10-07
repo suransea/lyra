@@ -16,6 +16,7 @@ public class DCLExecutor implements SQLExecutor {
     private static final String PASSWORD_REGEX;
 
     static {
+        //验证密码格式的正则表达式
         PASSWORD_REGEX = "^([A-Z]|[a-z]|[0-9]|[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~\uff01@#\uffe5%\u2026\u2026&*\uff08\uff09\u2014\u2014+|{}\u3010\u3011\u2018\uff1b\uff1a\u201d\u201c'\u3002\uff0c\u3001\uff1f]){6,20}$";
     }
 

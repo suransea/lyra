@@ -13,6 +13,12 @@ public class SQLCompilerFactory {
     public SQLCompilerFactory() {
     }
 
+    /**
+     * 创建SQL编译器实例
+     *
+     * @param sql 语句
+     * @return sql编译器
+     */
     public SQLCompiler createInstance(String sql) throws SQLParseException, UnterminatedCharException, SQLCompileUnsupportedException {
         lexer = new Lexer(sql);
         Token token = lexer.nextToken();
@@ -25,6 +31,12 @@ public class SQLCompilerFactory {
         }
     }
 
+    /**
+     * 当前词素类型是否与目标词素类型列表之一匹配
+     *
+     * @param tokenTypes 词素类型列表
+     * @return true if matched
+     */
     private boolean equalAny(TokenType... tokenTypes) {
         for (TokenType each : tokenTypes) {
             if (each == lexer.getToken().getType()) {

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class LyraResultSetMetaData implements ResultSetMetaData {
-    List<String> columnNames;
+    private List<String> columnNames;
 
 
     LyraResultSetMetaData(List<String> columnNames) {

@@ -3,6 +3,9 @@ package com.sea.lyrad.parse;
 import com.sea.lyrad.lex.Lexer;
 import com.sea.lyrad.lex.token.TokenType;
 
+/**
+ * SQL解析过程的异常
+ */
 public class SQLParseException extends Exception {
     private static final String UNMATCHED_MESSAGE = "SQL syntax error, expected token is '%s', actual token is '%s', literals is '%s'.";
 
