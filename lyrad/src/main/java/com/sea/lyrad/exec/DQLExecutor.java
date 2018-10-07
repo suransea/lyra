@@ -4,23 +4,25 @@ import com.sea.lyrad.db.Database;
 import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.db.table.TableAttribute;
 import com.sea.lyrad.parse.SQLParseException;
-import com.sea.lyrad.parse.stmt.context.Column;
-import com.sea.lyrad.parse.stmt.context.Condition;
-import com.sea.lyrad.parse.stmt.dql.DQLStatement;
-import com.sea.lyrad.parse.stmt.dql.SelectStatement;
+import com.sea.lyrad.stmt.SQLStatement;
+import com.sea.lyrad.stmt.common.Column;
+import com.sea.lyrad.stmt.common.Condition;
+import com.sea.lyrad.stmt.dql.DQLStatement;
+import com.sea.lyrad.stmt.dql.SelectStatement;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DQLExecutor extends SQLExecutor {
+public class DQLExecutor implements SQLExecutor {
     private User user;
     private DQLStatement statement;
 
-    public String execute(User user, DQLStatement statement) throws DBProcessException, SQLParseException {
+    @Override
+    public String execute(User user, SQLStatement statement) throws DBProcessException, SQLParseException {
         this.user = user;
-        this.statement = statement;
+        this.statement = (DQLStatement) statement;
         if (statement instanceof SelectStatement) {
             return executeSelect();
         }
@@ -76,7 +78,7 @@ public class DQLExecutor extends SQLExecutor {
         }
         List<Map<String, String>> data = selectAllRows ?
                 database.getRows(table.getName()) :
-                database.getRows(table.getName(), stmt);
+                database.getRows(table.getName(), stmt.getWhereExpression());
         JSONArray outcome = new JSONArray();
         data.sort(
                 (x, y) -> {

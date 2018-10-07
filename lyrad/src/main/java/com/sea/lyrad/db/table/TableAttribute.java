@@ -5,28 +5,15 @@ import com.sea.lyrad.exec.DBProcessException;
 public class TableAttribute {
     private String name;
     private DataType type;
-
-    public String getName() {
-        return name;
-    }
-
-    public DataType getType() {
-        return type;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
     private int length;
 
     public TableAttribute(String name, String type, String length) {
         this.name = name;
         for (DataType dataType : DataType.values()) {
-            if (dataType.name().equals(type)) {
+            if (dataType.name().toLowerCase().equals(type)) {
                 this.type = dataType;
+                break;
             }
-            break;
         }
         if (length == null) {
             this.length = -1;
@@ -38,12 +25,24 @@ public class TableAttribute {
     public TableAttribute(String name, String type, int length) {
         this.name = name;
         for (DataType dataType : DataType.values()) {
-            if (dataType.name().equals(type)) {
+            if (dataType.name().toLowerCase().equals(type)) {
                 this.type = dataType;
+                break;
             }
-            break;
         }
         this.length = length;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public DataType getType() {
+        return type;
+    }
+
+    public int getLength() {
+        return length;
     }
 
     public void checkType(String value) throws DBProcessException {

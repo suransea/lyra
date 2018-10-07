@@ -1,13 +1,17 @@
 package com.sea.lyrad.server;
 
+import com.sea.lyrad.compile.SQLCompileUnsupportedException;
+import com.sea.lyrad.compile.SQLCompiler;
+import com.sea.lyrad.compile.SQLCompilerFactory;
 import com.sea.lyrad.exec.DBManager;
 import com.sea.lyrad.exec.DBProcessException;
-import com.sea.lyrad.exec.SQLExecutor;
 import com.sea.lyrad.exec.User;
-import com.sea.lyrad.lex.Lexer;
 import com.sea.lyrad.lex.analyze.UnterminatedCharException;
-import com.sea.lyrad.parse.*;
-import com.sea.lyrad.parse.stmt.SQLStatement;
+import com.sea.lyrad.parse.SQLParseException;
+import com.sea.lyrad.parse.SQLParseUnsupportedException;
+import com.sea.lyrad.parse.SQLParser;
+import com.sea.lyrad.parse.SQLParserFactory;
+import com.sea.lyrad.stmt.SQLStatement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,11 +24,13 @@ import java.io.OutputStream;
 public class LyraHandler {
     private OutputStream outputStream;
     private User user = null;
-    private SQLExecutor sqlExecutor;
+    private SQLParserFactory sqlParserFactory;
+    private SQLCompilerFactory sqlCompilerFactory;
 
     public LyraHandler(OutputStream outputStream) {
         this.outputStream = outputStream;
-        sqlExecutor = new SQLExecutor();
+        sqlParserFactory = new SQLParserFactory();
+        sqlCompilerFactory = new SQLCompilerFactory();
     }
 
     public void handleLogin(JSONObject request, int count) throws IOException {
@@ -52,13 +58,12 @@ public class LyraHandler {
             return;
         }
         String sql = request.getString("sql");
-        Lexer lexer = new Lexer(sql);
-        SQLParser parser = new SQLParser(lexer);
         JSONObject response = new JSONObject();
         try {
             long startTime = System.currentTimeMillis();
+            SQLParser parser = sqlParserFactory.createInstance(sql);
             SQLStatement statement = parser.parse();
-            String outcome = sqlExecutor.execute(user, statement);
+            String outcome = user.execute(statement);
             long time = System.currentTimeMillis() - startTime;
             response.put("outcome", outcome);
             response.put("time", time);
@@ -80,11 +85,10 @@ public class LyraHandler {
         }
         String sql = request.getString("sql");
         int hashcode = request.getInt("hash");
-        Lexer lexer = new Lexer(sql);
-        SQLCompiler compiler = new SQLCompiler(lexer);
         JSONObject response = new JSONObject();
         try {
             long startTime = System.currentTimeMillis();
+            SQLCompiler compiler = sqlCompilerFactory.createInstance(sql);
             user.addPreparedStatement(hashcode, compiler.compile());
             long time = System.currentTimeMillis() - startTime;
             response.put("time", time);
@@ -117,7 +121,7 @@ public class LyraHandler {
         try {
             long startTime = System.currentTimeMillis();
             SQLStatement statement = user.getPreparedStatement(hashcode).toSQLStatement(params);
-            String outcome = sqlExecutor.execute(user, statement);
+            String outcome = user.execute(statement);
             long time = System.currentTimeMillis() - startTime;
             response.put("outcome", outcome);
             response.put("time", time);

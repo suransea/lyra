@@ -2,14 +2,14 @@ package com.sea.lyrad.util;
 
 public class CharUtil {
 
-    private CharUtil() {
-    }
-
     /**
      * End of input.
      * Ctrl+Z
      */
     private static final byte EOI = 0x1A;
+
+    private CharUtil() {
+    }
 
     public static char getEOI() {
         return (char) EOI;

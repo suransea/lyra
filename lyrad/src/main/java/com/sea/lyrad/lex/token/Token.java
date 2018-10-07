@@ -8,6 +8,13 @@ public class Token {
 
     private TokenType type;
     private String literals;
+    private int endPosition;
+
+    public Token(TokenType type, String literals, int endPosition) {
+        this.type = type;
+        this.literals = literals;
+        this.endPosition = endPosition;
+    }
 
     public TokenType getType() {
         return type;
@@ -19,14 +26,6 @@ public class Token {
 
     public int getEndPosition() {
         return endPosition;
-    }
-
-    private int endPosition;
-
-    public Token(TokenType type, String literals, int endPosition) {
-        this.type = type;
-        this.literals = literals;
-        this.endPosition = endPosition;
     }
 
     @Override

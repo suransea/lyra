@@ -4,10 +4,11 @@ import com.sea.lyrad.db.Database;
 import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.db.table.TableAttribute;
 import com.sea.lyrad.lex.token.Keyword;
-import com.sea.lyrad.parse.stmt.context.Column;
-import com.sea.lyrad.parse.stmt.ddl.CreateStatement;
-import com.sea.lyrad.parse.stmt.ddl.DDLStatement;
-import com.sea.lyrad.parse.stmt.ddl.DropStatement;
+import com.sea.lyrad.stmt.SQLStatement;
+import com.sea.lyrad.stmt.common.Column;
+import com.sea.lyrad.stmt.ddl.CreateStatement;
+import com.sea.lyrad.stmt.ddl.DDLStatement;
+import com.sea.lyrad.stmt.ddl.DropStatement;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -15,13 +16,14 @@ import org.dom4j.Element;
 import java.util.Iterator;
 import java.util.List;
 
-public class DDLExecutor extends SQLExecutor {
+public class DDLExecutor implements SQLExecutor {
     private User user;
     private DDLStatement statement;
 
-    public String execute(User user, DDLStatement statement) throws DBProcessException {
+    @Override
+    public String execute(User user, SQLStatement statement) throws DBProcessException {
         this.user = user;
-        this.statement = statement;
+        this.statement = (DDLStatement) statement;
         if (statement instanceof CreateStatement) {
             return executeCreate();
         } else if (statement instanceof DropStatement) {

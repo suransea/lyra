@@ -9,17 +9,8 @@ import com.sea.lyrad.util.CharUtil;
 
 public class Lexer {
 
-    public String getContent() {
-        return content;
-    }
-
     private String content;
     private int position;
-
-    public Token getToken() {
-        return token;
-    }
-
     private Token token;
     private Tokenizer tokenizer;
 
@@ -27,6 +18,14 @@ public class Lexer {
         this.content = content;
         tokenizer = new Tokenizer(content);
         position = 0;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Token getToken() {
+        return token;
     }
 
     private char charAt(int position) {

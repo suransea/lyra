@@ -31,17 +31,6 @@ public class LyraConnection implements Connection {
     private String schema = null;
 
 
-    private void send(String content) throws IOException {
-        outputStream.write(content.getBytes(Charset.forName("utf-8")));
-        outputStream.flush();
-    }
-
-    private String receive() throws IOException {
-        byte[] receive = new byte[1024];
-        inputStream.read(receive);
-        return new String(receive, Charset.forName("utf-8"));
-    }
-
     LyraConnection(URLConnection urlConnection, String user, String password) throws IOException, SQLException {
         this.connection = urlConnection;
         inputStream = connection.getInputStream();
@@ -63,6 +52,17 @@ public class LyraConnection implements Connection {
         } catch (SQLException e) {
             throw new SQLException(String.format("The target database [%s] is not exist.", dbName));
         }
+    }
+
+    private void send(String content) throws IOException {
+        outputStream.write(content.getBytes(Charset.forName("utf-8")));
+        outputStream.flush();
+    }
+
+    private String receive() throws IOException {
+        byte[] receive = new byte[1024];
+        inputStream.read(receive);
+        return new String(receive, Charset.forName("utf-8"));
     }
 
     @Override
@@ -94,13 +94,13 @@ public class LyraConnection implements Connection {
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        this.autoCommit = autoCommit;
+    public boolean getAutoCommit() throws SQLException {
+        return autoCommit;
     }
 
     @Override
-    public boolean getAutoCommit() throws SQLException {
-        return autoCommit;
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        this.autoCommit = autoCommit;
     }
 
     @Override
@@ -136,18 +136,13 @@ public class LyraConnection implements Connection {
     }
 
     @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        this.readOnly = readOnly;
-    }
-
-    @Override
     public boolean isReadOnly() throws SQLException {
         return readOnly;
     }
 
     @Override
-    public void setCatalog(String catalog) throws SQLException {
-        this.catalog = catalog;
+    public void setReadOnly(boolean readOnly) throws SQLException {
+        this.readOnly = readOnly;
     }
 
     @Override
@@ -156,13 +151,18 @@ public class LyraConnection implements Connection {
     }
 
     @Override
-    public void setTransactionIsolation(int level) throws SQLException {
-        transactionIsolation = level;
+    public void setCatalog(String catalog) throws SQLException {
+        this.catalog = catalog;
     }
 
     @Override
     public int getTransactionIsolation() throws SQLException {
         return transactionIsolation;
+    }
+
+    @Override
+    public void setTransactionIsolation(int level) throws SQLException {
+        transactionIsolation = level;
     }
 
     @Override
@@ -201,13 +201,13 @@ public class LyraConnection implements Connection {
     }
 
     @Override
-    public void setHoldability(int holdability) throws SQLException {
-        this.holdability = holdability;
+    public int getHoldability() throws SQLException {
+        return holdability;
     }
 
     @Override
-    public int getHoldability() throws SQLException {
-        return holdability;
+    public void setHoldability(int holdability) throws SQLException {
+        this.holdability = holdability;
     }
 
     @Override
@@ -292,11 +292,6 @@ public class LyraConnection implements Connection {
     }
 
     @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-        clientInfo = properties;
-    }
-
-    @Override
     public String getClientInfo(String name) throws SQLException {
         return clientInfo.toString();
     }
@@ -304,6 +299,11 @@ public class LyraConnection implements Connection {
     @Override
     public Properties getClientInfo() throws SQLException {
         return clientInfo;
+    }
+
+    @Override
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        clientInfo = properties;
     }
 
     @Override
@@ -317,13 +317,13 @@ public class LyraConnection implements Connection {
     }
 
     @Override
-    public void setSchema(String schema) throws SQLException {
-        this.schema = schema;
+    public String getSchema() throws SQLException {
+        return schema;
     }
 
     @Override
-    public String getSchema() throws SQLException {
-        return schema;
+    public void setSchema(String schema) throws SQLException {
+        this.schema = schema;
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.sea.lyrad.db;
 import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.exec.DBProcessException;
 import com.sea.lyrad.parse.SQLParseException;
-import com.sea.lyrad.parse.stmt.SQLStatement;
+import com.sea.lyrad.stmt.common.WhereExpression;
 import com.sea.lyrad.util.XMLUtil;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -12,17 +12,23 @@ import org.dom4j.Element;
 import java.util.*;
 
 public class Database {
+    private String name;
+    private List<Table> tables;
+    private Document document;
+
+    public Database(String name, Document document) {
+        this.name = name;
+        this.document = document;
+        tables = new ArrayList<>();
+    }
+
     public String getName() {
         return name;
     }
 
-    private String name;
-
     public List<Table> getTables() {
         return tables;
     }
-
-    private List<Table> tables;
 
     /**
      * @return 数据库对应的xml文档对象
@@ -30,8 +36,6 @@ public class Database {
     public Document getDocument() {
         return document;
     }
-
-    private Document document;
 
     /**
      * 获取指定表名的Table对象
@@ -81,7 +85,7 @@ public class Database {
         return result;
     }
 
-    public List<Map<String, String>> getRows(String tableName, SQLStatement statement) throws SQLParseException, DBProcessException {
+    public List<Map<String, String>> getRows(String tableName, WhereExpression expression) throws SQLParseException, DBProcessException {
         List<Map<String, String>> result = new ArrayList<>();
         Element rootElement = document.getRootElement();
         Element tableElement = XMLUtil.getTableElement(rootElement, tableName);
@@ -94,14 +98,8 @@ public class Database {
                 Attribute attribute = attrIt.next();
                 values.put(attribute.getName(), attribute.getValue());
             }
-            if (statement.isMatched(values)) result.add(values);
+            if (expression.isMatched(values)) result.add(values);
         }
         return result;
-    }
-
-    public Database(String name, Document document) {
-        this.name = name;
-        this.document = document;
-        tables = new ArrayList<>();
     }
 }

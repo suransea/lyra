@@ -14,13 +14,18 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LyraStatement implements Statement {
+    protected ResultSet resultSet = null;
+    protected int updateCount = 0;
     private Connection connection;
     private InputStream inputStream;
     private OutputStream outputStream;
-
     private boolean closed = false;
-    protected ResultSet resultSet = null;
-    protected int updateCount = 0;
+
+    LyraStatement(URLConnection urlConnection, Connection connection) throws IOException {
+        inputStream = urlConnection.getInputStream();
+        outputStream = urlConnection.getOutputStream();
+        this.connection = connection;
+    }
 
     protected void send(String content) throws IOException {
         outputStream.write(content.getBytes(Charset.forName("utf-8")));
@@ -45,12 +50,6 @@ public class LyraStatement implements Statement {
             receivedSize += length;
         }
         return new String(receive, Charset.forName("utf-8"));
-    }
-
-    LyraStatement(URLConnection urlConnection, Connection connection) throws IOException {
-        inputStream = urlConnection.getInputStream();
-        outputStream = urlConnection.getOutputStream();
-        this.connection = connection;
     }
 
     @Override
@@ -179,23 +178,23 @@ public class LyraStatement implements Statement {
     }
 
     @Override
-    public void setFetchDirection(int direction) throws SQLException {
-
-    }
-
-    @Override
     public int getFetchDirection() throws SQLException {
         return 0;
     }
 
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchDirection(int direction) throws SQLException {
 
     }
 
     @Override
     public int getFetchSize() throws SQLException {
         return 0;
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
+
     }
 
     @Override
@@ -279,13 +278,13 @@ public class LyraStatement implements Statement {
     }
 
     @Override
-    public void setPoolable(boolean poolable) throws SQLException {
-
+    public boolean isPoolable() throws SQLException {
+        return false;
     }
 
     @Override
-    public boolean isPoolable() throws SQLException {
-        return false;
+    public void setPoolable(boolean poolable) throws SQLException {
+
     }
 
     @Override

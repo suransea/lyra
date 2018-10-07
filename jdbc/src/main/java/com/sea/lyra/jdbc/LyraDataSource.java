@@ -11,6 +11,7 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 public class LyraDataSource implements DataSource {
+    private static Stack<LyraConnectionWrapper> pool = new Stack<>();
     private String url = "";
     private String user = "";
     private String password = "";
@@ -18,8 +19,6 @@ public class LyraDataSource implements DataSource {
 
     public LyraDataSource() {
     }
-
-    private static Stack<LyraConnectionWrapper> pool = new Stack<>();
 
     public String getUrl() {
         return url;
@@ -102,13 +101,13 @@ public class LyraDataSource implements DataSource {
     }
 
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-
+    public int getLoginTimeout() throws SQLException {
+        return 0;
     }
 
     @Override
-    public int getLoginTimeout() throws SQLException {
-        return 0;
+    public void setLoginTimeout(int seconds) throws SQLException {
+
     }
 
     @Override

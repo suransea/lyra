@@ -9,6 +9,12 @@ import java.util.List;
 public class Table {
 
     private String name;
+    private List<TableAttribute> attributes;
+
+    public Table(String name) {
+        this.name = name;
+        attributes = new ArrayList<>();
+    }
 
     /**
      * 获取全部属性
@@ -16,8 +22,6 @@ public class Table {
     public List<TableAttribute> getAttributes() {
         return attributes;
     }
-
-    private List<TableAttribute> attributes;
 
     public String getName() {
         return name;
@@ -37,10 +41,5 @@ public class Table {
 
     public boolean addAttribute(TableAttribute tableAttribute) {
         return attributes.add(tableAttribute);
-    }
-
-    public Table(String name) {
-        this.name = name;
-        attributes = new ArrayList<>();
     }
 }

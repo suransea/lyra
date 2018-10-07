@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class LyraPreparedStatement extends LyraStatement implements PreparedStatement {
-    private String sql;
     List<String> params;
+    private String sql;
 
     LyraPreparedStatement(URLConnection urlConnection, Connection connection, String sql) throws IOException, SQLException {
         super(urlConnection, connection);

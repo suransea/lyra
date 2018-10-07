@@ -4,12 +4,13 @@ import com.sea.lyrad.db.Database;
 import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.db.table.TableAttribute;
 import com.sea.lyrad.parse.SQLParseException;
-import com.sea.lyrad.parse.stmt.context.Column;
-import com.sea.lyrad.parse.stmt.context.Condition;
-import com.sea.lyrad.parse.stmt.dml.DMLStatement;
-import com.sea.lyrad.parse.stmt.dml.DeleteStatement;
-import com.sea.lyrad.parse.stmt.dml.InsertStatement;
-import com.sea.lyrad.parse.stmt.dml.UpdateStatement;
+import com.sea.lyrad.stmt.SQLStatement;
+import com.sea.lyrad.stmt.common.Column;
+import com.sea.lyrad.stmt.common.Condition;
+import com.sea.lyrad.stmt.dml.DMLStatement;
+import com.sea.lyrad.stmt.dml.DeleteStatement;
+import com.sea.lyrad.stmt.dml.InsertStatement;
+import com.sea.lyrad.stmt.dml.UpdateStatement;
 import com.sea.lyrad.util.Log;
 import com.sea.lyrad.util.XMLUtil;
 import org.dom4j.Attribute;
@@ -19,13 +20,14 @@ import org.dom4j.tree.DefaultElement;
 
 import java.util.*;
 
-public class DMLExecutor extends SQLExecutor {
+public class DMLExecutor implements SQLExecutor {
     private User user;
     private DMLStatement statement;
 
-    public String execute(User user, DMLStatement statement) throws DBProcessException, SQLParseException {
+    @Override
+    public String execute(User user, SQLStatement statement) throws DBProcessException, SQLParseException {
         this.user = user;
-        this.statement = statement;
+        this.statement = (DMLStatement) statement;
         if (statement instanceof InsertStatement) {
             return executeInsert();
         } else if (statement instanceof DeleteStatement) {

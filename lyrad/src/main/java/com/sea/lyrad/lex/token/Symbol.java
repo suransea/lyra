@@ -45,12 +45,7 @@ public enum Symbol implements TokenType {
     AT("@"),
     POUND("#");
 
-    Symbol(String literals) {
-        this.literals = literals;
-    }
-
     public static Map<String, Symbol> symbols = new HashMap<>(128);
-
     private static Symbol[] operators;
 
     static {
@@ -66,12 +61,12 @@ public enum Symbol implements TokenType {
 
     private String literals;
 
-    public static Symbol[] getOperators() {
-        return operators;
+    Symbol(String literals) {
+        this.literals = literals;
     }
 
-    public String getLiterals() {
-        return literals;
+    public static Symbol[] getOperators() {
+        return operators;
     }
 
     /**
@@ -82,5 +77,9 @@ public enum Symbol implements TokenType {
      */
     public static Symbol literalsOf(String literals) {
         return symbols.get(literals);
+    }
+
+    public String getLiterals() {
+        return literals;
     }
 }

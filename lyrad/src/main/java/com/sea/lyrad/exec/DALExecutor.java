@@ -2,21 +2,23 @@ package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.table.Table;
 import com.sea.lyrad.lex.token.Keyword;
-import com.sea.lyrad.parse.stmt.dal.DALStatement;
-import com.sea.lyrad.parse.stmt.dal.ShowStatement;
-import com.sea.lyrad.parse.stmt.dal.UseStatement;
+import com.sea.lyrad.stmt.SQLStatement;
+import com.sea.lyrad.stmt.dal.DALStatement;
+import com.sea.lyrad.stmt.dal.ShowStatement;
+import com.sea.lyrad.stmt.dal.UseStatement;
 import org.json.JSONArray;
 
 import java.util.Collections;
 
-public class DALExecutor extends SQLExecutor {
+public class DALExecutor implements SQLExecutor {
 
     private User user;
     private DALStatement statement;
 
-    public String execute(User user, DALStatement statement) throws DBProcessException {
+    @Override
+    public String execute(User user, SQLStatement statement) throws DBProcessException {
         this.user = user;
-        this.statement = statement;
+        this.statement = (DALStatement) statement;
         if (statement instanceof UseStatement) {
             return executeUse();
         } else if (statement instanceof ShowStatement) {

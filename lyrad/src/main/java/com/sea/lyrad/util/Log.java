@@ -7,9 +7,6 @@ import java.util.Date;
 public class Log {
     private static Writer writer = null;
 
-    private Log() {
-    }
-
     static {
         try {
             OutputStream outputStream = new FileOutputStream("lyrad.log", true);
@@ -17,6 +14,9 @@ public class Log {
         } catch (IOException e) {
             Log.p("Warning: 日志初始化失败.");
         }
+    }
+
+    private Log() {
     }
 
     /**

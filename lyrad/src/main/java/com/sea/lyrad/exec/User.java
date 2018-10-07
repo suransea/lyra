@@ -1,20 +1,29 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
-import com.sea.lyrad.parse.stmt.PreparedStatement;
+import com.sea.lyrad.parse.SQLParseException;
+import com.sea.lyrad.stmt.PreparedStatement;
+import com.sea.lyrad.stmt.SQLStatement;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class User {
+    private String name;
+    private Map<Integer, PreparedStatement> preparedStatements;
+    private Database currentDB = null;
+    private SQLExecutorFactory sqlExecutorFactory;
+
+    public User(String name) {
+        this.name = name;
+        preparedStatements = new HashMap<>();
+        sqlExecutorFactory = new SQLExecutorFactory();
+    }
+
     public String getName() {
         return name;
     }
-
-    private String name;
-
-    private Map<Integer, PreparedStatement> preparedStatements;
 
     public void addPreparedStatement(int hashcode, PreparedStatement preparedStatement) {
         preparedStatements.put(hashcode, preparedStatement);
@@ -36,8 +45,6 @@ public class User {
         this.currentDB = currentDB;
     }
 
-    private Database currentDB = null;
-
     public List<String> getAccessDBNames() {
         DBManager dbManager = DBManager.getInstance();
         List<String> result = dbManager.getDBNames();
@@ -47,8 +54,8 @@ public class User {
         return result;
     }
 
-    public User(String name) {
-        this.name = name;
-        preparedStatements = new HashMap<>();
+    public String execute(SQLStatement statement) throws DBProcessException, SQLParseException {
+        SQLExecutor executor = sqlExecutorFactory.createInstance(statement);
+        return executor.execute(User.this, statement);
     }
 }

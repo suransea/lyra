@@ -1,9 +1,10 @@
 package com.sea.lyrad.exec;
 
 import com.sea.lyrad.db.Database;
-import com.sea.lyrad.parse.stmt.dcl.AlterUserStatement;
-import com.sea.lyrad.parse.stmt.dcl.CreateUserStatement;
-import com.sea.lyrad.parse.stmt.dcl.DCLStatement;
+import com.sea.lyrad.stmt.SQLStatement;
+import com.sea.lyrad.stmt.dcl.AlterUserStatement;
+import com.sea.lyrad.stmt.dcl.CreateUserStatement;
+import com.sea.lyrad.stmt.dcl.DCLStatement;
 import com.sea.lyrad.util.AESCrypto;
 import com.sea.lyrad.util.Log;
 import com.sea.lyrad.util.XMLUtil;
@@ -11,7 +12,7 @@ import org.dom4j.Element;
 
 import java.util.Iterator;
 
-public class DCLExecutor extends SQLExecutor {
+public class DCLExecutor implements SQLExecutor {
     private static final String PASSWORD_REGEX;
 
     static {
@@ -21,9 +22,10 @@ public class DCLExecutor extends SQLExecutor {
     private User user;
     private DCLStatement statement;
 
-    public String execute(User user, DCLStatement statement) throws DBProcessException {
+    @Override
+    public String execute(User user, SQLStatement statement) throws DBProcessException {
         this.user = user;
-        this.statement = statement;
+        this.statement = (DCLStatement) statement;
         if (statement instanceof CreateUserStatement) {
             return executeCreate();
         } else if (statement instanceof AlterUserStatement) {
