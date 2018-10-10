@@ -26,6 +26,9 @@ public class SelectStatement extends DQLStatement {
     }
 
     public String getTableName() {
+        if (tableName.startsWith("`") && tableName.endsWith("`")) {
+            return tableName.substring(1, tableName.length() - 1);
+        }
         return tableName;
     }
 

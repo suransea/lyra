@@ -24,6 +24,9 @@ public class DMLStatement extends BaseSQLStatement implements SQLStatement {
     }
 
     public String getTableName() {
+        if (tableName.startsWith("`") && tableName.endsWith("`")) {
+            return tableName.substring(1, tableName.length() - 1);
+        }
         return tableName;
     }
 
