@@ -286,47 +286,49 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public boolean isBeforeFirst() throws SQLException {
-        return false;
+        return position == 0;
     }
 
     @Override
     public boolean isAfterLast() throws SQLException {
-        return false;
+        return position > rows.size();
     }
 
     @Override
     public boolean isFirst() throws SQLException {
-        return false;
+        return position == 1;
     }
 
     @Override
     public boolean isLast() throws SQLException {
-        return false;
+        return position == rows.size() - 1;
     }
 
     @Override
     public void beforeFirst() throws SQLException {
-
+        position = 0;
     }
 
     @Override
     public void afterLast() throws SQLException {
-
+        position = rows.size();
     }
 
     @Override
     public boolean first() throws SQLException {
-        return false;
+        position = 0;
+        return true;
     }
 
     @Override
     public boolean last() throws SQLException {
-        return false;
+        position = rows.size() - 1;
+        return true;
     }
 
     @Override
     public int getRow() throws SQLException {
-        return rows.size() - 1;
+        return position;
     }
 
     @Override
@@ -341,7 +343,11 @@ public class LyraResultSet implements ResultSet {
 
     @Override
     public boolean previous() throws SQLException {
-        return false;
+        if (position - 1 < 0) {
+            return false;
+        }
+        position--;
+        return true;
     }
 
     @Override
