@@ -89,7 +89,14 @@ public class DQLExecutor implements SQLExecutor {
                     for (int i = 0; i < orderAttrs.size(); i++) {
                         String left = x.get(orderAttrs.get(i));
                         String right = y.get(orderAttrs.get(i));
-                        int subResult = left.compareTo(right);
+                        int subResult;
+                        try {
+                            int a = Integer.parseInt(left);
+                            int b = Integer.parseInt(right);
+                            subResult = a - b;
+                        } catch (NumberFormatException e) {
+                            subResult = left.compareTo(right);
+                        }
                         if (subResult != 0 || i == orderAttrs.size() - 1) {
                             result = subResult;
                             break;
