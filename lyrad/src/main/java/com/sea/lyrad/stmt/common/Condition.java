@@ -16,7 +16,7 @@ public class Condition {
         try {
             double left = Double.parseDouble(value);
             double right = Double.parseDouble(this.value);
-            outcome = left - right;
+            outcome = Double.compare(left, right);
         } catch (NumberFormatException e) {
             outcome = value.compareTo(this.value);
         }
