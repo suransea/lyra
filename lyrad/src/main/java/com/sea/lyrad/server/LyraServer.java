@@ -1,48 +1,36 @@
 package com.sea.lyrad.server;
 
+import com.sea.lyrad.util.ConfigureUtil;
 import com.sea.lyrad.util.Log;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.BindException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Properties;
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LyraServer {
     public static final String VERSION = "0.5"; //版本号
 
     public static void main(String[] args) {
-        Properties properties = new Properties();
+        int port = ConfigureUtil.getPort();
+        int nThreads = ConfigureUtil.getThreadNumber();
         try {
-            InputStream inputStream = new FileInputStream("etc/lyrad.conf");
-            properties.load(new InputStreamReader(inputStream, "utf-8"));
-        } catch (IOException e) {
-            Log.pa("The configure file was lost.");
-            System.exit(1);
-        }
-        int port = Integer.parseInt(properties.getProperty("port"));
-
-        int count = 0;//连接数
-
-        try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            Log.pa("The server is running.");
+            ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+            AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withThreadPool(executor);
+            AsynchronousServerSocketChannel channel = AsynchronousServerSocketChannel.open(channelGroup);
+            channel.bind(new InetSocketAddress(port));
+            CompletionHandler<AsynchronousSocketChannel, Void> acceptHandler = new AcceptHandler(channel);
+            Log.pa("The server is started.");
+            channel.accept(null, acceptHandler);
             //noinspection InfiniteLoopStatement
-            while (true) {
-                Socket socket = serverSocket.accept();
-                count++;
-                Log.p();
-                Log.pa("Connection " + count);
-                Log.pa(socket);
-                Log.p();
-                Thread thread = new Thread(new LyraServerThread(socket, count));
-                thread.start();
-            }
+            while (true) Thread.sleep(1000);
         } catch (BindException e) {
             Log.pa("端口已被占用.");
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

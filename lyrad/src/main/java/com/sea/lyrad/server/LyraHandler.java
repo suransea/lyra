@@ -12,25 +12,53 @@ import com.sea.lyrad.parse.SQLParseUnsupportedException;
 import com.sea.lyrad.parse.SQLParser;
 import com.sea.lyrad.parse.SQLParserFactory;
 import com.sea.lyrad.stmt.SQLStatement;
+import com.sea.lyrad.util.IntegerUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 用来处理客户端请求
  */
 public class LyraHandler {
-    private OutputStream outputStream;
+    private AsynchronousSocketChannel channel;
     private User user = null;
     private SQLParserFactory sqlParserFactory;
     private SQLCompilerFactory sqlCompilerFactory;
 
-    public LyraHandler(OutputStream outputStream) {
-        this.outputStream = outputStream;
+    public LyraHandler(AsynchronousSocketChannel channel) {
+        this.channel = channel;
         sqlParserFactory = new SQLParserFactory();
         sqlCompilerFactory = new SQLCompilerFactory();
+    }
+
+    public void handle(String request) {
+        JSONObject json = new JSONObject(request);
+        switch (json.getString("tag")) {
+            case "login": {
+                handleLogin(json, AcceptHandler.getConnectionId());
+                break;
+            }
+            case "sql": {
+                handleSQL(json); //处理普通SQL执行
+                break;
+            }
+            case "pre": {
+                handlePrepare(json);
+                break;
+            }
+            case "exec": {
+                handleExecute(json); //处理prepared SQL的执行
+                break;
+            }
+            case "close": {
+                handleClose(json);
+                break;
+            }
+        }
     }
 
     /**
@@ -38,9 +66,8 @@ public class LyraHandler {
      *
      * @param request 请求JSON
      * @param count   当前连接ID
-     * @throws IOException 返回响应时连接异常
      */
-    public void handleLogin(JSONObject request, int count) throws IOException {
+    public void handleLogin(JSONObject request, int count) {
         String username = request.getString("user");
         String password = request.getString("password");
         DBManager dbManager = DBManager.getInstance();
@@ -64,9 +91,8 @@ public class LyraHandler {
      * 处理sql请求
      *
      * @param request 请求JSON
-     * @throws IOException 返回响应时连接异常
      */
-    public void handleSQL(JSONObject request) throws IOException {
+    public void handleSQL(JSONObject request) {
         if (user == null) {
             return;
         }
@@ -87,8 +113,7 @@ public class LyraHandler {
             response.put("outcome", e.getMessage());
             response.put("complete", false);
         }
-        outputStream.write(toByteArray(response.toString().getBytes("utf-8").length));
-        outputStream.flush();
+        sendLength(response.toString());
         send(response.toString());
     }
 
@@ -96,9 +121,8 @@ public class LyraHandler {
      * 处理prepare请求，即编译SQL语句
      *
      * @param request 请求JSON
-     * @throws IOException 返回响应时连接异常
      */
-    public void handlePrepare(JSONObject request) throws IOException {
+    public void handlePrepare(JSONObject request) {
         if (user == null) {
             return;
         }
@@ -117,8 +141,7 @@ public class LyraHandler {
             response.put("outcome", e.getMessage());
             response.put("complete", false);
         }
-        outputStream.write(toByteArray(response.toString().getBytes("utf-8").length));
-        outputStream.flush();
+        sendLength(response.toString());
         send(response.toString());
     }
 
@@ -139,9 +162,8 @@ public class LyraHandler {
      * 处理prepared语句的执行请求
      *
      * @param request 请求JSON
-     * @throws IOException 返回响应时连接异常
      */
-    public void handleExecute(JSONObject request) throws IOException {
+    public void handleExecute(JSONObject request) {
         if (user == null) {
             return;
         }
@@ -160,28 +182,17 @@ public class LyraHandler {
             response.put("outcome", e.getMessage());
             response.put("complete", false);
         }
-        outputStream.write(toByteArray(response.toString().getBytes("utf-8").length));
-        outputStream.flush();
+        sendLength(response.toString());
         send(response.toString());
     }
 
-    private void send(String response) throws IOException {
-        outputStream.write(response.getBytes("utf-8"));
-        outputStream.flush();
+    private void send(String response) {
+        ByteBuffer buffer = ByteBuffer.wrap(response.getBytes(StandardCharsets.UTF_8));
+        channel.write(buffer);
     }
 
-    /**
-     * 将int值转换成字节数组，高位在前
-     *
-     * @param integer 目标整数
-     * @return 转换后的字节数组
-     */
-    private byte[] toByteArray(int integer) {
-        byte[] bytes = new byte[4];
-        bytes[0] = (byte) ((integer >> 24) & 0xff);
-        bytes[1] = (byte) ((integer >> 16) & 0xff);
-        bytes[2] = (byte) ((integer >> 8) & 0xff);
-        bytes[3] = (byte) (integer & 0xff);
-        return bytes;
+    private void sendLength(String response) {
+        ByteBuffer buffer = ByteBuffer.wrap(IntegerUtil.toByteArray(response.getBytes(StandardCharsets.UTF_8).length));
+        channel.write(buffer);
     }
 }
