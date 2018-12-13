@@ -28,9 +28,11 @@ public class LyraHandler {
     private User user = null;
     private SQLParserFactory sqlParserFactory;
     private SQLCompilerFactory sqlCompilerFactory;
+    private int connectionId;
 
-    public LyraHandler(AsynchronousSocketChannel channel) {
+    public LyraHandler(AsynchronousSocketChannel channel, int connectionId) {
         this.channel = channel;
+        this.connectionId = connectionId;
         sqlParserFactory = new SQLParserFactory();
         sqlCompilerFactory = new SQLCompilerFactory();
     }
@@ -39,7 +41,7 @@ public class LyraHandler {
         JSONObject json = new JSONObject(request);
         switch (json.getString("tag")) {
             case "login": {
-                handleLogin(json, AcceptHandler.getConnectionId());
+                handleLogin(json, connectionId);
                 break;
             }
             case "sql": {

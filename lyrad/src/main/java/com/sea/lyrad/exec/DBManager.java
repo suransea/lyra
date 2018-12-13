@@ -23,8 +23,6 @@ import java.util.List;
 public class DBManager {
 
     private static final String PATH = "./database";//数据库文件存储位置
-    private static DBManager dbManager = null;
-
     private DatabasePool databasePool;
 
     private DBManager() {
@@ -37,10 +35,7 @@ public class DBManager {
      * @return DBManager对象
      */
     public static DBManager getInstance() {
-        if (dbManager == null) {
-            dbManager = new DBManager();
-        }
-        return dbManager;
+        return DBManagerInstance.INSTANCE;
     }
 
     /**
@@ -171,6 +166,10 @@ public class DBManager {
             }
         }
         return false;
+    }
+
+    private static class DBManagerInstance {
+        private static final DBManager INSTANCE = new DBManager();
     }
 }
 

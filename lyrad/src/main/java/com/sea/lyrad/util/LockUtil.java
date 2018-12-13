@@ -7,19 +7,19 @@ import java.util.concurrent.locks.ReentrantLock;
  * 重入锁工具
  */
 public class LockUtil {
-    private static Lock singleLock = null;
 
     private LockUtil() {
     }
 
     public static Lock getSingleLock() {
-        if (singleLock == null) {
-            singleLock = new ReentrantLock(true);
-        }
-        return singleLock;
+        return LockInstance.INSTANCE;
     }
 
     public static Lock getNewLock() {
         return new ReentrantLock(true);
+    }
+
+    private static class LockInstance {
+        private static final Lock INSTANCE = new ReentrantLock(true);
     }
 }

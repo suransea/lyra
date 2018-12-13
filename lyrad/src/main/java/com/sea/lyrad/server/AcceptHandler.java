@@ -16,19 +16,15 @@ public class AcceptHandler implements CompletionHandler<AsynchronousSocketChanne
         serverSocketChannel = channel;
     }
 
-    public static int getConnectionId() {
-        return connectionId;
-    }
-
     @Override
     public void completed(AsynchronousSocketChannel channel, Void aVoid) {
-        connectionId++;
+        ++connectionId;
         Log.p();
         Log.pa("Connection " + connectionId);
         Log.pa(channel);
         Log.p();
         ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-        ReadHandler handler = new ReadHandler(channel);
+        ReadHandler handler = new ReadHandler(channel, connectionId);
         channel.read(buffer, buffer, handler);
         serverSocketChannel.accept(null, new AcceptHandler(serverSocketChannel));
     }

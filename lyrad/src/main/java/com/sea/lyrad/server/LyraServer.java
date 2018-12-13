@@ -30,7 +30,6 @@ public class LyraServer {
             while (true) Thread.sleep(1000);
         } catch (BindException e) {
             Log.pa("端口已被占用.");
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
