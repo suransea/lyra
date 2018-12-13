@@ -9,7 +9,7 @@ import java.nio.channels.CompletionHandler;
 
 public class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Void> {
     private static final int BUFFER_SIZE = 1048576;
-    private static int connectionId = 0;
+    private int connectionId = 0;
     private AsynchronousServerSocketChannel serverSocketChannel;
 
     public AcceptHandler(AsynchronousServerSocketChannel channel) {
@@ -26,7 +26,7 @@ public class AcceptHandler implements CompletionHandler<AsynchronousSocketChanne
         ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
         ReadHandler handler = new ReadHandler(channel, connectionId);
         channel.read(buffer, buffer, handler);
-        serverSocketChannel.accept(null, new AcceptHandler(serverSocketChannel));
+        serverSocketChannel.accept(null, this);
     }
 
     @Override
