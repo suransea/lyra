@@ -13,7 +13,7 @@ public class ConfigureUtil {
     static {
         Properties properties = new Properties();
         try {
-            InputStream inputStream = new FileInputStream("etc/lyrad.conf");
+            InputStream inputStream = ConfigureUtil.class.getResourceAsStream("lyrad.conf");
             properties.load(new InputStreamReader(inputStream, "utf-8"));
         } catch (IOException e) {
             Log.pa("The configure file was lost.");
