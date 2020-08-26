@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sea</groupId>
-    <artifactId>lyra.jdbc</artifactId>
+    <artifactId>lyra-jdbc</artifactId>
     <version>0.1.9</version>
     <name>lyra-jdbc</name>
     <description>The jdbc driver of lyra database</description>
@@ -35,9 +35,6 @@
                 <version>2.5.5</version>
                 <configuration>
                     <encoding>utf-8</encoding>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>

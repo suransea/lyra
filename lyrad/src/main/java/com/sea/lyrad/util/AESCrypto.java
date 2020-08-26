@@ -5,6 +5,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -13,7 +14,7 @@ import java.util.Base64;
  */
 public class AESCrypto {
 
-    private String rule;
+    private final String rule;
 
     /**
      * @param rule 密钥
@@ -32,14 +33,14 @@ public class AESCrypto {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(rule.getBytes("utf8"));
+            secureRandom.setSeed(rule.getBytes(StandardCharsets.UTF_8));
             keygen.init(128, secureRandom);
             SecretKey originalKey = keygen.generateKey();
             byte[] raw = originalKey.getEncoded();
             SecretKey key = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            byte[] byteEncode = content.getBytes("utf-8");
+            byte[] byteEncode = content.getBytes(StandardCharsets.UTF_8);
             byte[] byteAES = cipher.doFinal(byteEncode);
             return new String(Base64.getEncoder().encode(byteAES));
         } catch (Exception e) {
@@ -58,7 +59,7 @@ public class AESCrypto {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(rule.getBytes("utf-8"));
+            secureRandom.setSeed(rule.getBytes(StandardCharsets.UTF_8));
             keygen.init(128, secureRandom);
             SecretKey originalKey = keygen.generateKey();
             byte[] raw = originalKey.getEncoded();
@@ -67,7 +68,7 @@ public class AESCrypto {
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] byteContent = Base64.getDecoder().decode(content);
             byte[] byteDecode = cipher.doFinal(byteContent);
-            return new String(byteDecode, "utf-8");
+            return new String(byteDecode, StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
             Log.a("AES error.");

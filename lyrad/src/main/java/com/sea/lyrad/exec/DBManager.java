@@ -13,6 +13,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +23,8 @@ import java.util.List;
  */
 public class DBManager {
 
-    private static final String PATH = "./database";//数据库文件存储位置
-    private DatabasePool databasePool;
+    private static final String PATH = System.getenv("HOME") + "/.lyra/database";
+    private final DatabasePool databasePool;
 
     private DBManager() {
         databasePool = new DatabasePool();
@@ -35,7 +36,7 @@ public class DBManager {
      * @return DBManager对象
      */
     public static DBManager getInstance() {
-        return DBManagerInstance.INSTANCE;
+        return Singleton.INSTANCE;
     }
 
     /**
@@ -82,7 +83,7 @@ public class DBManager {
         Document document = database.getDocument();
         try {
             OutputStream outputStream = new FileOutputStream(DBManager.PATH + "/" + database.getName() + ".xml");
-            OutputStreamWriter writer = new OutputStreamWriter(outputStream, "utf-8");
+            OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
             document.write(writer);
             writer.close();
             outputStream.close();
@@ -115,9 +116,9 @@ public class DBManager {
         Document document;
         try {
             InputStream inputStream = new FileInputStream(PATH + "/" + dbName + ".xml");
-            InputStreamReader streamReader = new InputStreamReader(inputStream, "utf-8");
+            InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             document = reader.read(streamReader);
-        } catch (DocumentException | FileNotFoundException | UnsupportedEncodingException e) {
+        } catch (DocumentException | FileNotFoundException e) {
             Log.a(e.getMessage());
             throw new DBProcessException("Unknown error.");
         }
@@ -152,7 +153,7 @@ public class DBManager {
         String encodePassword = aes.encode(password);
         Database userDB = getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        Element tableElement = XMLUtil.findTableElement(rootElement, "user");
         if (tableElement == null) {
             String message = "Error: inside table `user` lost";
             Log.a(message);
@@ -168,8 +169,7 @@ public class DBManager {
         return false;
     }
 
-    private static class DBManagerInstance {
+    private static class Singleton {
         private static final DBManager INSTANCE = new DBManager();
     }
 }
-

@@ -125,7 +125,7 @@ public class DMLExecutor implements SQLExecutor {
             }
         }
         Element rootElement = database.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, stmt.getTableName());
+        Element tableElement = XMLUtil.findTableElement(rootElement, stmt.getTableName());
         if (tableElement == null) {
             String message = "Error: data inconsistency.";
             Log.a(message);
@@ -188,7 +188,7 @@ public class DMLExecutor implements SQLExecutor {
             }
         }
         Element rootElement = database.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, stmt.getTableName());
+        Element tableElement = XMLUtil.findTableElement(rootElement, stmt.getTableName());
         if (tableElement == null) {
             String message = "Error: data inconsistency.";
             Log.a(message);

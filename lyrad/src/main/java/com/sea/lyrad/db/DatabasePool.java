@@ -10,7 +10,7 @@ import java.util.Map;
  * 数据库对象池
  */
 public class DatabasePool {
-    private Map<String, Database> pool;
+    private final Map<String, Database> pool;
 
     public DatabasePool() {
         pool = new HashMap<>();

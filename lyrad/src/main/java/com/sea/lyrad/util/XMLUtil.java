@@ -18,7 +18,7 @@ public class XMLUtil {
      * @param name 表名
      * @return 表结点元素 or null
      */
-    public static Element getTableElement(Element root, String name) {
+    public static Element findTableElement(Element root, String name) {
         for (Iterator<Element> it = root.elementIterator("table"); it.hasNext(); ) {
             Element element = it.next();
             if (element.attributeValue("name").equals(name)) {

@@ -1,6 +1,7 @@
 package com.sea.lyrad.util;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -8,12 +9,12 @@ import java.util.Date;
  * 日至工具
  */
 public class Log {
-    private static Writer writer = null;
+    private static Writer writer;
 
     static {
         try {
-            OutputStream outputStream = new FileOutputStream("lyrad.log", true);
-            writer = new OutputStreamWriter(outputStream, "utf-8");
+            OutputStream outputStream = new FileOutputStream("/log/lyrad.log", true);
+            writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
         } catch (IOException e) {
             Log.p("Warning: 日志初始化失败.");
         }
@@ -26,11 +27,8 @@ public class Log {
      * 向控制台打印
      */
     public static void p(Object o) {
-        StringBuilder log = new StringBuilder();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置时间格式
-        log.append(simpleDateFormat.format(new Date()));
-        log.append(' ');
-        log.append(o.toString());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置时间格式
+        String log = format.format(new Date()) + ' ' + o.toString();
         System.out.println(log);
     }
 
@@ -59,13 +57,5 @@ public class Log {
     public static void pa(Object o) {
         p(o);
         a(o);
-    }
-
-    public static void close() {
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

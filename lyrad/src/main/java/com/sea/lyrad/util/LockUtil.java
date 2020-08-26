@@ -15,7 +15,7 @@ public class LockUtil {
         return LockInstance.INSTANCE;
     }
 
-    public static Lock getNewLock() {
+    public static Lock newLock() {
         return new ReentrantLock(true);
     }
 

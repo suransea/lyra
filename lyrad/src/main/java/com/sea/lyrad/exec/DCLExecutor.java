@@ -43,7 +43,7 @@ public class DCLExecutor implements SQLExecutor {
         DBManager dbManager = DBManager.getInstance();
         Database userDB = dbManager.getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        Element tableElement = XMLUtil.findTableElement(rootElement, "user");
         if (tableElement == null) {
             String message = "Error: inside table `user` lost";
             Log.a(message);
@@ -75,7 +75,7 @@ public class DCLExecutor implements SQLExecutor {
         DBManager dbManager = DBManager.getInstance();
         Database userDB = dbManager.getDatabase("lyra");
         Element rootElement = userDB.getDocument().getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, "user");
+        Element tableElement = XMLUtil.findTableElement(rootElement, "user");
         if (tableElement == null) {
             String message = "Error: inside table `user` lost";
             Log.a(message);

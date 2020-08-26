@@ -75,7 +75,7 @@ public class Database {
     public List<Map<String, String>> getRows(String tableName) throws DBProcessException {
         List<Map<String, String>> result = new ArrayList<>();
         Element rootElement = document.getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, tableName);
+        Element tableElement = XMLUtil.findTableElement(rootElement, tableName);
         if (tableElement == null) {
             throw new DBProcessException("The target table is not exist.");
         }
@@ -102,7 +102,7 @@ public class Database {
     public List<Map<String, String>> getRows(String tableName, WhereExpression expression) throws SQLParseException, DBProcessException {
         List<Map<String, String>> result = new ArrayList<>();
         Element rootElement = document.getRootElement();
-        Element tableElement = XMLUtil.getTableElement(rootElement, tableName);
+        Element tableElement = XMLUtil.findTableElement(rootElement, tableName);
         if (tableElement == null) {
             throw new DBProcessException("The target table is not exist.");
         }

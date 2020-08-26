@@ -1,6 +1,6 @@
 package com.sea.lyrad.server;
 
-import com.sea.lyrad.util.ConfigureUtil;
+import com.sea.lyrad.util.Configuration;
 import com.sea.lyrad.util.Log;
 
 import java.net.BindException;
@@ -16,8 +16,8 @@ public class LyraServer {
     public static final String VERSION = "0.5"; //版本号
 
     public static void main(String[] args) {
-        int port = ConfigureUtil.getPort();
-        int nThreads = ConfigureUtil.getThreadNumber();
+        int port = Configuration.getPort();
+        int nThreads = Configuration.getThreadNumber();
         try {
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
             AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withThreadPool(executor);
